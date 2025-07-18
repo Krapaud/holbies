@@ -499,11 +499,6 @@ def profile():
     
     return render_template('profile.html', user=user, quiz_scores=scores)
 
-@app.route('/test-matrix')
-def test_matrix():
-    """Page de test pour diagnostiquer les effets Matrix"""
-    return render_template('test_matrix.html')
-
 @app.route('/quiz')
 def quiz_home():
     if 'user_id' not in session:

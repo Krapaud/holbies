@@ -1456,23 +1456,6 @@ a:hover {
     animation: glow 2s ease-in-out infinite alternate;
 }
 
-.hack-mode {
-    color: #ff0040;
-    font-weight: bold;
-    text-shadow: 0 0 10px #ff0040;
-}
-
-.hack-text {
-    color: var(--primary-green);
-    animation: flicker 0.15s ease-in-out infinite alternate;
-}
-
-.hack-warning {
-    color: var(--accent-orange);
-    font-weight: bold;
-    animation: pulse 1s ease-in-out infinite;
-}
-
 .joke {
     color: var(--secondary-green);
     font-style: italic;
@@ -1483,11 +1466,6 @@ a:hover {
     font-style: italic;
     border-left: 2px solid var(--primary-green);
     padding-left: 1rem;
-}
-
-.matrix-text {
-    color: var(--primary-green);
-    animation: matrix-glow 1s ease-in-out infinite alternate;
 }
 
 .terminal-line.welcome {
@@ -1557,11 +1535,6 @@ a:hover {
 @keyframes pulse {
     0%, 100% { transform: scale(1); }
     50% { transform: scale(1.05); }
-}
-
-@keyframes matrix-glow {
-    from { text-shadow: 0 0 5px var(--primary-green); }
-    to { text-shadow: 0 0 20px var(--primary-green), 0 0 30px var(--primary-green); }
 }
 
 /* Styles pour terminal Unix-like avancé */
@@ -1686,43 +1659,6 @@ a:hover {
 
 .hidden-color {
     color: var(--text-darker);
-}
-
-/* Styles pour commandes spéciales */
-.hack-title {
-    color: #ff0040;
-    font-weight: bold;
-    text-shadow: 0 0 10px #ff0040;
-    animation: pulse 1s ease-in-out infinite;
-}
-
-.hack-target {
-    color: var(--accent-orange);
-}
-
-.hack-step {
-    color: var(--primary-green);
-    animation: flicker 0.3s ease-in-out infinite alternate;
-}
-
-.hack-success {
-    color: var(--secondary-green);
-    font-weight: bold;
-    text-shadow: 0 0 15px var(--secondary-green);
-}
-
-.decode-header, .encrypt-header {
-    color: var(--accent-orange);
-    font-weight: bold;
-}
-
-.decode-input, .decode-output, .encrypt-input, .encrypt-output {
-    color: var(--text-light);
-    font-family: monospace;
-}
-
-.decode-status, .encrypt-status {
-    color: var(--secondary-green);
 }
 
 /* Styles pour utilitaires */
@@ -3292,87 +3228,6 @@ a:hover {
     .nav-link .nav-icon {
         font-size: 1rem;
     }
-}
-
-/* ==========================================================================
-   Effets Matrix
-   ========================================================================== */
-
-.matrix-bg {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-    opacity: 0.05;
-    pointer-events: none;
-    overflow: hidden;
-}
-
-.matrix-char {
-    position: absolute;
-    color: #00ff41;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 14px;
-    animation: matrix-fall linear infinite;
-    text-shadow: 0 0 5px #00ff41;
-}
-
-@keyframes matrix-fall {
-    0% {
-        transform: translateY(-100vh);
-        opacity: 1;
-    }
-    100% {
-        transform: translateY(100vh);
-        opacity: 0;
-    }
-}
-
-@keyframes konami-spin {
-    0%, 100% { transform: rotate(0deg); }
-    50% { transform: rotate(360deg); }
-}
-
-.glitch-active {
-    animation: glitch 1s linear infinite;
-}
-
-@keyframes glitch {
-    0%, 100% { 
-        transform: translateX(0); 
-        text-shadow: 0 0 5px #00ff41;
-    }
-    20% { 
-        transform: translateX(-2px); 
-        text-shadow: -2px 0 5px #ff0041, 2px 0 5px #00ff41;
-    }
-    40% { 
-        transform: translateX(2px); 
-        text-shadow: 2px 0 5px #ff0041, -2px 0 5px #00ff41;
-    }
-    60% { 
-        transform: translateX(-1px); 
-        text-shadow: -1px 0 5px #ff0041, 1px 0 5px #00ff41;
-    }
-    80% { 
-        transform: translateX(1px); 
-        text-shadow: 1px 0 5px #ff0041, -1px 0 5px #00ff41;
-    }
-}
-
-.hack-mode {
-    filter: hue-rotate(180deg) contrast(1.2) brightness(1.1);
-}
-
-.hack-mode .matrix-bg {
-    opacity: 0.3 !important;
-}
-
-.hack-mode .matrix-char {
-    color: #ff0041;
-    text-shadow: 0 0 5px #ff0041;
 }
 
 /* Quiz Question Styles */

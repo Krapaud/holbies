@@ -202,14 +202,6 @@
                             <span class="action-text">Administration</span>
                         </a>
                     {% endif %}
-                    <button class="action-btn" onclick="matrix()">
-                        <span class="action-icon">🌧️</span>
-                        <span class="action-text">Matrix Rain</span>
-                    </button>
-                    <button class="action-btn" onclick="glitch()">
-                        <span class="action-icon">⚡</span>
-                        <span class="action-text">Glitch Effect</span>
-                    </button>
                 </div>
             </div>
         </div>
@@ -453,13 +445,9 @@ ${cmd.examples || 'Aucun exemple disponible'}`;
 • vim [file]  - Éditeur de texte
 • nano [file] - Éditeur de texte simple
 
-<span class="cmd-category">═══ MATRIX SPÉCIAL ═══</span>
-• matrix      - Animation Matrix
-• hack        - Mode hacker avancé
+<span class="cmd-category">═══ APPLICATIONS ═══</span>
 • quiz        - Système de quiz interactif
 • stats       - Statistiques utilisateur
-• decode [text] - Décodeur Matrix
-• encrypt [text] - Chiffreur Matrix
 
 <span class="cmd-category">═══ UTILITAIRES ═══</span>
 • clear       - Effacer l'écran
@@ -779,11 +767,6 @@ Object.assign(commands, {
     grep: { description: 'Recherche motifs', execute: (args) => args.length >= 2 ? `<span class="grep-match">Motif "${args[0]}" trouvé dans ${args[1]}</span>` : '<span class="error">grep: motif et fichier requis</span>' },
     wc: { description: 'Compte mots', execute: (args) => `<span class="wc-output">   42  284 1642 ${args[0] || 'stdin'}</span>` },
     
-    // Matrix spécial
-    hack: { description: 'Mode hacker Matrix', execute: (args) => `<span class="hack-title">MATRIX HACK v3.0</span><span class="hack-step">Breach initié sur ${args[0] || 'localhost'}... ████████████ 100%</span><span class="hack-success">ACCÈS ACCORDÉ - Bienvenue dans la Matrix</span>` },
-    decode: { description: 'Décodeur Matrix', execute: (args) => args[0] ? `<span class="decode-output">Décodé: ${args.join(' ').split('').map(c => String.fromCharCode(c.charCodeAt(0) + 1)).join('')}</span>` : '<span class="error">decode: texte requis</span>' },
-    encrypt: { description: 'Chiffreur Matrix', execute: (args) => args[0] ? `<span class="encrypt-output">Chiffré: ${args.join(' ').split('').map(c => String.fromCharCode(c.charCodeAt(0) - 1)).join('')}</span>` : '<span class="error">encrypt: texte requis</span>' },
-    
     // Fun
     fortune: { description: 'Citations', execute: () => { const quotes = ['"The Matrix is everywhere" - Morpheus', '"There is no spoon" - Spoon Boy', '"Code is poetry" - WordPress']; return `<span class="fortune">${quotes[Math.floor(Math.random() * quotes.length)]}</span>`; }},
     cowsay: { description: 'Vache parlante', execute: (args) => { const text = args.join(' ') || 'Hello Matrix!'; return `<span class="cowsay"> ${'_'.repeat(text.length + 2)}\n< ${text} >\n ${'‾'.repeat(text.length + 2)}\n        \\   ^__^\n         \\  (oo)\\_______\n            (__)\\       )\\/\\\n                ||----w |\n                ||     ||</span>`; }},
@@ -1024,21 +1007,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Mettre à jour le badge
     updateBadge(Math.round(completionRate));
-    
-    // Test de diagnostic Matrix
-    setTimeout(() => {
-        console.log('🔍 DIAGNOSTIC MATRIX:');
-        console.log('Matrix function available:', typeof window.matrix);
-        console.log('Glitch function available:', typeof window.glitch);
-        console.log('Matrix background element:', document.getElementById('matrix-bg') ? 'FOUND' : 'NOT FOUND');
-        
-        // Test simple d'appel des fonctions
-        if (typeof window.matrix === 'function') {
-            console.log('✅ Matrix function is callable');
-        } else {
-            console.error('❌ Matrix function NOT callable');
-        }
-    }, 2000);
 });
 </script>
 {% endblock %}
