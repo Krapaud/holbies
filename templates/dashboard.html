@@ -3,41 +3,46 @@
 {% block title %}Dashboard - Dev Learning Hub{% endblock %}
 
 {% block content %}
-<div class="dashboard-container">
-    <div class="dashboard-header">
-        <h1 class="dashboard-title">
-            <span class="title-icon">📊</span>
+<div class="dashboard-container animated-bg">
+    <!-- Particules d'arrière-plan -->
+    <div class="particles" id="particles"></div>
+    
+    <div class="dashboard-header glass-effect">
+        <h1 class="dashboard-title glow-text">
+            <span class="title-icon rotating">📊</span>
             Tableau de bord
         </h1>
-        <p class="dashboard-subtitle">
-            Bienvenue, <span class="username-highlight">{{ user.username }}</span>
+        <p class="dashboard-subtitle fade-in">
+            Bienvenue, <span class="username-highlight neon-text">{{ user.username }}</span>
         </p>
     </div>
     
-    <div class="dashboard-grid">
-        <!-- Carte de profil -->
-        <div class="dashboard-card profile-card">
-            <div class="card-header">
+    <div class="dashboard-grid fade-in-grid">
+        <!-- Carte de profil améliorée -->
+        <div class="dashboard-card profile-card floating-card">
+            <div class="card-header gradient-header">
                 <h3 class="card-title">
-                    <span class="card-icon">👤</span>
+                    <span class="card-icon pulse">👤</span>
                     Mon Profil
                 </h3>
+                <div class="header-decoration"></div>
             </div>
             <div class="card-content">
                 <div class="profile-info">
-                    <div class="profile-avatar">
-                        <div class="avatar-placeholder">
+                    <div class="profile-avatar glow-avatar">
+                        <div class="avatar-placeholder animated-avatar">
                             {{ user.username[0].upper() }}
                         </div>
+                        <div class="avatar-ring"></div>
                     </div>
                     <div class="profile-details">
-                        <p class="profile-name">{{ user.username }}</p>
+                        <p class="profile-name gradient-text">{{ user.username }}</p>
                         <p class="profile-email">{{ user.email }}</p>
                         <p class="profile-role">
                             {% if user.is_admin %}
-                                <span class="role-badge admin">🔰 Administrateur</span>
+                                <span class="role-badge admin glow-badge">🔰 Administrateur</span>
                             {% else %}
-                                <span class="role-badge user">👤 Utilisateur</span>
+                                <span class="role-badge user glow-badge">👤 Utilisateur</span>
                             {% endif %}
                         </p>
                         <p class="profile-date">
@@ -45,88 +50,96 @@
                         </p>
                     </div>
                 </div>
-                <a href="{{ url_for('profile') }}" class="btn btn-secondary btn-small">
+                <a href="{{ url_for('profile') }}" class="btn btn-secondary btn-small hover-lift">
                     <span class="btn-icon">✏️</span>
                     Modifier
                 </a>
             </div>
         </div>
         
-        <!-- Statistiques -->
-        <div class="dashboard-card stats-card">
-            <div class="card-header">
+        <!-- Statistiques améliorées -->
+        <div class="dashboard-card stats-card floating-card">
+            <div class="card-header gradient-header">
                 <h3 class="card-title">
-                    <span class="card-icon">📈</span>
+                    <span class="card-icon pulse">📈</span>
                     Progression
                 </h3>
+                <div class="header-decoration"></div>
             </div>
             <div class="card-content">
                 <!-- Badge de niveau basé sur la progression -->
-                <div class="progression-badge-container">
-                    <div id="progressionBadge" class="progression-badge">
-                        <span class="badge-icon">🐣</span>
+                <div class="progression-badge-container floating-badge">
+                    <div id="progressionBadge" class="progression-badge animated-badge">
+                        <span class="badge-icon rotating-slow">🐣</span>
                         <span class="badge-text">Débutant</span>
+                        <div class="badge-glow"></div>
                     </div>
-                    <div class="badge-description">
+                    <div class="badge-description glow-text">
                         <span id="badgeDescription">Vous commencez votre parcours C</span>
                     </div>
                 </div>
                 
-                <div class="stats-grid">
-                    <div class="stat-item">
-                        <div class="stat-number">{{ user.level }}</div>
+                <div class="stats-grid enhanced-stats">
+                    <div class="stat-item hover-lift">
+                        <div class="stat-number gradient-text counter" data-target="{{ user.level }}">0</div>
                         <div class="stat-label">Niveau</div>
+                        <div class="stat-icon">⭐</div>
                     </div>
-                    <div class="stat-item">
-                        <div class="stat-number">{{ user.xp_points }}</div>
+                    <div class="stat-item hover-lift">
+                        <div class="stat-number gradient-text counter" data-target="{{ user.xp_points }}">0</div>
                         <div class="stat-label">Points XP</div>
+                        <div class="stat-icon">🔥</div>
                     </div>
-                    <div class="stat-item">
-                        <div class="stat-number">{{ user.total_quizzes }}</div>
+                    <div class="stat-item hover-lift">
+                        <div class="stat-number gradient-text counter" data-target="{{ user.total_quizzes }}">0</div>
                         <div class="stat-label">Quiz Complétés</div>
+                        <div class="stat-icon">✅</div>
                     </div>
-                    <div class="stat-item">
-                        <div class="stat-number">{{ "%.1f"|format(user.completion_rate) }}%</div>
+                    <div class="stat-item hover-lift">
+                        <div class="stat-number gradient-text counter" data-target="{{ "%.1f"|format(user.completion_rate) }}">0</div>
                         <div class="stat-label">Taux Réussite</div>
+                        <div class="stat-icon">🎯</div>
                     </div>
                 </div>
                 
-                <!-- Barre de progression niveau -->
-                <div class="level-progress">
+                <!-- Barre de progression niveau améliorée -->
+                <div class="level-progress enhanced-progress">
                     <div class="progress-header">
-                        <span class="progress-label">Niveau {{ user.level }} → {{ user.level + 1 }}</span>
-                        <span class="progress-percent">{{ "%.0f"|format(level_progress) }}%</span>
+                        <span class="progress-label glow-text">Niveau {{ user.level }} → {{ user.level + 1 }}</span>
+                        <span class="progress-percent neon-text">{{ "%.0f"|format(level_progress) }}%</span>
                     </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" data-width="{{ level_progress }}"></div>
+                    <div class="progress-bar enhanced-bar">
+                        <div class="progress-fill animated-fill" data-width="{{ level_progress }}">
+                            <div class="progress-shine"></div>
+                        </div>
                     </div>
                     <div class="progress-info">
-                        <span>{{ xp_for_next - (user.xp_points - ((user.level - 1) ** 2 * 100)) }} XP pour le niveau suivant</span>
+                        <span class="glow-text">{{ xp_for_next - (user.xp_points - ((user.level - 1) ** 2 * 100)) }} XP pour le niveau suivant</span>
                     </div>
                 </div>
                 
-                <!-- Légende des badges -->
-                <div class="badges-legend">
-                    <h4 class="legend-title">🏆 Niveaux de maîtrise C</h4>
-                    <div class="badges-grid">
-                        <div class="badge-legend-item">
-                            <span class="legend-badge beginner">🐣 Débutant</span>
+                <!-- Légende des badges améliorée -->
+                <div class="badges-legend enhanced-legend">
+                    <h4 class="legend-title gradient-text">🏆 Niveaux de maîtrise C</h4>
+                    <div class="badges-grid enhanced-badges">
+                        <div class="badge-legend-item hover-lift">
+                            <span class="legend-badge beginner glow-badge">🐣 Débutant</span>
                             <span class="legend-range">0-20%</span>
                         </div>
-                        <div class="badge-legend-item">
-                            <span class="legend-badge apprentice">📚 Apprenti</span>
+                        <div class="badge-legend-item hover-lift">
+                            <span class="legend-badge apprentice glow-badge">📚 Apprenti</span>
                             <span class="legend-range">21-40%</span>
                         </div>
-                        <div class="badge-legend-item">
-                            <span class="legend-badge intermediate">🔧 Intermédiaire</span>
+                        <div class="badge-legend-item hover-lift">
+                            <span class="legend-badge intermediate glow-badge">🔧 Intermédiaire</span>
                             <span class="legend-range">41-60%</span>
                         </div>
-                        <div class="badge-legend-item">
-                            <span class="legend-badge advanced">🚀 Avancé</span>
+                        <div class="badge-legend-item hover-lift">
+                            <span class="legend-badge advanced glow-badge">🚀 Avancé</span>
                             <span class="legend-range">61-80%</span>
                         </div>
-                        <div class="badge-legend-item">
-                            <span class="legend-badge master">👑 Maître C</span>
+                        <div class="badge-legend-item hover-lift">
+                            <span class="legend-badge master glow-badge">👑 Maître C</span>
                             <span class="legend-range">81-100%</span>
                         </div>
                     </div>
@@ -251,29 +264,35 @@
             </div>
         </div>
         
-        <!-- Console Easter Egg -->
-        <div class="dashboard-card console-card">
-            <div class="card-header">
+        <!-- Console Easter Egg améliorée -->
+        <div class="dashboard-card console-card floating-card">
+            <div class="card-header gradient-header">
                 <h3 class="card-title">
-                    <span class="card-icon">💻</span>
+                    <span class="card-icon pulse">💻</span>
                     Console Hacker
                 </h3>
-                <div class="console-controls">
-                    <button class="console-btn" onclick="clearTerminal()" title="Effacer">🗑️</button>
-                    <button class="console-btn" onclick="showHelp()" title="Aide">❓</button>
-                    <button class="console-btn" onclick="toggleFullscreen()" title="Plein écran">⛶</button>
+                <div class="console-controls enhanced-controls">
+                    <button class="console-btn hover-lift" onclick="clearTerminal()" title="Effacer">🗑️</button>
+                    <button class="console-btn hover-lift" onclick="showHelp()" title="Aide">❓</button>
+                    <button class="console-btn hover-lift" onclick="toggleFullscreen()" title="Plein écran">⛶</button>
+                    <button class="console-btn hover-lift" onclick="matrixRain()" title="Matrix Rain">🌧️</button>
                 </div>
+                <div class="header-decoration"></div>
             </div>
             <div class="card-content">
-                <div class="console-terminal" id="terminal">
-                    <div class="terminal-header">
+                <div class="console-terminal enhanced-terminal" id="terminal">
+                    <div class="terminal-header glass-effect">
                         <div class="terminal-controls">
                             <div class="terminal-buttons">
-                                <span class="terminal-button close"></span>
-                                <span class="terminal-button minimize"></span>
-                                <span class="terminal-button maximize"></span>
+                                <span class="terminal-button close glow-button"></span>
+                                <span class="terminal-button minimize glow-button"></span>
+                                <span class="terminal-button maximize glow-button"></span>
                             </div>
-                            <span class="terminal-title">matrix@hackaton: ~/dev</span>
+                            <span class="terminal-title neon-text">matrix@hackaton: ~/dev</span>
+                            <div class="terminal-stats">
+                                <span class="cpu-usage">CPU: <span class="stat-value">45%</span></span>
+                                <span class="mem-usage">MEM: <span class="stat-value">67%</span></span>
+                            </div>
                         </div>
                         <div class="terminal-status-bar">
                             <span class="terminal-info">TTY: /dev/pts/1</span>
