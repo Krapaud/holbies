@@ -331,6 +331,11 @@ def get_level_progress(xp_points, level):
 def index():
     return render_template('index.html')
 
+@app.route('/test_glitch')
+def test_glitch():
+    with open('test_glitch.html', 'r', encoding='utf-8') as f:
+        return f.read()
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
