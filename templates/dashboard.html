@@ -466,7 +466,7 @@ ${cmd.examples || 'Aucun exemple disponible'}`;
 
 <span class="cmd-category">═══ APPLICATIONS ═══</span>
 • quiz        - Système de quiz interactif
-• tutor       - Python Tutor multi-langages
+• tutor       - D.L.H. Tutor multi-langages
 • stats       - Statistiques utilisateur
 
 <span class="cmd-category">═══ UTILITAIRES ═══</span>
@@ -783,7 +783,7 @@ Object.assign(commands, {
     
     // Applications
     quiz: { description: 'Système de quiz interactif', execute: () => { window.open('/quiz', '_blank'); return '<span class="success">🎯 Ouverture du système de quiz...</span>'; }},
-    tutor: { description: 'Python Tutor multi-langages', execute: () => { window.open('/python-tutor', '_blank'); return '<span class="success">🐍 Ouverture du Python Tutor...</span>'; }},
+    tutor: { description: 'D.L.H. Tutor multi-langages', execute: () => { window.open('/python-tutor', '_blank'); return '<span class="success">� Ouverture du D.L.H. Tutor...</span>'; }},
     stats: { description: 'Statistiques utilisateur', execute: () => `<span class="stats-header">📊 STATISTIQUES UTILISATEUR</span><span class="stats-line">Niveau: ${userData.level}</span><span class="stats-line">XP: ${userData.xp}</span><span class="stats-line">Quiz complétés: ${userData.quizzes}</span><span class="stats-line">Taux de réussite: ${userData.completionRate}%</span>` },
     
     // Utilitaires
