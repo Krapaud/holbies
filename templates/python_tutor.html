@@ -18,7 +18,7 @@
 
         <div class="tutor-container">
             <div class="toolbar">
-                <div class="language-selector">
+                <div class="languag            const response = await fetch('http://localhost:8002/run', {-selector">
                     <label for="language-select">🔧 Langage:</label>
                     <select id="language-select" class="language-dropdown">
                         <option value="python">🐍 Python</option>
@@ -688,7 +688,7 @@ class MatrixPythonTutor {
     async simulateExecution(code) {
         // Appel réel au serveur Python Tutor
         try {
-            const response = await fetch("http://localhost:8000/run", {
+            const response = await fetch("http://localhost:8001/run", {
                 method: "POST",
                 headers: { 
                     "Content-Type": "application/json",

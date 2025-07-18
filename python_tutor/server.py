@@ -27,9 +27,20 @@ class PythonTracer:
         """Fonction de traçage pour capturer l'exécution"""
         if event == 'line':
             lineno = frame.f_lineno
+            # Nettoyer les variables locales pour éviter les objets non sérialisables
+            clean_locals = {}
+            for key, value in frame.f_locals.items():
+                try:
+                    # Tester si la valeur est sérialisable en JSON
+                    json.dumps(value)
+                    clean_locals[key] = value
+                except (TypeError, ValueError):
+                    # Si non sérialisable, convertir en string
+                    clean_locals[key] = str(type(value).__name__)
+            
             snapshot = {
                 "line": lineno,
-                "locals": dict(frame.f_locals),
+                "locals": clean_locals,
                 "globals": {},
                 "output": self.output
             }
@@ -310,7 +321,7 @@ class CodeExecutionHandler(http.server.BaseHTTPRequestHandler):
 
 
 if __name__ == "__main__":
-    PORT = 8000
+    PORT = 8001  # Changement de port pour éviter les conflits
     print(f"🚀 Démarrage du serveur Multi-Language Code Executor...")
     print(f"📍 URL: http://localhost:{PORT}")
     print(f"🔧 Langages supportés: Python, JavaScript, C")
