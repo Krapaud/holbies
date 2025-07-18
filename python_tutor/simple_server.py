@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 """
-Simple Multi-Language Code Executor
-D_L_H Tutor API Server - Version Multi-langages
-Support Python, JavaScript et C avec visualisation d'exécution
+DLH Tutor API Server - Version Multi-langages
+Support d'exécution pour Python, JavaScript et C
 """
 
 import sys
@@ -282,7 +281,7 @@ class SimpleHandler(http.server.BaseHTTPRequestHandler):
     
     def do_GET(self):
         if self.path == '/':
-            response = {"message": "D_L_H Tutor API", "status": "OK", "languages": ["python", "javascript", "c"]}
+            response = {"message": "DLH Tutor API", "status": "OK", "languages": ["python", "javascript", "c"]}
             self.send_response(200)
             self.send_header('Content-Type', 'application/json')
             self.send_header('Access-Control-Allow-Origin', '*')
@@ -295,7 +294,7 @@ class SimpleHandler(http.server.BaseHTTPRequestHandler):
 
 if __name__ == "__main__":
     PORT = 8002
-    print(f"🚀 Serveur D_L_H Tutor Multi-langages")
+    print(f"🚀 Serveur DLH Tutor Multi-langages")
     print(f"📍 URL: http://localhost:{PORT}")
     print(f"� Support: Python, JavaScript, C")
     print(f"📋 Dépendances: Node.js (pour JS), GCC (pour C)")

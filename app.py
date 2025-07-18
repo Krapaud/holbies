@@ -501,7 +501,7 @@ def profile():
 
 @app.route('/python-tutor')
 def python_tutor():
-    """Page D_L_H Tutor - Visualiseur de code multi-langages"""
+    """Page DLH Tutor - Visualiseur de code multi-langages"""
     if 'user_id' not in session:
         return redirect(url_for('login'))
     

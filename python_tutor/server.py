@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-D_L_H Tutor API Server
+DLH Tutor API Server
 Serveur simple pour exécuter du code Python et retourner les résultats
 """
 
