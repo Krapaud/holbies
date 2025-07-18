@@ -61,6 +61,17 @@
                 </h3>
             </div>
             <div class="card-content">
+                <!-- Badge de niveau basé sur la progression -->
+                <div class="progression-badge-container">
+                    <div id="progressionBadge" class="progression-badge">
+                        <span class="badge-icon">🐣</span>
+                        <span class="badge-text">Débutant</span>
+                    </div>
+                    <div class="badge-description">
+                        <span id="badgeDescription">Vous commencez votre parcours C</span>
+                    </div>
+                </div>
+                
                 <div class="stats-grid">
                     <div class="stat-item">
                         <div class="stat-number">{{ user.level }}</div>
@@ -91,6 +102,33 @@
                     </div>
                     <div class="progress-info">
                         <span>{{ xp_for_next - (user.xp_points - ((user.level - 1) ** 2 * 100)) }} XP pour le niveau suivant</span>
+                    </div>
+                </div>
+                
+                <!-- Légende des badges -->
+                <div class="badges-legend">
+                    <h4 class="legend-title">🏆 Niveaux de maîtrise C</h4>
+                    <div class="badges-grid">
+                        <div class="badge-legend-item">
+                            <span class="legend-badge beginner">🐣 Débutant</span>
+                            <span class="legend-range">0-20%</span>
+                        </div>
+                        <div class="badge-legend-item">
+                            <span class="legend-badge apprentice">📚 Apprenti</span>
+                            <span class="legend-range">21-40%</span>
+                        </div>
+                        <div class="badge-legend-item">
+                            <span class="legend-badge intermediate">🔧 Intermédiaire</span>
+                            <span class="legend-range">41-60%</span>
+                        </div>
+                        <div class="badge-legend-item">
+                            <span class="legend-badge advanced">🚀 Avancé</span>
+                            <span class="legend-range">61-80%</span>
+                        </div>
+                        <div class="badge-legend-item">
+                            <span class="legend-badge master">👑 Maître C</span>
+                            <span class="legend-range">81-100%</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -268,6 +306,7 @@
                         <div class="terminal-line current-line">
                             <span class="terminal-prompt">{{ user.username }}@matrix:~/dev$</span>
                             <div class="terminal-input-container">
+                                <span class="terminal-typed-text" id="terminal-typed-text"></span>
                                 <input type="text" class="terminal-input" id="terminal-input" placeholder="" autocomplete="off" spellcheck="false">
                                 <span class="terminal-cursor">█</span>
                             </div>
@@ -757,13 +796,17 @@ function initTerminal() {
     const input = document.getElementById('terminal-input');
     const content = document.getElementById('terminal-content');
     const cursor = document.querySelector('.terminal-cursor');
+    const typedText = document.getElementById('terminal-typed-text');
     
     if (!input || !content) return;
     
-    // Fonction pour mettre à jour la position du curseur
-    function updateCursorPosition() {
-        if (cursor && input) {
+    // Fonction pour mettre à jour le texte affiché et la position du curseur
+    function updateDisplay() {
+        if (cursor && input && typedText) {
             const text = input.value;
+            typedText.textContent = text;
+            
+            // Mesurer la largeur du texte pour positionner le curseur
             const canvas = document.createElement('canvas');
             const context = canvas.getContext('2d');
             context.font = '0.9rem JetBrains Mono, monospace';
@@ -772,21 +815,21 @@ function initTerminal() {
         }
     }
     
-    // Mettre à jour le curseur lors de la saisie
-    input.addEventListener('input', updateCursorPosition);
-    input.addEventListener('keyup', updateCursorPosition);
+    // Mettre à jour l'affichage lors de la saisie
+    input.addEventListener('input', updateDisplay);
+    input.addEventListener('keyup', updateDisplay);
     
     input.addEventListener('keydown', function(e) {
         if (e.key === 'Enter') {
             executeCommand(input.value.trim());
             input.value = '';
-            updateCursorPosition();
+            updateDisplay();
         } else if (e.key === 'ArrowUp') {
             e.preventDefault();
             if (historyIndex < commandHistory.length - 1) {
                 historyIndex++;
                 input.value = commandHistory[commandHistory.length - 1 - historyIndex] || '';
-                updateCursorPosition();
+                updateDisplay();
             }
         } else if (e.key === 'ArrowDown') {
             e.preventDefault();
@@ -797,7 +840,7 @@ function initTerminal() {
                 historyIndex = -1;
                 input.value = '';
             }
-            updateCursorPosition();
+            updateDisplay();
         }
     });
     
@@ -811,6 +854,7 @@ function executeCommand(commandLine) {
     
     const content = document.getElementById('terminal-content');
     const input = document.getElementById('terminal-input');
+    const typedText = document.getElementById('terminal-typed-text');
     
     // Ajouter la commande à l'historique
     commandHistory.push(commandLine);
@@ -849,6 +893,11 @@ function executeCommand(commandLine) {
         content.insertBefore(resultElement, inputLine);
     }
     
+    // Réinitialiser le texte affiché
+    if (typedText) {
+        typedText.textContent = '';
+    }
+    
     // Scroll vers le bas
     content.scrollTop = content.scrollHeight;
 }
@@ -856,6 +905,7 @@ function executeCommand(commandLine) {
 function clearTerminal() {
     const content = document.getElementById('terminal-content');
     const inputLine = document.getElementById('terminal-input').parentElement;
+    const typedText = document.getElementById('terminal-typed-text');
     
     content.innerHTML = `
         <div class="terminal-line welcome">
@@ -867,6 +917,11 @@ function clearTerminal() {
     
     content.appendChild(inputLine);
     document.getElementById('terminal-input').focus();
+    
+    // Réinitialiser le texte affiché
+    if (typedText) {
+        typedText.textContent = '';
+    }
 }
 
 function showHelp() {
@@ -914,6 +969,61 @@ document.addEventListener('keydown', function(e) {
         const modals = document.querySelectorAll('.modal, .dropdown');
         modals.forEach(modal => modal.classList.remove('active'));
     }
+});
+
+// Fonction pour mettre à jour le badge de progression
+function updateBadge(completionRate) {
+    const badgeElement = document.getElementById('progression-badge');
+    const badgeIcon = badgeElement.querySelector('.badge-icon');
+    const badgeText = badgeElement.querySelector('.badge-text');
+    
+    // Retirer toutes les classes de badge existantes
+    badgeElement.className = 'progression-badge';
+    
+    if (completionRate <= 20) {
+        badgeElement.classList.add('progression-badge-beginner');
+        badgeIcon.textContent = '🌱';
+        badgeText.textContent = 'Débutant C';
+    } else if (completionRate <= 40) {
+        badgeElement.classList.add('progression-badge-apprentice');
+        badgeIcon.textContent = '🔧';
+        badgeText.textContent = 'Apprenti C';
+    } else if (completionRate <= 60) {
+        badgeElement.classList.add('progression-badge-intermediate');
+        badgeIcon.textContent = '⚙️';
+        badgeText.textContent = 'Intermédiaire C';
+    } else if (completionRate <= 80) {
+        badgeElement.classList.add('progression-badge-advanced');
+        badgeIcon.textContent = '🛠️';
+        badgeText.textContent = 'Avancé C';
+    } else {
+        badgeElement.classList.add('progression-badge-master');
+        badgeIcon.textContent = '👑';
+        badgeText.textContent = 'Maître C';
+    }
+}
+
+// Initialiser le badge avec les données utilisateur
+document.addEventListener('DOMContentLoaded', function() {
+    // Calculer le taux de completion basé sur les données utilisateur
+    const totalQuestions = 100; // Total des questions disponibles
+    const userLevel = userData.level || 1;
+    const userXP = userData.xp || 0;
+    
+    // Calculer un taux de completion approximatif basé sur le niveau et l'XP
+    // Formule simple : niveau * 10 + (XP / 100) pour donner un pourcentage
+    let completionRate = Math.min((userLevel - 1) * 10 + (userXP / 100), 100);
+    
+    // Si l'utilisateur a des quiz_scores, utiliser cela pour un calcul plus précis
+    if (userData.quiz_scores && userData.quiz_scores.length > 0) {
+        const avgScore = userData.quiz_scores.reduce((sum, score) => sum + score, 0) / userData.quiz_scores.length;
+        const quizCompletion = (userData.quiz_scores.length / totalQuestions) * 100;
+        // Prendre en compte à la fois le score moyen et le nombre de quiz complétés
+        completionRate = Math.min((avgScore * 0.7) + (quizCompletion * 0.3), 100);
+    }
+    
+    // Mettre à jour le badge
+    updateBadge(Math.round(completionRate));
 });
 </script>
 {% endblock %}
