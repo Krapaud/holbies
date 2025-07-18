@@ -295,7 +295,7 @@ class SimpleHandler(http.server.BaseHTTPRequestHandler):
 
 if __name__ == "__main__":
     PORT = 8002
-    print(f"🚀 Serveur D.L.H. Tutor Multi-langages")
+    print(f"🚀 Serveur D_L_H Tutor Multi-langages")
     print(f"📍 URL: http://localhost:{PORT}")
     print(f"� Support: Python, JavaScript, C")
     print(f"📋 Dépendances: Node.js (pour JS), GCC (pour C)")
