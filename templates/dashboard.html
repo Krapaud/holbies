@@ -880,6 +880,89 @@ function toggleFullscreen() {
     }
 }
 
+function matrixRain() {
+    const terminal = document.getElementById('terminal-content');
+    let rainActive = terminal.classList.contains('matrix-rain-active');
+    
+    if (rainActive) {
+        // Arrêter la pluie Matrix
+        terminal.classList.remove('matrix-rain-active');
+        const rainElements = terminal.querySelectorAll('.matrix-rain-char');
+        rainElements.forEach(el => el.remove());
+        return;
+    }
+    
+    // Démarrer la pluie Matrix
+    terminal.classList.add('matrix-rain-active');
+    
+    const matrixChars = '日ﾊﾐﾋｰｳｼﾅﾓﾆｻﾜﾂｵﾘｱﾎﾃﾏｹﾒｴｶｷﾑﾕﾗﾈﾄﾖﾀﾇｿﾍﾞﾌｺｴﾁ';
+    const numColumns = Math.floor(terminal.offsetWidth / 15); // Estimation du nombre de colonnes
+    
+    for (let i = 0; i < numColumns; i++) {
+        setTimeout(() => {
+            createMatrixColumn(i * 15, matrixChars);
+        }, i * 100);
+    }
+    
+    // Arrêter automatiquement après 10 secondes
+    setTimeout(() => {
+        if (terminal.classList.contains('matrix-rain-active')) {
+            matrixRain(); // Rappeler pour arrêter
+        }
+    }, 10000);
+}
+
+function createMatrixColumn(x, chars) {
+    const terminal = document.getElementById('terminal-content');
+    const column = document.createElement('div');
+    column.className = 'matrix-rain-char';
+    column.style.cssText = `
+        position: absolute;
+        left: ${x}px;
+        top: -20px;
+        color: #00ff41;
+        font-family: monospace;
+        font-size: 14px;
+        opacity: 0.7;
+        z-index: 1000;
+        pointer-events: none;
+        animation: matrix-fall 3s linear infinite;
+    `;
+    
+    // Ajouter des caractères aléatoires
+    let charStr = '';
+    for (let i = 0; i < 20; i++) {
+        charStr += chars[Math.floor(Math.random() * chars.length)] + '<br>';
+    }
+    column.innerHTML = charStr;
+    
+    terminal.appendChild(column);
+    
+    // Supprimer après l'animation
+    setTimeout(() => {
+        if (column.parentNode) {
+            column.remove();
+        }
+    }, 3000);
+}
+
+// Ajouter les styles CSS pour la pluie Matrix si ils n'existent pas
+if (!document.querySelector('#matrix-rain-styles')) {
+    const style = document.createElement('style');
+    style.id = 'matrix-rain-styles';
+    style.textContent = `
+        @keyframes matrix-fall {
+            0% { transform: translateY(-20px); opacity: 1; }
+            100% { transform: translateY(400px); opacity: 0; }
+        }
+        .matrix-rain-active {
+            position: relative;
+            overflow: hidden;
+        }
+    `;
+    document.head.appendChild(style);
+}
+
 // Raccourcis clavier
 document.addEventListener('keydown', function(e) {
     if (e.ctrlKey && e.shiftKey) {
