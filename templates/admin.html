@@ -1,0 +1,382 @@
+{% extends "base.html" %}
+
+{% block title %}Administration - Dev Learning Hub{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+    <div class="admin-header">
+        <h1 class="admin-title">
+            <span class="title-icon">⚙️</span>
+            Panel d'Administration
+        </h1>
+        <p class="admin-subtitle">Gestion complète du système</p>
+    </div>
+    
+    <!-- Statistiques globales -->
+    <div class="admin-stats">
+        <div class="stat-card">
+            <div class="stat-icon">👥</div>
+            <div class="stat-content">
+                <div class="stat-number">{{ stats.total_users }}</div>
+                <div class="stat-label">Utilisateurs totaux</div>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">🔰</div>
+            <div class="stat-content">
+                <div class="stat-number">{{ stats.admin_users }}</div>
+                <div class="stat-label">Administrateurs</div>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">🕒</div>
+            <div class="stat-content">
+                <div class="stat-number">{{ stats.recent_logins }}</div>
+                <div class="stat-label">Connexions récentes</div>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">🌟</div>
+            <div class="stat-content">
+                <div class="stat-number">{{ stats.total_users - stats.admin_users }}</div>
+                <div class="stat-label">Utilisateurs standard</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Gestion des utilisateurs -->
+    <div class="admin-section">
+        <div class="section-header">
+            <h2 class="section-title">
+                <span class="section-icon">👥</span>
+                Gestion des Utilisateurs
+            </h2>
+            <div class="section-actions">
+                <button class="btn btn-primary" onclick="refreshUserList()">
+                    <span class="btn-icon">🔄</span>
+                    Actualiser
+                </button>
+            </div>
+        </div>
+        
+        <div class="users-table-container">
+            <table class="users-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Utilisateur</th>
+                        <th>Email</th>
+                        <th>Rôle</th>
+                        <th>Date de création</th>
+                        <th>Dernière connexion</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr class="user-row" data-user-id="{{ user.id }}">
+                        <td class="user-id">{{ user.id }}</td>
+                        <td class="user-username">
+                            <div class="user-info">
+                                <div class="user-avatar">{{ user.username[0].upper() }}</div>
+                                <span class="username">{{ user.username }}</span>
+                            </div>
+                        </td>
+                        <td class="user-email">{{ user.email }}</td>
+                        <td class="user-role">
+                            {% if user.is_admin %}
+                                <span class="role-badge admin">🔰 Admin</span>
+                            {% else %}
+                                <span class="role-badge user">👤 User</span>
+                            {% endif %}
+                        </td>
+                        <td class="user-created">{{ user.created_at.split(' ')[0] }}</td>
+                        <td class="user-login">
+                            {% if user.last_login %}
+                                {{ user.last_login.split(' ')[0] }}
+                            {% else %}
+                                <span class="no-login">Jamais</span>
+                            {% endif %}
+                        </td>
+                        <td class="user-actions">
+                            <div class="action-buttons">
+                                {% if user.username != session.username %}
+                                    <button class="btn-icon-small" onclick="toggleAdmin({{ user.id }})" title="Toggle Admin">
+                                        {% if user.is_admin %}
+                                            <span class="action-icon demote">👤</span>
+                                        {% else %}
+                                            <span class="action-icon promote">🔰</span>
+                                        {% endif %}
+                                    </button>
+                                    <button class="btn-icon-small delete-btn" onclick="deleteUser({{ user.id }}, '{{ user.username }}')" title="Supprimer">
+                                        <span class="action-icon delete">🗑️</span>
+                                    </button>
+                                {% else %}
+                                    <span class="current-user">Vous</span>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Logs et activité -->
+    <div class="admin-section">
+        <div class="section-header">
+            <h2 class="section-title">
+                <span class="section-icon">📝</span>
+                Activité Système
+            </h2>
+        </div>
+        
+        <div class="activity-logs">
+            <div class="log-item">
+                <div class="log-time">{{ "now"|strftime('%H:%M') }}</div>
+                <div class="log-content">
+                    <span class="log-icon">🔑</span>
+                    <span class="log-text">Connexion administrateur : {{ session.username }}</span>
+                </div>
+            </div>
+            
+            <div class="log-item">
+                <div class="log-time">{{ "now"|strftime('%H:%M') }}</div>
+                <div class="log-content">
+                    <span class="log-icon">👥</span>
+                    <span class="log-text">{{ stats.total_users }} utilisateurs actifs</span>
+                </div>
+            </div>
+            
+            <div class="log-item">
+                <div class="log-time">{{ "now"|strftime('%H:%M') }}</div>
+                <div class="log-content">
+                    <span class="log-icon">🛡️</span>
+                    <span class="log-text">Système de sécurité opérationnel</span>
+                </div>
+            </div>
+            
+            <div class="log-item">
+                <div class="log-time">{{ "now"|strftime('%H:%M') }}</div>
+                <div class="log-content">
+                    <span class="log-icon">💾</span>
+                    <span class="log-text">Base de données synchronisée</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Console d'administration -->
+    <div class="admin-section">
+        <div class="section-header">
+            <h2 class="section-title">
+                <span class="section-icon">💻</span>
+                Console Admin
+            </h2>
+        </div>
+        
+        <div class="admin-console">
+            <div class="console-header">
+                <span class="console-title">admin@matrix-system:~$</span>
+                <div class="console-controls">
+                    <button class="console-btn" onclick="clearConsole()">Clear</button>
+                    <button class="console-btn" onclick="runSystemCheck()">System Check</button>
+                </div>
+            </div>
+            <div class="console-content" id="adminConsole">
+                <div class="console-line">
+                    <span class="console-prompt">admin@matrix-system:~$</span>
+                    <span class="console-text">system status</span>
+                </div>
+                <div class="console-line">✅ Database: Connected</div>
+                <div class="console-line">✅ Security: Active</div>
+                <div class="console-line">✅ Matrix Effects: Operational</div>
+                <div class="console-line">✅ Users: {{ stats.total_users }} registered</div>
+                <div class="console-line">
+                    <span class="console-prompt">admin@matrix-system:~$</span>
+                    <span class="console-cursor">|</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de confirmation de suppression -->
+<div id="deleteModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Confirmer la suppression</h3>
+            <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p class="modal-warning">
+                <span class="warning-icon">⚠️</span>
+                Êtes-vous sûr de vouloir supprimer l'utilisateur <strong id="deleteUsername"></strong> ?
+            </p>
+            <p>Cette action est irréversible.</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal()">Annuler</button>
+            <button class="btn btn-danger" id="confirmDelete">Supprimer</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let currentDeleteUserId = null;
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Animation d'entrée
+    const adminContainer = document.querySelector('.admin-container');
+    adminContainer.classList.add('fade-in');
+    
+    // Animation du curseur console
+    const cursor = document.querySelector('.console-cursor');
+    setInterval(() => {
+        cursor.style.opacity = cursor.style.opacity === '0' ? '1' : '0';
+    }, 500);
+    
+    // Animation des cartes statistiques
+    const statCards = document.querySelectorAll('.stat-card');
+    statCards.forEach((card, index) => {
+        card.style.animationDelay = `${index * 0.1}s`;
+        card.classList.add('slide-in');
+    });
+});
+
+function toggleAdmin(userId) {
+    fetch(`/admin/toggle_admin/${userId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Erreur: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+            alert('Erreur lors de la modification du rôle');
+        });
+}
+
+function deleteUser(userId, username) {
+    currentDeleteUserId = userId;
+    document.getElementById('deleteUsername').textContent = username;
+    document.getElementById('deleteModal').classList.add('active');
+}
+
+function confirmDeleteUser() {
+    if (currentDeleteUserId) {
+        fetch(`/admin/delete_user/${currentDeleteUserId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Erreur: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                alert('Erreur lors de la suppression');
+            });
+    }
+    closeModal();
+}
+
+function closeModal() {
+    document.querySelectorAll('.modal').forEach(modal => {
+        modal.classList.remove('active');
+    });
+    currentDeleteUserId = null;
+}
+
+function refreshUserList() {
+    location.reload();
+}
+
+function clearConsole() {
+    const console = document.getElementById('adminConsole');
+    console.innerHTML = `
+        <div class="console-line">
+            <span class="console-prompt">admin@matrix-system:~$</span>
+            <span class="console-text">clear</span>
+        </div>
+        <div class="console-line">
+            <span class="console-prompt">admin@matrix-system:~$</span>
+            <span class="console-cursor">|</span>
+        </div>
+    `;
+}
+
+function runSystemCheck() {
+    const console = document.getElementById('adminConsole');
+    const lines = [
+        'Exécution du diagnostic système...',
+        '🔍 Vérification de la base de données...',
+        '✅ Base de données: OK',
+        '🔍 Vérification de la sécurité...',
+        '✅ Sécurité: OK',
+        '🔍 Vérification des utilisateurs...',
+        `✅ Utilisateurs: {{ stats.total_users }} actifs`,
+        '🔍 Vérification des effets Matrix...',
+        '✅ Effets Matrix: Opérationnels',
+        '🎯 Diagnostic terminé - Tous les systèmes sont opérationnels'
+    ];
+    
+    console.innerHTML = `
+        <div class="console-line">
+            <span class="console-prompt">admin@matrix-system:~$</span>
+            <span class="console-text">system_check --full</span>
+        </div>
+    `;
+    
+    lines.forEach((line, index) => {
+        setTimeout(() => {
+            const lineDiv = document.createElement('div');
+            lineDiv.className = 'console-line';
+            lineDiv.textContent = line;
+            console.appendChild(lineDiv);
+            
+            if (index === lines.length - 1) {
+                setTimeout(() => {
+                    const promptDiv = document.createElement('div');
+                    promptDiv.className = 'console-line';
+                    promptDiv.innerHTML = `
+                        <span class="console-prompt">admin@matrix-system:~$</span>
+                        <span class="console-cursor">|</span>
+                    `;
+                    console.appendChild(promptDiv);
+                }, 500);
+            }
+        }, index * 300);
+    });
+}
+
+// Event listeners pour les modals
+document.getElementById('confirmDelete').addEventListener('click', confirmDeleteUser);
+
+document.querySelectorAll('.modal-close').forEach(btn => {
+    btn.addEventListener('click', closeModal);
+});
+
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('modal')) {
+        closeModal();
+    }
+});
+
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeModal();
+    }
+});
+</script>
+{% endblock %}

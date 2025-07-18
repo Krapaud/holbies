@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+
+{% block title %}Accueil - Dev Learning Hub{% endblock %}
+
+{% block content %}
+<div class="hero-section">
+    <div class="hero-content">
+        <h1 class="hero-title">
+            <span class="title-glitch" data-text="Dev Learning Hub">Dev Learning Hub</span>
+        </h1>
+        <p class="hero-subtitle">
+            Plongez dans l'univers du développement avec notre plateforme d'apprentissage geek
+        </p>
+        <div class="hero-stats">
+            <div class="stat-item">
+                <span class="stat-number">1337</span>
+                <span class="stat-label">Développeurs</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">42</span>
+                <span class="stat-label">Projets</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">∞</span>
+                <span class="stat-label">Possibilités</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="features-section">
+    <div class="container">
+        <h2 class="section-title">
+            <span class="section-icon">🚀</span>
+            Fonctionnalités
+        </h2>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🔐</div>
+                <h3>Authentification Sécurisée</h3>
+                <p>Inscription et connexion avec chiffrement avancé et gestion des rôles</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">🎨</div>
+                <h3>Interface Matrix</h3>
+                <p>Design sombre avec effets Matrix, animations et thème cyberpunk</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">⚙️</div>
+                <h3>Panel Admin</h3>
+                <p>Gestion complète des utilisateurs et statistiques en temps réel</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">📱</div>
+                <h3>Responsive</h3>
+                <p>Interface adaptative pour desktop, tablette et mobile</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="cta-section">
+    <div class="container">
+        <div class="cta-content">
+            <h2 class="cta-title">Prêt à rejoindre la matrice ?</h2>
+            <p class="cta-subtitle">Créez votre compte et commencez votre aventure dans le développement</p>
+            <div class="cta-buttons">
+                {% if not session.user_id %}
+                    <a href="{{ url_for('register') }}" class="btn btn-primary">
+                        <span class="btn-icon">🚀</span>
+                        S'inscrire maintenant
+                    </a>
+                    <a href="{{ url_for('login') }}" class="btn btn-secondary">
+                        <span class="btn-icon">🔑</span>
+                        Se connecter
+                    </a>
+                {% else %}
+                    <a href="{{ url_for('dashboard') }}" class="btn btn-primary">
+                        <span class="btn-icon">📊</span>
+                        Accéder au Dashboard
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="easter-egg-section">
+    <div class="container">
+        <div class="easter-egg-content">
+            <h3>🎮 Console Commands</h3>
+            <p>Ouvrez la console développeur (F12) et essayez :</p>
+            <div class="commands-list">
+                <code class="command-item">konami()</code>
+                <code class="command-item">matrix()</code>
+                <code class="command-item">glitch()</code>
+                <code class="command-item">hack()</code>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Animation d'entrée pour les cartes
+document.addEventListener('DOMContentLoaded', function() {
+    const cards = document.querySelectorAll('.feature-card');
+    cards.forEach((card, index) => {
+        card.style.animationDelay = `${index * 0.2}s`;
+        card.classList.add('fade-in-up');
+    });
+    
+    // Animation pour les statistiques
+    const stats = document.querySelectorAll('.stat-number');
+    stats.forEach(stat => {
+        const target = stat.textContent;
+        if (target !== '∞') {
+            animateNumber(stat, parseInt(target));
+        }
+    });
+});
+
+function animateNumber(element, target) {
+    let current = 0;
+    const increment = target / 50;
+    const timer = setInterval(() => {
+        current += increment;
+        if (current >= target) {
+            current = target;
+            clearInterval(timer);
+        }
+        element.textContent = Math.floor(current);
+    }, 30);
+}
+</script>
+{% endblock %}

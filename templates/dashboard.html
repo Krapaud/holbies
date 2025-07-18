@@ -1,0 +1,292 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Dev Learning Hub{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <h1 class="dashboard-title">
+            <span class="title-icon">📊</span>
+            Tableau de bord
+        </h1>
+        <p class="dashboard-subtitle">
+            Bienvenue, <span class="username-highlight">{{ user.username }}</span>
+        </p>
+    </div>
+    
+    <div class="dashboard-grid">
+        <!-- Carte de profil -->
+        <div class="dashboard-card profile-card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <span class="card-icon">👤</span>
+                    Mon Profil
+                </h3>
+            </div>
+            <div class="card-content">
+                <div class="profile-info">
+                    <div class="profile-avatar">
+                        <div class="avatar-placeholder">
+                            {{ user.username[0].upper() }}
+                        </div>
+                    </div>
+                    <div class="profile-details">
+                        <p class="profile-name">{{ user.username }}</p>
+                        <p class="profile-email">{{ user.email }}</p>
+                        <p class="profile-role">
+                            {% if user.is_admin %}
+                                <span class="role-badge admin">🔰 Administrateur</span>
+                            {% else %}
+                                <span class="role-badge user">👤 Utilisateur</span>
+                            {% endif %}
+                        </p>
+                        <p class="profile-date">
+                            Membre depuis le {{ user.created_at.split(' ')[0] }}
+                        </p>
+                    </div>
+                </div>
+                <a href="{{ url_for('profile') }}" class="btn btn-secondary btn-small">
+                    <span class="btn-icon">✏️</span>
+                    Modifier
+                </a>
+            </div>
+        </div>
+        
+        <!-- Statistiques -->
+        <div class="dashboard-card stats-card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <span class="card-icon">📈</span>
+                    Statistiques
+                </h3>
+            </div>
+            <div class="card-content">
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-number">{{ total_users }}</div>
+                        <div class="stat-label">Utilisateurs</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">{{ user.created_at.split('-')[0] }}</div>
+                        <div class="stat-label">Année</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">1337</div>
+                        <div class="stat-label">Points XP</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">42</div>
+                        <div class="stat-label">Niveau</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Actions rapides -->
+        <div class="dashboard-card actions-card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <span class="card-icon">⚡</span>
+                    Actions Rapides
+                </h3>
+            </div>
+            <div class="card-content">
+                <div class="actions-grid">
+                    <a href="{{ url_for('profile') }}" class="action-btn">
+                        <span class="action-icon">👤</span>
+                        <span class="action-text">Mon Profil</span>
+                    </a>
+                    {% if user.is_admin %}
+                        <a href="{{ url_for('admin') }}" class="action-btn admin-action">
+                            <span class="action-icon">⚙️</span>
+                            <span class="action-text">Administration</span>
+                        </a>
+                    {% endif %}
+                    <button class="action-btn" onclick="matrix()">
+                        <span class="action-icon">🌧️</span>
+                        <span class="action-text">Matrix Rain</span>
+                    </button>
+                    <button class="action-btn" onclick="glitch()">
+                        <span class="action-icon">⚡</span>
+                        <span class="action-text">Glitch Effect</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Activité récente -->
+        <div class="dashboard-card activity-card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <span class="card-icon">🕒</span>
+                    Activité Récente
+                </h3>
+            </div>
+            <div class="card-content">
+                <div class="activity-list">
+                    <div class="activity-item">
+                        <div class="activity-icon">🔑</div>
+                        <div class="activity-content">
+                            <p class="activity-title">Connexion réussie</p>
+                            <p class="activity-time">
+                                {% if user.last_login %}
+                                    {{ user.last_login.split(' ')[0] }}
+                                {% else %}
+                                    Première connexion
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon">📝</div>
+                        <div class="activity-content">
+                            <p class="activity-title">Compte créé</p>
+                            <p class="activity-time">{{ user.created_at.split(' ')[0] }}</p>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon">🎯</div>
+                        <div class="activity-content">
+                            <p class="activity-title">Niveau 42 atteint</p>
+                            <p class="activity-time">Aujourd'hui</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Progression -->
+        <div class="dashboard-card progress-card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <span class="card-icon">🎯</span>
+                    Progression
+                </h3>
+            </div>
+            <div class="card-content">
+                <div class="progress-item">
+                    <div class="progress-label">
+                        <span>Niveau de Hack</span>
+                        <span>85%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 85%"></div>
+                    </div>
+                </div>
+                <div class="progress-item">
+                    <div class="progress-label">
+                        <span>Compétences Matrix</span>
+                        <span>92%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 92%"></div>
+                    </div>
+                </div>
+                <div class="progress-item">
+                    <div class="progress-label">
+                        <span>Code Mastery</span>
+                        <span>73%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 73%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Console Easter Egg -->
+        <div class="dashboard-card console-card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <span class="card-icon">💻</span>
+                    Console Hacker
+                </h3>
+            </div>
+            <div class="card-content">
+                <div class="console-terminal">
+                    <div class="terminal-header">
+                        <span class="terminal-title">~/hacker-console</span>
+                    </div>
+                    <div class="terminal-content">
+                        <p class="terminal-line">
+                            <span class="terminal-prompt">root@matrix:~$</span>
+                            <span class="terminal-text">whoami</span>
+                        </p>
+                        <p class="terminal-line">{{ user.username }}</p>
+                        <p class="terminal-line">
+                            <span class="terminal-prompt">root@matrix:~$</span>
+                            <span class="terminal-text">access_level</span>
+                        </p>
+                        <p class="terminal-line">
+                            {% if user.is_admin %}ADMIN_ACCESS_GRANTED{% else %}USER_LEVEL_AUTHENTICATED{% endif %}
+                        </p>
+                        <p class="terminal-line">
+                            <span class="terminal-prompt">root@matrix:~$</span>
+                            <span class="terminal-cursor">|</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Animation d'entrée pour les cartes
+    const cards = document.querySelectorAll('.dashboard-card');
+    cards.forEach((card, index) => {
+        card.style.animationDelay = `${index * 0.1}s`;
+        card.classList.add('fade-in-up');
+    });
+    
+    // Animation des barres de progression
+    setTimeout(() => {
+        const progressBars = document.querySelectorAll('.progress-fill');
+        progressBars.forEach(bar => {
+            const width = bar.style.width;
+            bar.style.width = '0%';
+            setTimeout(() => {
+                bar.style.width = width;
+            }, 500);
+        });
+    }, 1000);
+    
+    // Animation du curseur terminal
+    const cursor = document.querySelector('.terminal-cursor');
+    setInterval(() => {
+        cursor.style.opacity = cursor.style.opacity === '0' ? '1' : '0';
+    }, 500);
+});
+
+// Raccourcis clavier
+document.addEventListener('keydown', function(e) {
+    if (e.ctrlKey && e.shiftKey) {
+        switch(e.key) {
+            case 'D':
+                e.preventDefault();
+                // Déjà sur le dashboard
+                break;
+            case 'A':
+                e.preventDefault();
+                {% if user.is_admin %}
+                    window.location.href = "{{ url_for('admin') }}";
+                {% endif %}
+                break;
+            case 'L':
+                e.preventDefault();
+                window.location.href = "{{ url_for('logout') }}";
+                break;
+        }
+    }
+    
+    if (e.key === 'Escape') {
+        // Fermer les éléments modaux s'ils existent
+        const modals = document.querySelectorAll('.modal, .dropdown');
+        modals.forEach(modal => modal.classList.remove('active'));
+    }
+});
+</script>
+{% endblock %}

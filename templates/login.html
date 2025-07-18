@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}Connexion - Dev Learning Hub{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <h2 class="auth-title">
+                <span class="auth-icon">🔑</span>
+                Connexion
+            </h2>
+            <p class="auth-subtitle">Entrez dans la matrice</p>
+        </div>
+        
+        <form class="auth-form" method="POST">
+            <div class="form-group">
+                <label for="username" class="form-label">
+                    <span class="label-icon">👤</span>
+                    Nom d'utilisateur
+                </label>
+                <input 
+                    type="text" 
+                    id="username" 
+                    name="username" 
+                    class="form-input"
+                    placeholder="Votre nom d'utilisateur"
+                    required
+                    autocomplete="username"
+                >
+                <div class="input-glow"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="password" class="form-label">
+                    <span class="label-icon">🔒</span>
+                    Mot de passe
+                </label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    name="password" 
+                    class="form-input"
+                    placeholder="Votre mot de passe"
+                    required
+                    autocomplete="current-password"
+                >
+                <div class="input-glow"></div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary btn-full">
+                <span class="btn-icon">⚡</span>
+                Se connecter
+            </button>
+        </form>
+        
+        <div class="auth-footer">
+            <p class="auth-link-text">
+                Pas encore de compte ?
+                <a href="{{ url_for('register') }}" class="auth-link">S'inscrire</a>
+            </p>
+        </div>
+        
+        <div class="demo-credentials">
+            <h4>🎯 Comptes de démonstration</h4>
+            <div class="demo-account">
+                <strong>Administrateur :</strong>
+                <span class="demo-cred">admin / admin123</span>
+            </div>
+            <div class="demo-warning">
+                ⚠️ Changez ces identifiants en production !
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Animation d'entrée
+    const authCard = document.querySelector('.auth-card');
+    authCard.classList.add('slide-in');
+    
+    // Effet de focus sur les inputs
+    const inputs = document.querySelectorAll('.form-input');
+    inputs.forEach(input => {
+        input.addEventListener('focus', function() {
+            this.parentElement.classList.add('focused');
+        });
+        
+        input.addEventListener('blur', function() {
+            if (!this.value) {
+                this.parentElement.classList.remove('focused');
+            }
+        });
+    });
+    
+    // Auto-remplissage pour la démo
+    document.querySelector('.demo-cred').addEventListener('click', function() {
+        document.getElementById('username').value = 'admin';
+        document.getElementById('password').value = 'admin123';
+        document.querySelectorAll('.form-group').forEach(group => {
+            group.classList.add('focused');
+        });
+    });
+});
+</script>
+{% endblock %}
