@@ -1,12 +1,15 @@
 #!/usr/bin/env python3
 """
-Python Tutor API Server - Version Simple
+Python Tutor API Server - Version Multi-langages
 """
 
 import sys
 import json
 import http.server
 import socketserver
+import subprocess
+import tempfile
+import os
 from urllib.parse import parse_qs
 
 class SimpleCodeExecutor:
@@ -72,17 +75,152 @@ class SimpleCodeExecutor:
                 "error": str(e)
             }]
     
+    def execute_javascript(self, code):
+        """Exécute du code JavaScript avec Node.js"""
+        try:
+            with tempfile.NamedTemporaryFile(mode='w', suffix='.js', delete=False) as f:
+                f.write(code)
+                temp_file = f.name
+            
+            try:
+                result = subprocess.run(
+                    ['node', temp_file],
+                    capture_output=True,
+                    text=True,
+                    timeout=10
+                )
+                
+                trace = [{
+                    "line": -1,
+                    "locals": {},
+                    "globals": {},
+                    "output": result.stdout.strip(),
+                    "error": result.stderr.strip() if result.stderr else None
+                }]
+                
+                return trace
+                
+            finally:
+                os.unlink(temp_file)
+                
+        except subprocess.TimeoutExpired:
+            return [{
+                "line": -1,
+                "locals": {},
+                "globals": {},
+                "output": "",
+                "error": "Timeout: Le code a pris trop de temps à s'exécuter"
+            }]
+        except FileNotFoundError:
+            return [{
+                "line": -1,
+                "locals": {},
+                "globals": {},
+                "output": "",
+                "error": "Node.js n'est pas installé sur ce système"
+            }]
+        except Exception as e:
+            return [{
+                "line": -1,
+                "locals": {},
+                "globals": {},
+                "output": "",
+                "error": str(e)
+            }]
+    
+    def execute_c(self, code):
+        """Compile et exécute du code C avec GCC"""
+        try:
+            with tempfile.NamedTemporaryFile(mode='w', suffix='.c', delete=False) as f:
+                f.write(code)
+                c_file = f.name
+            
+            exe_file = c_file.replace('.c', '')
+            
+            try:
+                # Compilation
+                compile_result = subprocess.run(
+                    ['gcc', '-o', exe_file, c_file],
+                    capture_output=True,
+                    text=True,
+                    timeout=10
+                )
+                
+                if compile_result.returncode != 0:
+                    return [{
+                        "line": -1,
+                        "locals": {},
+                        "globals": {},
+                        "output": "",
+                        "error": f"Erreur de compilation: {compile_result.stderr}"
+                    }]
+                
+                # Exécution
+                run_result = subprocess.run(
+                    [exe_file],
+                    capture_output=True,
+                    text=True,
+                    timeout=10
+                )
+                
+                trace = [{
+                    "line": -1,
+                    "locals": {},
+                    "globals": {},
+                    "output": run_result.stdout.strip(),
+                    "error": run_result.stderr.strip() if run_result.stderr else None
+                }]
+                
+                return trace
+                
+            finally:
+                # Nettoyage
+                if os.path.exists(c_file):
+                    os.unlink(c_file)
+                if os.path.exists(exe_file):
+                    os.unlink(exe_file)
+                    
+        except subprocess.TimeoutExpired:
+            return [{
+                "line": -1,
+                "locals": {},
+                "globals": {},
+                "output": "",
+                "error": "Timeout: Le code a pris trop de temps à s'exécuter"
+            }]
+        except FileNotFoundError:
+            return [{
+                "line": -1,
+                "locals": {},
+                "globals": {},
+                "output": "",
+                "error": "GCC n'est pas installé sur ce système"
+            }]
+        except Exception as e:
+            return [{
+                "line": -1,
+                "locals": {},
+                "globals": {},
+                "output": "",
+                "error": str(e)
+            }]
+    
     def execute(self, code, language):
         """Point d'entrée principal"""
-        if language.lower() == 'python':
+        language = language.lower()
+        if language == 'python':
             return self.execute_python(code)
+        elif language == 'javascript':
+            return self.execute_javascript(code)
+        elif language == 'c':
+            return self.execute_c(code)
         else:
             return [{
                 "line": -1,
                 "locals": {},
                 "globals": {},
                 "output": "",
-                "error": f"Langage '{language}' non supporté. Seul Python est disponible dans cette version."
+                "error": f"Langage '{language}' non supporté. Langages disponibles: python, javascript, c"
             }]
 
 
@@ -130,7 +268,7 @@ class SimpleHandler(http.server.BaseHTTPRequestHandler):
     
     def do_GET(self):
         if self.path == '/':
-            response = {"message": "Python Tutor API", "status": "OK"}
+            response = {"message": "Python Tutor API", "status": "OK", "languages": ["python", "javascript", "c"]}
             self.send_response(200)
             self.send_header('Content-Type', 'application/json')
             self.send_header('Access-Control-Allow-Origin', '*')
@@ -143,9 +281,10 @@ class SimpleHandler(http.server.BaseHTTPRequestHandler):
 
 if __name__ == "__main__":
     PORT = 8002
-    print(f"🚀 Serveur Python Tutor Simple")
+    print(f"🚀 Serveur Python Tutor Multi-langages")
     print(f"📍 URL: http://localhost:{PORT}")
-    print(f"🐍 Support: Python uniquement")
+    print(f"🐍 Support: Python, JavaScript, C")
+    print(f"📋 Dépendances: Node.js (pour JS), GCC (pour C)")
     
     try:
         with socketserver.TCPServer(("", PORT), SimpleHandler) as httpd:
