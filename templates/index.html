@@ -1,13 +1,18 @@
 {% extends "base.html" %}
 
-{% block title %}Accueil - Matrix Dev Hub{% endblock %}
+{% block title %}Accueil - Dev Learning Hub{% endblock %}
 
 {% block content %}
 <div class="hero-section">
     <div class="hero-content">
         <h1 class="hero-title">
-            <span class="title-glitch" data-text="Matrix Dev Hub">Matrix Dev Hub</span>
+            <span class="title-glitch" data-text="Dev Learning Hub">Dev Learning Hub</span>
         </h1>
+        <!-- Bouton de test pour l'effet glitch -->
+        <button onclick="if(typeof glitch === 'function') glitch(); else console.log('Fonction glitch non trouvée');" 
+                style="margin: 10px; padding: 10px 20px; background: var(--matrix-green); color: black; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">
+            🔀 Test Glitch
+        </button>
         <p class="hero-subtitle">
             Maîtrisez la programmation C dans l'univers Matrix - Plateforme d'apprentissage avancée
         </p>

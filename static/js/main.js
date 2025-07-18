@@ -23,6 +23,20 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialize progress bars animation
     initProgressBars();
+    
+    // Déclencher l'effet glitch au chargement
+    setTimeout(() => {
+        if (typeof glitch === 'function') {
+            glitch();
+        }
+    }, 1000);
+    
+    // Déclencher l'effet glitch périodiquement (toutes les 10 secondes)
+    setInterval(() => {
+        if (Math.random() > 0.7 && typeof glitch === 'function') { // 30% de chance
+            glitch();
+        }
+    }, 10000);
 });
 
 // Nouvelles fonctions pour les améliorations du dashboard
@@ -677,6 +691,32 @@ window.matrix = function() {
         matrix();
     }
 };
+
+// Fonction glitch pour l'effet sur les titres
+function glitch() {
+    console.log('🔀 Fonction glitch appelée');
+    const glitchElements = document.querySelectorAll('.title-glitch');
+    console.log('🔍 Éléments trouvés:', glitchElements.length);
+    
+    if (glitchElements.length === 0) {
+        console.warn('⚠️ Aucun élément .title-glitch trouvé !');
+        return;
+    }
+    
+    glitchElements.forEach((element, index) => {
+        console.log(`🎯 Application glitch sur élément ${index + 1}:`, element);
+        // Ajouter la classe glitch-active
+        element.classList.add('glitch-active');
+        
+        // Retirer la classe après l'animation
+        setTimeout(() => {
+            element.classList.remove('glitch-active');
+            console.log(`✅ Glitch retiré de l'élément ${index + 1}`);
+        }, 1000);
+    });
+    
+    console.log('🔀 Glitch effect activated!');
+}
 
 window.glitch = function() {
     if (typeof glitch === 'function') {
