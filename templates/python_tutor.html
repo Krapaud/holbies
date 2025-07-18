@@ -1,0 +1,874 @@
+{% extends "base.html" %}
+
+{% block title %}Python Tutor - {{ super() }}{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <div class="container">
+        <div class="hero-section">
+            <h1 class="hero-title">
+                <span class="hero-icon">🐍</span>
+                Python Tutor Matrix
+                <span class="hero-subtitle">Visualiseur de Code Multi-Langages</span>
+            </h1>
+            <p class="hero-description">
+                Exécutez et visualisez du code Python, JavaScript et C en temps réel
+            </p>
+        </div>
+
+        <div class="tutor-container">
+            <div class="toolbar">
+                <div class="language-selector">
+                    <label for="language-select">🔧 Langage:</label>
+                    <select id="language-select" class="language-dropdown">
+                        <option value="python">🐍 Python</option>
+                        <option value="javascript">📜 JavaScript</option>
+                        <option value="c">⚙️ C</option>
+                    </select>
+                </div>
+                <button id="run-button" class="matrix-btn primary">
+                    <span class="btn-icon">▶️</span>
+                    Exécuter
+                </button>
+                <button id="clear-button" class="matrix-btn secondary">
+                    <span class="btn-icon">🗑️</span>
+                    Effacer
+                </button>
+                <button id="example-button" class="matrix-btn tertiary">
+                    <span class="btn-icon">💡</span>
+                    Exemple
+                </button>
+            </div>
+            
+            <div class="editor-section">
+                <div class="editor-header">
+                    <span class="editor-title">📝 Éditeur de Code</span>
+                    <div class="editor-status">
+                        <span id="language-indicator" class="status-badge">Python</span>
+                        <span id="lines-counter" class="status-info">0 lignes</span>
+                    </div>
+                </div>
+                <textarea id="code-input" class="code-editor" rows="15" placeholder="# Entrez votre code Python ici..."></textarea>
+            </div>
+            
+            <div id="error-output" class="error-section" style="display: none;"></div>
+            
+            <div class="results-section">
+                <div class="results-header">
+                    <span class="results-title">📊 Résultats d'Exécution</span>
+                    <div class="results-controls">
+                        <button id="step-prev" class="step-btn" disabled>◀️ Précédent</button>
+                        <span id="step-counter" class="step-info">Étape 0/0</span>
+                        <button id="step-next" class="step-btn" disabled>Suivant ▶️</button>
+                    </div>
+                </div>
+                <div id="trace-output" class="trace-visualization">
+                    <div class="welcome-message">
+                        <div class="welcome-icon">🚀</div>
+                        <h3>Bienvenue dans le Python Tutor Matrix</h3>
+                        <p>Écrivez du code et cliquez sur <strong>Exécuter</strong> pour voir la visualisation</p>
+                        <div class="features">
+                            <div class="feature">
+                                <span class="feature-icon">🐍</span>
+                                <span>Python avec traçage complet</span>
+                            </div>
+                            <div class="feature">
+                                <span class="feature-icon">📜</span>
+                                <span>JavaScript avec variables</span>
+                            </div>
+                            <div class="feature">
+                                <span class="feature-icon">⚙️</span>
+                                <span>C avec compilation</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Exemples pré-définis -->
+            <div class="examples-section">
+                <h3 class="examples-title">
+                    <span class="examples-icon">💡</span>
+                    Exemples de Code
+                </h3>
+                <div class="examples-grid">
+                    <div class="example-card" onclick="loadExample('python-basic')">
+                        <div class="example-header">
+                            <span class="example-icon">🐍</span>
+                            <span class="example-title">Python - Variables</span>
+                        </div>
+                        <div class="example-desc">Variables, boucles et fonctions de base</div>
+                    </div>
+                    
+                    <div class="example-card" onclick="loadExample('python-advanced')">
+                        <div class="example-header">
+                            <span class="example-icon">🔬</span>
+                            <span class="example-title">Python - Avancé</span>
+                        </div>
+                        <div class="example-desc">Récursion, listes et algorithmes</div>
+                    </div>
+                    
+                    <div class="example-card" onclick="loadExample('javascript-basic')">
+                        <div class="example-header">
+                            <span class="example-icon">📜</span>
+                            <span class="example-title">JavaScript - Base</span>
+                        </div>
+                        <div class="example-desc">Variables, boucles et arrays</div>
+                    </div>
+                    
+                    <div class="example-card" onclick="loadExample('c-basic')">
+                        <div class="example-header">
+                            <span class="example-icon">⚙️</span>
+                            <span class="example-title">C - Structures</span>
+                        </div>
+                        <div class="example-desc">Variables, boucles et tableaux</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Styles spécifiques au Python Tutor */
+.tutor-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--spacing-xl);
+}
+
+.toolbar {
+    display: flex;
+    gap: var(--spacing-md);
+    align-items: center;
+    padding: var(--spacing-lg);
+    background: var(--card-gray);
+    border: 1px solid var(--border-gray);
+    border-radius: var(--border-radius-lg);
+    margin-bottom: var(--spacing-xl);
+    flex-wrap: wrap;
+}
+
+.language-selector {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.language-dropdown {
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: 1px solid var(--border-gray);
+    border-radius: var(--border-radius);
+    background: var(--background-black);
+    color: var(--text-light);
+    font-family: var(--font-mono);
+}
+
+.matrix-btn {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-sm) var(--spacing-lg);
+    border: none;
+    border-radius: var(--border-radius);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: var(--font-mono);
+}
+
+.matrix-btn.primary {
+    background: var(--primary-green);
+    color: var(--background-black);
+}
+
+.matrix-btn.secondary {
+    background: var(--accent-orange);
+    color: var(--background-black);
+}
+
+.matrix-btn.tertiary {
+    background: var(--secondary-green);
+    color: var(--background-black);
+}
+
+.matrix-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 255, 65, 0.3);
+}
+
+.matrix-btn:disabled {
+    background: var(--border-gray);
+    color: var(--text-muted);
+    cursor: not-allowed;
+    transform: none;
+}
+
+.editor-section {
+    background: var(--card-gray);
+    border: 1px solid var(--border-gray);
+    border-radius: var(--border-radius-lg);
+    margin-bottom: var(--spacing-lg);
+    overflow: hidden;
+}
+
+.editor-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: var(--background-dark);
+    border-bottom: 1px solid var(--border-gray);
+}
+
+.editor-title {
+    color: var(--primary-green);
+    font-weight: 600;
+    font-family: var(--font-mono);
+}
+
+.editor-status {
+    display: flex;
+    gap: var(--spacing-md);
+    align-items: center;
+}
+
+.status-badge {
+    background: var(--primary-green);
+    color: var(--background-black);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--border-radius);
+    font-size: 0.8rem;
+    font-weight: 600;
+    font-family: var(--font-mono);
+}
+
+.status-info {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    font-family: var(--font-mono);
+}
+
+.code-editor {
+    width: 100%;
+    min-height: 300px;
+    padding: var(--spacing-lg);
+    border: none;
+    background: var(--background-black);
+    color: var(--text-light);
+    font-family: var(--font-mono);
+    font-size: 14px;
+    line-height: 1.5;
+    resize: vertical;
+    outline: none;
+}
+
+.code-editor::placeholder {
+    color: var(--text-muted);
+}
+
+.error-section {
+    background: linear-gradient(135deg, #ff4757, #c44569);
+    color: white;
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius-lg);
+    margin-bottom: var(--spacing-lg);
+    border-left: 4px solid #ff3742;
+}
+
+.results-section {
+    background: var(--card-gray);
+    border: 1px solid var(--border-gray);
+    border-radius: var(--border-radius-lg);
+    margin-bottom: var(--spacing-xl);
+    overflow: hidden;
+}
+
+.results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: var(--background-dark);
+    border-bottom: 1px solid var(--border-gray);
+}
+
+.results-title {
+    color: var(--primary-green);
+    font-weight: 600;
+    font-family: var(--font-mono);
+}
+
+.results-controls {
+    display: flex;
+    gap: var(--spacing-sm);
+    align-items: center;
+}
+
+.step-btn {
+    background: var(--secondary-green);
+    color: var(--background-black);
+    border: none;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+}
+
+.step-btn:disabled {
+    background: var(--border-gray);
+    color: var(--text-muted);
+    cursor: not-allowed;
+}
+
+.step-info {
+    color: var(--text-light);
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    min-width: 80px;
+    text-align: center;
+}
+
+.trace-visualization {
+    padding: var(--spacing-xl);
+    min-height: 200px;
+}
+
+.welcome-message {
+    text-align: center;
+    color: var(--text-light);
+}
+
+.welcome-icon {
+    font-size: 4rem;
+    margin-bottom: var(--spacing-lg);
+}
+
+.features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-lg);
+    margin-top: var(--spacing-xl);
+}
+
+.feature {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md);
+    background: var(--background-dark);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-gray);
+}
+
+.feature-icon {
+    font-size: 1.5rem;
+}
+
+.examples-section {
+    margin-top: var(--spacing-xl);
+}
+
+.examples-title {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    color: var(--primary-green);
+    font-family: var(--font-mono);
+    margin-bottom: var(--spacing-lg);
+}
+
+.examples-icon {
+    font-size: 1.5rem;
+}
+
+.examples-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--spacing-lg);
+}
+
+.example-card {
+    background: var(--card-gray);
+    border: 1px solid var(--border-gray);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-lg);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.example-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0, 255, 65, 0.15);
+    border-color: var(--primary-green);
+}
+
+.example-header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-sm);
+}
+
+.example-icon {
+    font-size: 1.5rem;
+}
+
+.example-title {
+    color: var(--primary-green);
+    font-weight: 600;
+    font-family: var(--font-mono);
+}
+
+.example-desc {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.trace-step {
+    background: var(--background-dark);
+    border: 1px solid var(--border-gray);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-lg);
+    margin-bottom: var(--spacing-md);
+    border-left: 4px solid var(--primary-green);
+}
+
+.step-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+}
+
+.step-number {
+    background: var(--primary-green);
+    color: var(--background-black);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--border-radius);
+    font-weight: 600;
+    font-family: var(--font-mono);
+}
+
+.step-line {
+    color: var(--accent-orange);
+    font-family: var(--font-mono);
+}
+
+.variables-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-md);
+}
+
+.variable-group {
+    background: var(--card-gray);
+    border: 1px solid var(--border-gray);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-md);
+}
+
+.variable-title {
+    color: var(--secondary-green);
+    font-weight: 600;
+    margin-bottom: var(--spacing-sm);
+    font-family: var(--font-mono);
+}
+
+.variable-item {
+    display: flex;
+    justify-content: space-between;
+    padding: var(--spacing-xs) 0;
+    border-bottom: 1px solid var(--border-gray);
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+}
+
+.variable-name {
+    color: var(--accent-orange);
+    font-weight: 600;
+}
+
+.variable-value {
+    color: var(--text-light);
+}
+
+.output-section {
+    background: var(--background-black);
+    border: 1px solid var(--border-gray);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-md);
+}
+
+.output-title {
+    color: var(--primary-green);
+    font-weight: 600;
+    margin-bottom: var(--spacing-sm);
+    font-family: var(--font-mono);
+}
+
+.output-content {
+    color: var(--text-light);
+    font-family: var(--font-mono);
+    white-space: pre-wrap;
+    font-size: 0.9rem;
+}
+
+.loading {
+    text-align: center;
+    padding: var(--spacing-xl);
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .toolbar {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+    
+    .editor-header {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+    
+    .results-header {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+    
+    .variables-section {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<script>
+// Python Tutor JavaScript Integration
+class MatrixPythonTutor {
+    constructor() {
+        this.currentLanguage = 'python';
+        this.trace = [];
+        this.currentStep = 0;
+        this.examples = {
+            'python-basic': {
+                code: `x = 5\ny = 10\nz = x + y\nprint(f'La somme est: {z}')\n\nfor i in range(3):\n    print(f'Iteration {i}')\n\nnumbers = [1, 2, 3, 4, 5]\ntotal = sum(numbers)\nprint(f'Total: {total}')`,
+                language: 'python'
+            },
+            'python-advanced': {
+                code: `def fibonacci(n):\n    if n <= 1:\n        return n\n    return fibonacci(n-1) + fibonacci(n-2)\n\nresult = fibonacci(5)\nprint(f'Fibonacci(5) = {result}')\n\nnumbers = [1, 2, 3, 4, 5]\nsquares = [x**2 for x in numbers]\nprint(f'Carrés: {squares}')`,
+                language: 'python'
+            },
+            'javascript-basic': {
+                code: `let x = 5;\nlet y = 10;\nlet z = x + y;\nconsole.log(\`La somme est: \${z}\`);\n\nfor(let i = 0; i < 3; i++) {\n    console.log(\`Iteration \${i}\`);\n}\n\nconst numbers = [1, 2, 3, 4, 5];\nconst total = numbers.reduce((sum, num) => sum + num, 0);\nconsole.log(\`Total: \${total}\`);`,
+                language: 'javascript'
+            },
+            'c-basic': {
+                code: `int x = 5;\nint y = 10;\nint z = x + y;\nprintf("La somme est: %d\\n", z);\n\nfor(int i = 0; i < 3; i++) {\n    printf("Iteration %d\\n", i);\n}\n\nint numbers[] = {1, 2, 3, 4, 5};\nint total = 0;\nfor(int i = 0; i < 5; i++) {\n    total += numbers[i];\n}\nprintf("Total: %d\\n", total);`,
+                language: 'c'
+            }
+        };
+        
+        this.initializeUI();
+    }
+    
+    initializeUI() {
+        // Éléments DOM
+        this.codeInput = document.getElementById('code-input');
+        this.languageSelect = document.getElementById('language-select');
+        this.runButton = document.getElementById('run-button');
+        this.clearButton = document.getElementById('clear-button');
+        this.exampleButton = document.getElementById('example-button');
+        this.traceOutput = document.getElementById('trace-output');
+        this.errorOutput = document.getElementById('error-output');
+        this.languageIndicator = document.getElementById('language-indicator');
+        this.linesCounter = document.getElementById('lines-counter');
+        this.stepPrev = document.getElementById('step-prev');
+        this.stepNext = document.getElementById('step-next');
+        this.stepCounter = document.getElementById('step-counter');
+        
+        // Événements
+        this.runButton.addEventListener('click', () => this.runCode());
+        this.clearButton.addEventListener('click', () => this.clearCode());
+        this.exampleButton.addEventListener('click', () => this.loadRandomExample());
+        this.languageSelect.addEventListener('change', (e) => this.changeLanguage(e.target.value));
+        this.codeInput.addEventListener('input', () => this.updateLinesCounter());
+        this.stepPrev.addEventListener('click', () => this.previousStep());
+        this.stepNext.addEventListener('click', () => this.nextStep());
+        
+        // Initialisation
+        this.updatePlaceholder();
+        this.updateLinesCounter();
+    }
+    
+    changeLanguage(language) {
+        this.currentLanguage = language;
+        this.languageIndicator.textContent = this.getLanguageName(language);
+        this.updatePlaceholder();
+    }
+    
+    getLanguageName(language) {
+        const names = {
+            'python': 'Python',
+            'javascript': 'JavaScript',
+            'c': 'C'
+        };
+        return names[language] || language;
+    }
+    
+    updatePlaceholder() {
+        const placeholders = {
+            'python': '# Entrez votre code Python ici...\nx = 5\ny = 10\nprint(f"Somme: {x + y}")',
+            'javascript': '// Entrez votre code JavaScript ici...\nlet x = 5;\nlet y = 10;\nconsole.log(`Somme: ${x + y}`);',
+            'c': '// Entrez votre code C ici...\nint x = 5;\nint y = 10;\nprintf("Somme: %d\\n", x + y);'
+        };
+        this.codeInput.placeholder = placeholders[this.currentLanguage];
+    }
+    
+    updateLinesCounter() {
+        const lines = this.codeInput.value.split('\n').length;
+        this.linesCounter.textContent = `${lines} ligne${lines > 1 ? 's' : ''}`;
+    }
+    
+    clearCode() {
+        this.codeInput.value = '';
+        this.traceOutput.innerHTML = this.getWelcomeMessage();
+        this.hideError();
+        this.updateLinesCounter();
+        this.resetSteps();
+    }
+    
+    loadRandomExample() {
+        const currentLangExamples = Object.keys(this.examples).filter(key => 
+            this.examples[key].language === this.currentLanguage
+        );
+        
+        if (currentLangExamples.length > 0) {
+            const randomExample = currentLangExamples[Math.floor(Math.random() * currentLangExamples.length)];
+            this.loadExample(randomExample);
+        }
+    }
+    
+    loadExample(exampleKey) {
+        if (this.examples[exampleKey]) {
+            const example = this.examples[exampleKey];
+            this.languageSelect.value = example.language;
+            this.changeLanguage(example.language);
+            this.codeInput.value = example.code;
+            this.updateLinesCounter();
+        }
+    }
+    
+    async runCode() {
+        const code = this.codeInput.value.trim();
+        if (!code) {
+            this.showError('Veuillez entrer du code à exécuter');
+            return;
+        }
+        
+        this.runButton.disabled = true;
+        this.runButton.innerHTML = '<span class="btn-icon">⏳</span> Exécution...';
+        this.hideError();
+        this.traceOutput.innerHTML = '<div class="loading">🔄 Compilation et exécution en cours...</div>';
+        
+        try {
+            // Simulation pour le moment - à remplacer par l'appel au serveur Python
+            await this.simulateExecution(code);
+        } catch (error) {
+            this.showError(error.message);
+        } finally {
+            this.runButton.disabled = false;
+            this.runButton.innerHTML = '<span class="btn-icon">▶️</span> Exécuter';
+        }
+    }
+    
+    async simulateExecution(code) {
+        // Simulation temporaire - sera remplacée par l'appel au serveur main.py
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        this.trace = [
+            {
+                line: 1,
+                locals: { x: 5 },
+                globals: {},
+                output: ''
+            },
+            {
+                line: 2,
+                locals: { x: 5, y: 10 },
+                globals: {},
+                output: ''
+            },
+            {
+                line: 3,
+                locals: { x: 5, y: 10, z: 15 },
+                globals: {},
+                output: 'La somme est: 15\n'
+            }
+        ];
+        
+        this.currentStep = 0;
+        this.displayTrace();
+    }
+    
+    displayTrace() {
+        if (this.trace.length === 0) {
+            this.traceOutput.innerHTML = this.getWelcomeMessage();
+            return;
+        }
+        
+        this.updateStepControls();
+        this.displayCurrentStep();
+    }
+    
+    displayCurrentStep() {
+        if (this.currentStep >= this.trace.length) return;
+        
+        const step = this.trace[this.currentStep];
+        const stepNumber = this.currentStep + 1;
+        
+        let html = `
+            <div class="trace-step">
+                <div class="step-header">
+                    <span class="step-number">Étape ${stepNumber}</span>
+                    <span class="step-line">Ligne ${step.line}</span>
+                </div>
+        `;
+        
+        if (Object.keys(step.locals).length > 0 || Object.keys(step.globals).length > 0) {
+            html += `
+                <div class="variables-section">
+                    <div class="variable-group">
+                        <div class="variable-title">🔧 Variables Locales</div>
+                        ${this.formatVariables(step.locals)}
+                    </div>
+                    <div class="variable-group">
+                        <div class="variable-title">🌐 Variables Globales</div>
+                        ${this.formatVariables(step.globals)}
+                    </div>
+                </div>
+            `;
+        }
+        
+        if (step.output) {
+            html += `
+                <div class="output-section">
+                    <div class="output-title">📺 Sortie</div>
+                    <div class="output-content">${step.output}</div>
+                </div>
+            `;
+        }
+        
+        if (step.error) {
+            html += `
+                <div class="error-section">
+                    <strong>❌ Erreur:</strong> ${step.error}
+                </div>
+            `;
+        }
+        
+        html += `</div>`;
+        this.traceOutput.innerHTML = html;
+    }
+    
+    formatVariables(variables) {
+        if (!variables || Object.keys(variables).length === 0) {
+            return '<div style="color: var(--text-muted); font-style: italic;">Aucune variable</div>';
+        }
+        
+        let html = '';
+        Object.entries(variables).forEach(([key, value]) => {
+            html += `
+                <div class="variable-item">
+                    <span class="variable-name">${key}</span>
+                    <span class="variable-value">${JSON.stringify(value)}</span>
+                </div>
+            `;
+        });
+        
+        return html;
+    }
+    
+    updateStepControls() {
+        this.stepCounter.textContent = `Étape ${this.currentStep + 1}/${this.trace.length}`;
+        this.stepPrev.disabled = this.currentStep <= 0;
+        this.stepNext.disabled = this.currentStep >= this.trace.length - 1;
+    }
+    
+    previousStep() {
+        if (this.currentStep > 0) {
+            this.currentStep--;
+            this.displayCurrentStep();
+            this.updateStepControls();
+        }
+    }
+    
+    nextStep() {
+        if (this.currentStep < this.trace.length - 1) {
+            this.currentStep++;
+            this.displayCurrentStep();
+            this.updateStepControls();
+        }
+    }
+    
+    resetSteps() {
+        this.currentStep = 0;
+        this.trace = [];
+        this.updateStepControls();
+    }
+    
+    showError(message) {
+        this.errorOutput.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span>❌</span>
+                <span><strong>Erreur:</strong> ${message}</span>
+            </div>
+        `;
+        this.errorOutput.style.display = 'block';
+    }
+    
+    hideError() {
+        this.errorOutput.style.display = 'none';
+    }
+    
+    getWelcomeMessage() {
+        return `
+            <div class="welcome-message">
+                <div class="welcome-icon">🚀</div>
+                <h3>Bienvenue dans le Python Tutor Matrix</h3>
+                <p>Écrivez du code et cliquez sur <strong>Exécuter</strong> pour voir la visualisation</p>
+                <div class="features">
+                    <div class="feature">
+                        <span class="feature-icon">🐍</span>
+                        <span>Python avec traçage complet</span>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">📜</span>
+                        <span>JavaScript avec variables</span>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">⚙️</span>
+                        <span>C avec compilation</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+}
+
+// Fonctions globales pour les exemples
+function loadExample(exampleKey) {
+    if (window.pythonTutor) {
+        window.pythonTutor.loadExample(exampleKey);
+    }
+}
+
+// Initialisation
+document.addEventListener('DOMContentLoaded', function() {
+    window.pythonTutor = new MatrixPythonTutor();
+});
+</script>
+{% endblock %}

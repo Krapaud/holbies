@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Language Code Executor</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2d3748;
+            margin-bottom: 2rem;
+        }
+        
+        .toolbar {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: #f7fafc;
+            border-radius: 8px;
+        }
+        
+        .language-selector {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        select {
+            padding: 0.5rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            background: white;
+        }
+        
+        .run-btn, .clear-btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .run-btn {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+        }
+        
+        .clear-btn {
+            background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+            color: white;
+        }
+        
+        .run-btn:hover, .clear-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .run-btn:disabled {
+            background: #a0aec0;
+            transform: none;
+            cursor: not-allowed;
+        }
+        
+        textarea {
+            width: 100%;
+            min-height: 300px;
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            resize: vertical;
+            background: #f8f9fa;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+        }
+        
+        .error-message {
+            background: #fed7d7;
+            color: #c53030;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            border-left: 4px solid #e53e3e;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #4a5568;
+            font-size: 1.1rem;
+        }
+        
+        .trace-step {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            margin: 1rem 0;
+            padding: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .trace-step:hover {
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        pre {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 0.5rem 0;
+        }
+        
+        .examples {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .example-card {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .example-card:hover {
+            background: #edf2f7;
+            transform: translateY(-2px);
+        }
+        
+        .example-title {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+        
+        .example-desc {
+            color: #4a5568;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Multi-Language Code Executor</h1>
+        <p style="text-align: center; color: #4a5568; margin-bottom: 2rem;">
+            Exécutez du code Python, JavaScript ou C avec visualisation des résultats
+        </p>
+        
+        <div id="code-visualizer-container"></div>
+        
+        <div class="examples">
+            <div class="example-card" onclick="loadPythonExample()">
+                <div class="example-title">🐍 Python - Variables et fonctions</div>
+                <div class="example-desc">Variables, boucles, listes et récursion</div>
+            </div>
+            
+            <div class="example-card" onclick="loadJavaScriptExample()">
+                <div class="example-title">📜 JavaScript - Arrays et fonctions</div>
+                <div class="example-desc">Variables, boucles, arrays et récursion</div>
+            </div>
+            
+            <div class="example-card" onclick="loadCExample()">
+                <div class="example-title">⚙️ C - Structures de contrôle</div>
+                <div class="example-desc">Variables, boucles, tableaux et récursion</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simulation de la classe CodeVisualizer en JavaScript pur
+        class SimpleCodeExecutor {
+            constructor(containerId) {
+                this.container = document.getElementById(containerId);
+                this.currentLanguage = 'python';
+                this.initializeUI();
+            }
+            
+            initializeUI() {
+                this.container.innerHTML = `
+                    <div class="toolbar">
+                        <div class="language-selector">
+                            <label for="language-select">🔧 Langage:</label>
+                            <select id="language-select">
+                                <option value="python">🐍 Python</option>
+                                <option value="javascript">📜 JavaScript</option>
+                                <option value="c">⚙️ C</option>
+                            </select>
+                        </div>
+                        <button id="run-button" class="run-btn">▶️ Exécuter</button>
+                        <button id="clear-button" class="clear-btn">🗑️ Effacer</button>
+                    </div>
+                    
+                    <div class="input-section">
+                        <textarea id="code-input" placeholder="Entrez votre code ici..."></textarea>
+                    </div>
+                    
+                    <div id="error-output" class="error-message" style="display: none;"></div>
+                    <div id="trace-output" class="trace-visualization"></div>
+                `;
+                
+                this.attachEvents();
+                this.updatePlaceholder();
+            }
+            
+            attachEvents() {
+                const runButton = document.getElementById('run-button');
+                const clearButton = document.getElementById('clear-button');
+                const languageSelect = document.getElementById('language-select');
+                
+                runButton.addEventListener('click', () => this.runCode());
+                clearButton.addEventListener('click', () => this.clearCode());
+                languageSelect.addEventListener('change', (e) => {
+                    this.currentLanguage = e.target.value;
+                    this.updatePlaceholder();
+                });
+            }
+            
+            updatePlaceholder() {
+                const codeInput = document.getElementById('code-input');
+                const placeholders = {
+                    python: '# Code Python\\nx = 5\\nprint(f"Hello from Python! x = {x}")',
+                    javascript: '// Code JavaScript\\nlet x = 5;\\nconsole.log(`Hello from JavaScript! x = ${x}`);',
+                    c: '// Code C\\nint x = 5;\\nprintf("Hello from C! x = %d\\\\n", x);'
+                };
+                codeInput.placeholder = placeholders[this.currentLanguage];
+                if (!codeInput.value.trim()) {
+                    codeInput.value = placeholders[this.currentLanguage];
+                }
+            }
+            
+            clearCode() {
+                document.getElementById('code-input').value = '';
+                document.getElementById('trace-output').innerHTML = '';
+                document.getElementById('error-output').style.display = 'none';
+            }
+            
+            async runCode() {
+                const codeInput = document.getElementById('code-input');
+                const runButton = document.getElementById('run-button');
+                const outputDiv = document.getElementById('trace-output');
+                const errorDiv = document.getElementById('error-output');
+                
+                const code = codeInput.value.trim();
+                if (!code) {
+                    this.showError('Veuillez entrer du code à exécuter');
+                    return;
+                }
+                
+                runButton.disabled = true;
+                runButton.textContent = '⏳ Exécution...';
+                errorDiv.style.display = 'none';
+                outputDiv.innerHTML = '<div class="loading">🔄 Exécution en cours...</div>';
+                
+                try {
+                    const response = await fetch('http://localhost:8000/run', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ code, language: this.currentLanguage })
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`Erreur HTTP: ${response.status}`);
+                    }
+                    
+                    const data = await response.json();
+                    
+                    if (data.error) {
+                        throw new Error(data.error);
+                    }
+                    
+                    this.displayResults(data.trace || []);
+                    
+                } catch (err) {
+                    this.showError(err.message);
+                } finally {
+                    runButton.disabled = false;
+                    runButton.textContent = '▶️ Exécuter';
+                }
+            }
+            
+            showError(message) {
+                const errorDiv = document.getElementById('error-output');
+                errorDiv.innerHTML = `❌ <strong>Erreur:</strong> ${message}`;
+                errorDiv.style.display = 'block';
+            }
+            
+            displayResults(trace) {
+                const outputDiv = document.getElementById('trace-output');
+                
+                if (!trace || trace.length === 0) {
+                    outputDiv.innerHTML = '<div class="loading">🤔 Aucun résultat disponible</div>';
+                    return;
+                }
+                
+                let html = `<h3>📊 Résultats d'exécution (${this.currentLanguage})</h3>`;
+                
+                trace.forEach((step, index) => {
+                    html += `
+                        <div class="trace-step">
+                            <h4>Résultat ${index + 1}</h4>
+                            ${step.error ? `
+                                <div style="background: #fed7d7; color: #c53030; padding: 1rem; border-radius: 6px; margin: 0.5rem 0;">
+                                    <strong>❌ Erreur:</strong>
+                                    <pre style="background: none; color: inherit;">${step.error}</pre>
+                                </div>
+                            ` : ''}
+                            ${step.output ? `
+                                <div style="margin: 0.5rem 0;">
+                                    <strong>📤 Sortie:</strong>
+                                    <pre style="background: #f0fff4; color: #2f855a;">${step.output}</pre>
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                });
+                
+                outputDiv.innerHTML = html;
+            }
+            
+            setLanguage(language) {
+                this.currentLanguage = language;
+                document.getElementById('language-select').value = language;
+                this.updatePlaceholder();
+            }
+            
+            setCode(code) {
+                document.getElementById('code-input').value = code;
+            }
+        }
+        
+        // Initialiser l'exécuteur
+        const executor = new SimpleCodeExecutor('code-visualizer-container');
+        
+        // Fonctions pour charger les exemples
+        function loadPythonExample() {
+            const code = `x = 5
+y = 10
+z = x + y
+print(f'La somme est: {z}')
+
+for i in range(3):
+    print(f'Iteration {i}')
+
+numbers = [1, 2, 3, 4, 5]
+total = sum(numbers)
+print(f'Total: {total}')
+
+def fibonacci(n):
+    if n <= 1:
+        return n
+    return fibonacci(n-1) + fibonacci(n-2)
+
+result = fibonacci(5)
+print(f'Fibonacci(5) = {result}')`;
+            executor.setLanguage('python');
+            executor.setCode(code);
+        }
+        
+        function loadJavaScriptExample() {
+            const code = `let x = 5;
+let y = 10;
+let z = x + y;
+console.log(\`La somme est: \${z}\`);
+
+for(let i = 0; i < 3; i++) {
+    console.log(\`Iteration \${i}\`);
+}
+
+const numbers = [1, 2, 3, 4, 5];
+const total = numbers.reduce((sum, num) => sum + num, 0);
+console.log(\`Total: \${total}\`);
+
+function fibonacci(n) {
+    if (n <= 1) return n;
+    return fibonacci(n-1) + fibonacci(n-2);
+}
+
+const result = fibonacci(5);
+console.log(\`Fibonacci(5) = \${result}\`);`;
+            executor.setLanguage('javascript');
+            executor.setCode(code);
+        }
+        
+        function loadCExample() {
+            const code = `int x = 5;
+int y = 10;
+int z = x + y;
+printf("La somme est: %d\\n", z);
+
+for(int i = 0; i < 3; i++) {
+    printf("Iteration %d\\n", i);
+}
+
+int numbers[] = {1, 2, 3, 4, 5};
+int total = 0;
+for(int i = 0; i < 5; i++) {
+    total += numbers[i];
+}
+printf("Total: %d\\n", total);`;
+            executor.setLanguage('c');
+            executor.setCode(code);
+        }
+        
+        // Export global
+        window.codeExecutor = executor;
+    </script>
+</body>
+</html>
