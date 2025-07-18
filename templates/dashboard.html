@@ -18,45 +18,6 @@
     </div>
     
     <div class="dashboard-grid fade-in-grid">
-        <!-- Carte de profil améliorée -->
-        <div class="dashboard-card profile-card floating-card">
-            <div class="card-header gradient-header">
-                <h3 class="card-title">
-                    <span class="card-icon pulse">👤</span>
-                    Mon Profil
-                </h3>
-                <div class="header-decoration"></div>
-            </div>
-            <div class="card-content">
-                <div class="profile-info">
-                    <div class="profile-avatar glow-avatar">
-                        <div class="avatar-placeholder animated-avatar">
-                            {{ user.username[0].upper() }}
-                        </div>
-                        <div class="avatar-ring"></div>
-                    </div>
-                    <div class="profile-details">
-                        <p class="profile-name gradient-text">{{ user.username }}</p>
-                        <p class="profile-email">{{ user.email }}</p>
-                        <p class="profile-role">
-                            {% if user.is_admin %}
-                                <span class="role-badge admin glow-badge">🔰 Administrateur</span>
-                            {% else %}
-                                <span class="role-badge user glow-badge">👤 Utilisateur</span>
-                            {% endif %}
-                        </p>
-                        <p class="profile-date">
-                            Membre depuis le {{ user.created_at.split(' ')[0] }}
-                        </p>
-                    </div>
-                </div>
-                <a href="{{ url_for('profile') }}" class="btn btn-secondary btn-small hover-lift">
-                    <span class="btn-icon">✏️</span>
-                    Modifier
-                </a>
-            </div>
-        </div>
-        
         <!-- Statistiques améliorées -->
         <div class="dashboard-card stats-card floating-card">
             <div class="card-header gradient-header">
@@ -190,34 +151,6 @@
             </div>
         </div>
         {% endif %}
-        
-        <!-- Actions rapides -->
-        <div class="dashboard-card actions-card">
-            <div class="card-header">
-                <h3 class="card-title">
-                    <span class="card-icon">⚡</span>
-                    Actions Rapides
-                </h3>
-            </div>
-            <div class="card-content">
-                <div class="actions-grid">
-                    <a href="{{ url_for('profile') }}" class="action-btn">
-                        <span class="action-icon">👤</span>
-                        <span class="action-text">Mon Profil</span>
-                    </a>
-                    <a href="{{ url_for('quiz_home') }}" class="action-btn quiz-action">
-                        <span class="action-icon">🎯</span>
-                        <span class="action-text">Quiz C</span>
-                    </a>
-                    {% if user.is_admin %}
-                        <a href="{{ url_for('admin') }}" class="action-btn admin-action">
-                            <span class="action-icon">⚙️</span>
-                            <span class="action-text">Administration</span>
-                        </a>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
         
         <!-- Activité récente -->
         <div class="dashboard-card activity-card">
