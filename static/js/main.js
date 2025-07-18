@@ -71,9 +71,9 @@ function createParticle(container) {
     const particle = document.createElement('div');
     particle.className = 'particle';
     
-    // Position aléatoire
-    particle.style.left = Math.random() * 100 + '%';
-    particle.style.top = Math.random() * 100 + '%';
+    // Position aléatoire sur tout l'écran
+    particle.style.left = Math.random() * 100 + 'vw';
+    particle.style.top = Math.random() * 100 + 'vh';
     
     // Animation delay aléatoire
     particle.style.animationDelay = Math.random() * 6 + 's';
@@ -85,17 +85,23 @@ function createParticle(container) {
     particle.style.height = size + 'px';
     
     // Opacité aléatoire
-    particle.style.opacity = 0.3 + Math.random() * 0.7;
+    particle.style.opacity = 0.2 + Math.random() * 0.6;
+    
+    // Couleur aléatoire dans les tons verts
+    const colors = ['var(--primary-green)', 'var(--secondary-green)', '#00ff88', '#00cc66'];
+    particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+    particle.style.boxShadow = `0 0 ${size * 2}px ${particle.style.background}`;
     
     container.appendChild(particle);
     
-    // Recréer la particule après l'animation
+    // Recréer la particule après l'animation avec une durée plus longue
+    const duration = (3 + Math.random() * 6) * 1000;
     setTimeout(() => {
         if (container.contains(particle)) {
             container.removeChild(particle);
             createParticle(container);
         }
-    }, (3 + Math.random() * 6) * 1000);
+    }, duration);
 }
 
 function initCounters() {
