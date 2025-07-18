@@ -499,6 +499,18 @@ def profile():
     
     return render_template('profile.html', user=user, quiz_scores=scores)
 
+@app.route('/python-tutor')
+def python_tutor():
+    """Page Python Tutor - Visualiseur de code multi-langages"""
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    conn = get_db_connection()
+    user = conn.execute('SELECT * FROM users WHERE id = ?', (session['user_id'],)).fetchone()
+    conn.close()
+    
+    return render_template('python_tutor.html', user=user)
+
 @app.route('/quiz')
 def quiz_home():
     if 'user_id' not in session:
