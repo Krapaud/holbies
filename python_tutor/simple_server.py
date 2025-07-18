@@ -12,12 +12,7 @@ import socketserver
 import subprocess
 import tempfile
 import os
-from urlliif __name__ == "__main__":
-    PORT = 8002
-    print(f"🚀 Serveur D_L_H Tutor Multi-langages")
-    print(f"📍 URL: http://localhost:{PORT}")
-    print(f"🔮 Support: Python, JavaScript, C")
-    print(f"📋 Dépendances: Node.js (pour JS), GCC (pour C)")e import parse_qs
+from urllib.parse import parse_qs
 
 class SimpleCodeExecutor:
     def execute_python(self, code):
