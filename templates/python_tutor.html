@@ -686,32 +686,38 @@ class MatrixPythonTutor {
     }
     
     async simulateExecution(code) {
-        // Simulation temporaire - sera remplacée par l'appel au serveur main.py
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        this.trace = [
-            {
-                line: 1,
-                locals: { x: 5 },
-                globals: {},
-                output: ''
-            },
-            {
-                line: 2,
-                locals: { x: 5, y: 10 },
-                globals: {},
-                output: ''
-            },
-            {
-                line: 3,
-                locals: { x: 5, y: 10, z: 15 },
-                globals: {},
-                output: 'La somme est: 15\n'
+        // Appel réel au serveur Python Tutor
+        try {
+            const response = await fetch("http://localhost:8000/run", {
+                method: "POST",
+                headers: { 
+                    "Content-Type": "application/json",
+                    "Access-Control-Allow-Origin": "*"
+                },
+                body: JSON.stringify({ 
+                    code: code,
+                    language: this.currentLanguage 
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`Erreur HTTP: ${response.status}`);
             }
-        ];
-        
-        this.currentStep = 0;
-        this.displayTrace();
+
+            const data = await response.json();
+            
+            if (data.error) {
+                throw new Error(data.error);
+            }
+
+            this.trace = data.trace || [];
+            this.currentStep = 0;
+            this.displayTrace();
+            
+        } catch (error) {
+            console.error('Erreur lors de l\'exécution:', error);
+            throw error;
+        }
     }
     
     displayTrace() {
