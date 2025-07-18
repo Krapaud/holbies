@@ -348,6 +348,17 @@ function updateTerminalStats() {
 // Initialiser les stats du terminal
 setTimeout(updateTerminalStats, 1000);
 
+// Fonction pour gérer le menu mobile
+function toggleMobileMenu() {
+    const navMenu = document.getElementById('navMenu');
+    const navToggle = document.querySelector('.nav-toggle');
+    
+    if (navMenu && navToggle) {
+        navMenu.classList.toggle('nav-menu-active');
+        navToggle.classList.toggle('nav-toggle-active');
+    }
+}
+
 // Fonction pour gérer le menu utilisateur
 function toggleUserMenu() {
     const dropdown = document.getElementById('userDropdown');
