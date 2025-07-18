@@ -13,16 +13,20 @@
         </p>
         <div class="hero-stats">
             <div class="stat-item">
-                <span class="stat-number">100</span>
+                <span class="stat-number dynamic-stat" data-base="125" data-variation="25">125</span>
                 <span class="stat-label">Questions C</span>
             </div>
             <div class="stat-item">
-                <span class="stat-number">5</span>
-                <span class="stat-label">Niveaux</span>
+                <span class="stat-number dynamic-stat" data-base="1200" data-variation="300">1,200</span>
+                <span class="stat-label">Utilisateurs</span>
             </div>
             <div class="stat-item">
-                <span class="stat-number">∞</span>
-                <span class="stat-label">Connaissances</span>
+                <span class="stat-number dynamic-stat" data-base="80" data-variation="15">80+</span>
+                <span class="stat-label">Commandes</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number dynamic-stat" data-base="8500" data-variation="1500">8,500</span>
+                <span class="stat-label">Codes exécutés</span>
             </div>
         </div>
     </div>
@@ -115,19 +119,106 @@ document.addEventListener('DOMContentLoaded', function() {
         card.classList.add('fade-in-up');
     });
     
-    // Animation pour les statistiques
-    const stats = document.querySelectorAll('.stat-number');
-    stats.forEach(stat => {
-        const target = stat.textContent;
-        if (target !== '∞') {
-            animateNumber(stat, parseInt(target));
-        }
-    });
+    // Initialisation des statistiques dynamiques
+    initDynamicStats();
 });
+
+function initDynamicStats() {
+    const dynamicStats = document.querySelectorAll('.dynamic-stat');
+    
+    // Animation initiale des nombres
+    dynamicStats.forEach((stat, index) => {
+        const baseValue = parseInt(stat.dataset.base);
+        const displayText = stat.textContent;
+        
+        // Animation d'entrée avec délai
+        setTimeout(() => {
+            if (displayText.includes('+')) {
+                animateNumberWithSuffix(stat, baseValue, '+');
+            } else if (displayText.includes(',')) {
+                animateFormattedNumber(stat, baseValue);
+            } else {
+                animateNumber(stat, baseValue);
+            }
+        }, index * 200);
+    });
+    
+    // Mise à jour périodique des statistiques
+    setInterval(updateRandomStats, 5000); // Toutes les 5 secondes
+    
+    // Mise à jour plus fréquente pour simuler l'activité en temps réel
+    setInterval(updateRealtimeStats, 2000); // Toutes les 2 secondes pour certaines stats
+}
+
+function updateRandomStats() {
+    const dynamicStats = document.querySelectorAll('.dynamic-stat');
+    
+    // Sélectionner 1-2 statistiques à mettre à jour
+    const statsToUpdate = Math.floor(Math.random() * 2) + 1;
+    const indices = [];
+    
+    while (indices.length < statsToUpdate) {
+        const randomIndex = Math.floor(Math.random() * dynamicStats.length);
+        if (!indices.includes(randomIndex)) {
+            indices.push(randomIndex);
+        }
+    }
+    
+    indices.forEach(index => {
+        const stat = dynamicStats[index];
+        updateSingleStat(stat);
+    });
+}
+
+function updateRealtimeStats() {
+    const dynamicStats = document.querySelectorAll('.dynamic-stat');
+    
+    // Mettre à jour spécifiquement les "Codes exécutés" (index 3) plus fréquemment
+    const codesExecutedStat = dynamicStats[3];
+    if (codesExecutedStat && Math.random() < 0.3) { // 30% de chance
+        updateSingleStat(codesExecutedStat, true);
+    }
+    
+    // Mettre à jour les utilisateurs (index 1) occasionnellement
+    const usersStat = dynamicStats[1];
+    if (usersStat && Math.random() < 0.1) { // 10% de chance
+        updateSingleStat(usersStat);
+    }
+}
+
+function updateSingleStat(stat, isRealtime = false) {
+    const baseValue = parseInt(stat.dataset.base);
+    const variation = parseInt(stat.dataset.variation);
+    const currentText = stat.textContent;
+    
+    // Calculer nouvelle valeur avec variation aléatoire
+    let variationRange = isRealtime ? variation * 0.3 : variation; // Variation plus petite en temps réel
+    const randomVariation = Math.floor(Math.random() * variationRange * 2) - variationRange;
+    let newValue = baseValue + randomVariation;
+    
+    // S'assurer que la valeur reste positive et réaliste
+    newValue = Math.max(newValue, Math.floor(baseValue * 0.8));
+    
+    // Mettre à jour selon le format
+    stat.classList.add('stat-updating');
+    
+    if (currentText.includes('+')) {
+        animateNumberWithSuffix(stat, newValue, '+');
+    } else if (currentText.includes(',')) {
+        animateFormattedNumber(stat, newValue);
+    } else {
+        animateNumber(stat, newValue);
+    }
+    
+    // Effet visuel de mise à jour
+    setTimeout(() => {
+        stat.classList.remove('stat-updating');
+    }, 800);
+}
 
 function animateNumber(element, target) {
     let current = 0;
-    const increment = target / 50;
+    const increment = target / 30;
     const timer = setInterval(() => {
         current += increment;
         if (current >= target) {
@@ -135,7 +226,74 @@ function animateNumber(element, target) {
             clearInterval(timer);
         }
         element.textContent = Math.floor(current);
-    }, 30);
+    }, 25);
 }
+
+function animateNumberWithSuffix(element, target, suffix) {
+    let current = 0;
+    const increment = target / 30;
+    const timer = setInterval(() => {
+        current += increment;
+        if (current >= target) {
+            current = target;
+            clearInterval(timer);
+        }
+        element.textContent = Math.floor(current) + suffix;
+    }, 25);
+}
+
+function animateFormattedNumber(element, target) {
+    let current = 0;
+    const increment = target / 30;
+    const timer = setInterval(() => {
+        current += increment;
+        if (current >= target) {
+            current = target;
+            clearInterval(timer);
+        }
+        const formatted = Math.floor(current).toLocaleString('fr-FR');
+        element.textContent = formatted;
+    }, 25);
+}
+
+// Effet Matrix sur les statistiques
+document.addEventListener('DOMContentLoaded', function() {
+    const statItems = document.querySelectorAll('.stat-item');
+    
+    statItems.forEach(item => {
+        item.addEventListener('mouseenter', function() {
+            const statNumber = this.querySelector('.stat-number');
+            statNumber.style.textShadow = '0 0 10px var(--primary-green)';
+            statNumber.style.transform = 'scale(1.1)';
+        });
+        
+        item.addEventListener('mouseleave', function() {
+            const statNumber = this.querySelector('.stat-number');
+            statNumber.style.textShadow = '';
+            statNumber.style.transform = 'scale(1)';
+        });
+    });
+});
+
+// Simulation d'activité temps réel basée sur l'heure
+function getActivityMultiplier() {
+    const hour = new Date().getHours();
+    // Plus d'activité pendant les heures de travail et d'étude
+    if (hour >= 9 && hour <= 17) return 1.5; // Journée
+    if (hour >= 19 && hour <= 22) return 1.3; // Soirée
+    return 0.8; // Nuit/Matin
+}
+
+// Ajouter des événements simulés
+setInterval(() => {
+    const activityLevel = getActivityMultiplier();
+    if (Math.random() < 0.1 * activityLevel) { // Simulation d'une nouvelle exécution de code
+        const codesExecutedStat = document.querySelector('.dynamic-stat[data-base="8500"]');
+        if (codesExecutedStat) {
+            const currentBase = parseInt(codesExecutedStat.dataset.base);
+            codesExecutedStat.dataset.base = currentBase + Math.floor(Math.random() * 3) + 1;
+        }
+    }
+}, 3000);
 </script>
 {% endblock %}

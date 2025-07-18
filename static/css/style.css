@@ -757,6 +757,34 @@ a:hover {
 
 .stat-item {
     text-align: center;
+    transition: all 0.3s ease;
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius);
+    position: relative;
+}
+
+.stat-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent, rgba(0, 255, 65, 0.1), transparent);
+    border-radius: var(--border-radius);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.stat-item:hover::before {
+    opacity: 1;
+}
+
+.stat-item:hover {
+    transform: translateY(-3px);
+    background: rgba(0, 255, 65, 0.05);
+    border: 1px solid rgba(0, 255, 65, 0.2);
 }
 
 .stat-number {
@@ -765,6 +793,36 @@ a:hover {
     font-weight: 900;
     color: var(--primary-green);
     text-shadow: 0 0 10px var(--primary-green);
+    transition: all 0.3s ease;
+    font-family: 'Orbitron', monospace;
+}
+
+.stat-number.dynamic-stat {
+    cursor: pointer;
+}
+
+.stat-number.stat-updating {
+    animation: statPulse 0.8s ease-in-out;
+    text-shadow: 0 0 20px var(--primary-green), 0 0 30px var(--primary-green);
+}
+
+@keyframes statPulse {
+    0%, 100% { 
+        transform: scale(1);
+        text-shadow: 0 0 10px var(--primary-green);
+    }
+    25% { 
+        transform: scale(1.05);
+        text-shadow: 0 0 15px var(--primary-green), 0 0 25px var(--primary-green);
+    }
+    50% { 
+        transform: scale(1.1);
+        text-shadow: 0 0 20px var(--primary-green), 0 0 30px var(--primary-green), 0 0 40px var(--primary-green);
+    }
+    75% { 
+        transform: scale(1.05);
+        text-shadow: 0 0 15px var(--primary-green), 0 0 25px var(--primary-green);
+    }
 }
 
 .stat-label {
