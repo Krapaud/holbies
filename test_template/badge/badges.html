@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Badges de progression</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+
+    <div class="bg-white shadow-lg rounded-xl p-8 max-w-lg w-full text-center">
+        <h1 class="text-2xl font-bold mb-6">🎓 Votre progression</h1>
+
+        <!-- Contrôle pour tester différents niveaux -->
+        <div class="mb-6">
+            <label for="progressInput" class="block text-sm font-medium text-gray-700 mb-2">
+                Ajustez votre progression (0-100%) :
+            </label>
+            <input 
+                type="range" 
+                id="progressInput" 
+                min="0" 
+                max="100" 
+                value="25" 
+                class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                oninput="updateBadge(this.value)"
+            >
+        </div>
+
+        <div class="mb-4">
+            <div id="badgeContainer" class="inline-block px-4 py-2 rounded-full font-semibold text-sm bg-red-100 text-red-800">
+                🐣 Débutant
+            </div>
+        </div>
+
+        <div class="w-full bg-gray-300 rounded-full h-4 mb-2">
+            <div id="progressBar" class="bg-blue-500 h-4 rounded-full transition-all duration-300" style="width: 25%;"></div>
+        </div>
+        <p id="progressText" class="mt-2 text-sm text-gray-600">25% complété</p>
+
+        <!-- Légende des badges -->
+        <div class="mt-8 p-4 bg-gray-50 rounded-lg">
+            <h3 class="font-semibold mb-3 text-gray-800">🏆 Niveaux de progression :</h3>
+            <div class="space-y-2 text-sm">
+                <div class="flex justify-between items-center">
+                    <span class="bg-red-100 text-red-800 px-2 py-1 rounded-full">🐣 Débutant</span>
+                    <span class="text-gray-600">0-20%</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">📚 Apprenti</span>
+                    <span class="text-gray-600">21-40%</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full">🔧 Intermédiaire</span>
+                    <span class="text-gray-600">41-60%</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full">🚀 Avancé</span>
+                    <span class="text-gray-600">61-80%</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="bg-purple-100 text-purple-800 px-2 py-1 rounded-full">👑 Maître C</span>
+                    <span class="text-gray-600">81-100%</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updateBadge(progress) {
+            progress = parseInt(progress);
+            
+            let badge = '';
+            let color = '';
+            
+            if (progress <= 20) {
+                badge = '🐣 Débutant';
+                color = 'bg-red-100 text-red-800';
+            } else if (progress <= 40) {
+                badge = '📚 Apprenti';
+                color = 'bg-yellow-100 text-yellow-800';
+            } else if (progress <= 60) {
+                badge = '🔧 Intermédiaire';
+                color = 'bg-blue-100 text-blue-800';
+            } else if (progress <= 80) {
+                badge = '🚀 Avancé';
+                color = 'bg-green-100 text-green-800';
+            } else {
+                badge = '👑 Maître C';
+                color = 'bg-purple-100 text-purple-800';
+            }
+            
+            // Mettre à jour le badge
+            const badgeContainer = document.getElementById('badgeContainer');
+            badgeContainer.textContent = badge;
+            badgeContainer.className = `inline-block px-4 py-2 rounded-full font-semibold text-sm ${color}`;
+            
+            // Mettre à jour la barre de progression
+            const progressBar = document.getElementById('progressBar');
+            progressBar.style.width = progress + '%';
+            
+            // Mettre à jour le texte
+            const progressText = document.getElementById('progressText');
+            progressText.textContent = progress + '% complété';
+        }
+        
+        // Initialiser au chargement
+        document.addEventListener('DOMContentLoaded', function() {
+            updateBadge(25);
+        });
+    </script>
+
+</body>
+</html>
