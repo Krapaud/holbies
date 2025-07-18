@@ -8,7 +8,106 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialize keyboard shortcuts
     initKeyboardShortcuts();
+    
+    // Initialize user menu
+    initUserMenu();
 });
+
+// Fonction pour gérer le menu utilisateur
+function toggleUserMenu() {
+    const dropdown = document.getElementById('userDropdown');
+    const trigger = document.querySelector('.user-menu-trigger');
+    
+    if (dropdown && trigger) {
+        const isOpen = dropdown.classList.contains('show');
+        
+        if (isOpen) {
+            closeUserMenu();
+        } else {
+            openUserMenu();
+        }
+    }
+}
+
+function openUserMenu() {
+    const dropdown = document.getElementById('userDropdown');
+    const trigger = document.querySelector('.user-menu-trigger');
+    
+    if (dropdown && trigger) {
+        dropdown.classList.add('show');
+        trigger.classList.add('active');
+        
+        // Animation d'entrée pour les éléments du menu
+        const items = dropdown.querySelectorAll('.dropdown-item');
+        items.forEach((item, index) => {
+            item.style.opacity = '0';
+            item.style.transform = 'translateX(-10px)';
+            setTimeout(() => {
+                item.style.transition = 'all 0.2s ease';
+                item.style.opacity = '1';
+                item.style.transform = 'translateX(0)';
+            }, index * 50);
+        });
+    }
+}
+
+function closeUserMenu() {
+    const dropdown = document.getElementById('userDropdown');
+    const trigger = document.querySelector('.user-menu-trigger');
+    
+    if (dropdown && trigger) {
+        dropdown.classList.remove('show');
+        trigger.classList.remove('active');
+    }
+}
+
+function initUserMenu() {
+    // Fermer le menu quand on clique ailleurs
+    document.addEventListener('click', function(event) {
+        const userMenuContainer = document.querySelector('.user-menu-container');
+        
+        if (userMenuContainer && !userMenuContainer.contains(event.target)) {
+            closeUserMenu();
+        }
+    });
+    
+    // Fermer avec la touche Escape
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            closeUserMenu();
+        }
+    });
+}
+
+// Fonctions pour les éléments du menu
+function showSettings() {
+    alert('Paramètres - Fonctionnalité à venir !');
+}
+
+function showHelp() {
+    const helpContent = `
+🔧 RACCOURCIS CLAVIER :
+• Ctrl+Shift+D : Dashboard
+• Ctrl+Shift+A : Administration
+• Ctrl+Shift+L : Déconnexion
+• Ctrl+Shift+Q : Quiz
+• Ctrl+P : Mon Profil
+• F1 : Aide
+• Échap : Fermer les menus
+
+💡 NAVIGATION :
+• Utilisez le terminal interactif dans le dashboard
+• Consultez vos badges de progression
+• Testez vos connaissances avec les quiz
+
+📊 PROGRESSION :
+• Complétez les quiz pour gagner de l'XP
+• Débloquez des achievements
+• Suivez votre progression avec les badges
+    `;
+    
+    alert(helpContent);
+}
 
 function initFlashMessages() {
     const flashMessages = document.querySelectorAll('.flash-message');
@@ -81,11 +180,38 @@ function initKeyboardShortcuts() {
                         window.location.href = '/logout';
                     }
                     break;
+                case 'Q':
+                    e.preventDefault();
+                    if (document.querySelector('a[href*="quiz"]')) {
+                        window.location.href = '/quiz';
+                    }
+                    break;
             }
+        }
+        
+        // Raccourcis simples avec Ctrl
+        if (e.ctrlKey && !e.shiftKey) {
+            switch(e.key) {
+                case 'p':
+                case 'P':
+                    e.preventDefault();
+                    if (document.querySelector('a[href*="profile"]')) {
+                        window.location.href = '/profile';
+                    }
+                    break;
+            }
+        }
+        
+        // Aide avec F1
+        if (e.key === 'F1') {
+            e.preventDefault();
+            showHelp();
         }
         
         // Close modals/dropdowns with Escape
         if (e.key === 'Escape') {
+            closeUserMenu();
+            
             const openModals = document.querySelectorAll('.modal.active');
             openModals.forEach(modal => {
                 modal.classList.remove('active');

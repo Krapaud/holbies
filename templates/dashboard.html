@@ -1024,6 +1024,21 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Mettre à jour le badge
     updateBadge(Math.round(completionRate));
+    
+    // Test de diagnostic Matrix
+    setTimeout(() => {
+        console.log('🔍 DIAGNOSTIC MATRIX:');
+        console.log('Matrix function available:', typeof window.matrix);
+        console.log('Glitch function available:', typeof window.glitch);
+        console.log('Matrix background element:', document.getElementById('matrix-bg') ? 'FOUND' : 'NOT FOUND');
+        
+        // Test simple d'appel des fonctions
+        if (typeof window.matrix === 'function') {
+            console.log('✅ Matrix function is callable');
+        } else {
+            console.error('❌ Matrix function NOT callable');
+        }
+    }, 2000);
 });
 </script>
 {% endblock %}

@@ -4,126 +4,473 @@
 
 {% block content %}
 <div class="quiz-container">
+    <!-- En-tête amélioré -->
     <div class="quiz-header">
-        <h1 class="quiz-title">
-            <span class="title-icon">🧠</span>
-            Quiz sur le Langage C
-        </h1>
-        <p class="quiz-subtitle">Testez vos connaissances en programmation C</p>
-    </div>
-    
-    <div class="categories-grid">
-        {% for category, question_indices in categories.items() %}
-        <div class="category-card">
-            <div class="category-header">
-                <h3 class="category-title">{{ category }}</h3>
-                <span class="category-count">{{ question_indices|length }} questions</span>
+        <div class="quiz-hero">
+            <div class="hero-icon">🧠</div>
+            <h1 class="quiz-title">Quiz sur le Langage C</h1>
+            <p class="quiz-subtitle">Maîtrisez la programmation C étape par étape</p>
+            <div class="quiz-stats">
+                <div class="stat-item">
+                    <span class="stat-number">10</span>
+                    <span class="stat-label">Catégories</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">100</span>
+                    <span class="stat-label">Questions</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">{{ categories|length * 5 }}</span>
+                    <span class="stat-label">Quiz disponibles</span>
+                </div>
             </div>
-            
-            <div class="category-description">
-                {% if category == "Notions de base" %}
-                    <p>Variables, types de données, syntaxe de base</p>
-                    <div class="category-icon">📚</div>
-                {% elif category == "Structures de contrôle" %}
-                    <p>Conditions, boucles, branchements</p>
-                    <div class="category-icon">🔀</div>
-                {% elif category == "Tableaux et chaînes" %}
-                    <p>Manipulation des tableaux et chaînes de caractères</p>
-                    <div class="category-icon">📊</div>
-                {% elif category == "Fonctions" %}
-                    <p>Déclaration, appel, paramètres des fonctions</p>
-                    <div class="category-icon">⚙️</div>
-                {% elif category == "Pointeurs" %}
-                    <p>Adresses mémoire, allocation dynamique</p>
-                    <div class="category-icon">👉</div>
-                {% elif category == "Fichiers" %}
-                    <p>Lecture, écriture, manipulation de fichiers</p>
-                    <div class="category-icon">📁</div>
-                {% elif category == "Structures et typedef" %}
-                    <p>Structures de données personnalisées</p>
-                    <div class="category-icon">🏗️</div>
-                {% elif category == "Compilation et erreurs" %}
-                    <p>Processus de compilation, débogage</p>
-                    <div class="category-icon">🔧</div>
-                {% elif category == "Arithmétique et logique" %}
-                    <p>Opérateurs, expressions, logique booléenne</p>
-                    <div class="category-icon">🧮</div>
-                {% elif category == "Concepts avancés" %}
-                    <p>Techniques avancées de programmation C</p>
-                    <div class="category-icon">🚀</div>
-                {% endif %}
-            </div>
-            
-            <div class="category-difficulty">
-                {% set difficulty_level = loop.index %}
-                {% if difficulty_level <= 3 %}
-                    <span class="difficulty easy">Facile</span>
-                {% elif difficulty_level <= 6 %}
-                    <span class="difficulty medium">Moyen</span>
-                {% else %}
-                    <span class="difficulty hard">Difficile</span>
-                {% endif %}
-            </div>
-            
-            <a href="{{ url_for('quiz_category', category=category) }}" class="btn btn-primary category-btn">
-                <span class="btn-icon">🎯</span>
-                Commencer le Quiz
-            </a>
-        </div>
-        {% endfor %}
-    </div>
-    
-    <div class="quiz-info">
-        <div class="info-card">
-            <div class="info-icon">📝</div>
-            <h4>Format du Quiz</h4>
-            <p>5 questions par catégorie, réponses courtes ou explications</p>
-        </div>
-        
-        <div class="info-card">
-            <div class="info-icon">⏱️</div>
-            <h4>Temps</h4>
-            <p>Pas de limite de temps, prenez le temps de réfléchir</p>
-        </div>
-        
-        <div class="info-card">
-            <div class="info-icon">🏆</div>
-            <h4>Scoring</h4>
-            <p>Points accordés selon la qualité et complétude des réponses</p>
-        </div>
-        
-        <div class="info-card">
-            <div class="info-icon">📈</div>
-            <h4>Progression</h4>
-            <p>Suivez vos progrès dans votre profil utilisateur</p>
         </div>
     </div>
     
-    <div class="quiz-tips">
-        <h3 class="tips-title">
-            <span class="tips-icon">💡</span>
-            Conseils pour réussir
-        </h3>
+    <!-- Progression path -->
+    <div class="learning-path">
+        <h2 class="path-title">
+            <span class="path-icon">🛤️</span>
+            Parcours d'Apprentissage
+        </h2>
+        <div class="path-description">
+            Suivez notre parcours structuré pour maîtriser le langage C progressivement
+        </div>
+    </div>
+    
+    <!-- Catégories organisées par difficulté -->
+    <div class="categories-section">
+        <!-- Niveau Débutant -->
+        <div class="difficulty-group">
+            <div class="difficulty-header">
+                <span class="difficulty-icon">🌱</span>
+                <h3 class="difficulty-title">Niveau Débutant</h3>
+                <span class="difficulty-badge easy">Facile</span>
+            </div>
+            <div class="categories-grid">
+                <div class="category-card beginner">
+                    <div class="category-header">
+                        <div class="category-icon">📚</div>
+                        <h4 class="category-title">Notions de base</h4>
+                        <span class="category-count">{{ categories['Notions de base']|length }} questions</span>
+                    </div>
+                    <div class="category-description">
+                        <p>Variables, types de données, syntaxe de base du langage C</p>
+                        <div class="category-topics">
+                            <span class="topic-tag">Variables</span>
+                            <span class="topic-tag">Types</span>
+                            <span class="topic-tag">Syntaxe</span>
+                        </div>
+                    </div>
+                    <a href="{{ url_for('quiz_category', category='Notions de base') }}" class="category-btn">
+                        <span class="btn-icon">🎯</span>
+                        Commencer
+                    </a>
+                </div>
+                
+                <div class="category-card beginner">
+                    <div class="category-header">
+                        <div class="category-icon">🧮</div>
+                        <h4 class="category-title">Arithmétique et logique</h4>
+                        <span class="category-count">{{ categories['Arithmétique et logique']|length }} questions</span>
+                    </div>
+                    <div class="category-description">
+                        <p>Opérateurs, expressions, logique booléenne</p>
+                        <div class="category-topics">
+                            <span class="topic-tag">Opérateurs</span>
+                            <span class="topic-tag">Expressions</span>
+                            <span class="topic-tag">Logique</span>
+                        </div>
+                    </div>
+                    <a href="{{ url_for('quiz_category', category='Arithmétique et logique') }}" class="category-btn">
+                        <span class="btn-icon">🎯</span>
+                        Commencer
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Niveau Intermédiaire -->
+        <div class="difficulty-group">
+            <div class="difficulty-header">
+                <span class="difficulty-icon">⚙️</span>
+                <h3 class="difficulty-title">Niveau Intermédiaire</h3>
+                <span class="difficulty-badge medium">Moyen</span>
+            </div>
+            <div class="categories-grid">
+                <div class="category-card intermediate">
+                    <div class="category-header">
+                        <div class="category-icon">�</div>
+                        <h4 class="category-title">Structures de contrôle</h4>
+                        <span class="category-count">{{ categories['Structures de contrôle']|length }} questions</span>
+                    </div>
+                    <div class="category-description">
+                        <p>Conditions, boucles, branchements</p>
+                        <div class="category-topics">
+                            <span class="topic-tag">if/else</span>
+                            <span class="topic-tag">switch</span>
+                            <span class="topic-tag">for/while</span>
+                        </div>
+                    </div>
+                    <a href="{{ url_for('quiz_category', category='Structures de contrôle') }}" class="category-btn">
+                        <span class="btn-icon">🎯</span>
+                        Commencer
+                    </a>
+                </div>
+                
+                <div class="category-card intermediate">
+                    <div class="category-header">
+                        <div class="category-icon">📊</div>
+                        <h4 class="category-title">Tableaux et chaînes</h4>
+                        <span class="category-count">{{ categories['Tableaux et chaînes']|length }} questions</span>
+                    </div>
+                    <div class="category-description">
+                        <p>Manipulation des tableaux et chaînes de caractères</p>
+                        <div class="category-topics">
+                            <span class="topic-tag">Arrays</span>
+                            <span class="topic-tag">Strings</span>
+                            <span class="topic-tag">Indexation</span>
+                        </div>
+                    </div>
+                    <a href="{{ url_for('quiz_category', category='Tableaux et chaînes') }}" class="category-btn">
+                        <span class="btn-icon">🎯</span>
+                        Commencer
+                    </a>
+                </div>
+                
+                <div class="category-card intermediate">
+                    <div class="category-header">
+                        <div class="category-icon">⚙️</div>
+                        <h4 class="category-title">Fonctions</h4>
+                        <span class="category-count">{{ categories['Fonctions']|length }} questions</span>
+                    </div>
+                    <div class="category-description">
+                        <p>Déclaration, appel, paramètres des fonctions</p>
+                        <div class="category-topics">
+                            <span class="topic-tag">Prototypes</span>
+                            <span class="topic-tag">Paramètres</span>
+                            <span class="topic-tag">Return</span>
+                        </div>
+                    </div>
+                    <a href="{{ url_for('quiz_category', category='Fonctions') }}" class="category-btn">
+                        <span class="btn-icon">🎯</span>
+                        Commencer
+                    </a>
+                </div>
+                
+                <div class="category-card intermediate">
+                    <div class="category-header">
+                        <div class="category-icon">�</div>
+                        <h4 class="category-title">Fichiers</h4>
+                        <span class="category-count">{{ categories['Fichiers']|length }} questions</span>
+                    </div>
+                    <div class="category-description">
+                        <p>Lecture, écriture, manipulation de fichiers</p>
+                        <div class="category-topics">
+                            <span class="topic-tag">fopen</span>
+                            <span class="topic-tag">fread/fwrite</span>
+                            <span class="topic-tag">fclose</span>
+                        </div>
+                    </div>
+                    <a href="{{ url_for('quiz_category', category='Fichiers') }}" class="category-btn">
+                        <span class="btn-icon">🎯</span>
+                        Commencer
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Niveau Avancé -->
+        <div class="difficulty-group">
+            <div class="difficulty-header">
+                <span class="difficulty-icon">🚀</span>
+                <h3 class="difficulty-title">Niveau Avancé</h3>
+                <span class="difficulty-badge hard">Difficile</span>
+            </div>
+            <div class="categories-grid">
+                <div class="category-card advanced">
+                    <div class="category-header">
+                        <div class="category-icon">👉</div>
+                        <h4 class="category-title">Pointeurs</h4>
+                        <span class="category-count">{{ categories['Pointeurs']|length }} questions</span>
+                    </div>
+                    <div class="category-description">
+                        <p>Adresses mémoire, allocation dynamique</p>
+                        <div class="category-topics">
+                            <span class="topic-tag">Adresses</span>
+                            <span class="topic-tag">malloc/free</span>
+                            <span class="topic-tag">Déréférencement</span>
+                        </div>
+                    </div>
+                    <a href="{{ url_for('quiz_category', category='Pointeurs') }}" class="category-btn">
+                        <span class="btn-icon">🎯</span>
+                        Commencer
+                    </a>
+                </div>
+                
+                <div class="category-card advanced">
+                    <div class="category-header">
+                        <div class="category-icon">🏗️</div>
+                        <h4 class="category-title">Structures et typedef</h4>
+                        <span class="category-count">{{ categories['Structures et typedef']|length }} questions</span>
+                    </div>
+                    <div class="category-description">
+                        <p>Structures de données personnalisées</p>
+                        <div class="category-topics">
+                            <span class="topic-tag">struct</span>
+                            <span class="topic-tag">typedef</span>
+                            <span class="topic-tag">union</span>
+                        </div>
+                    </div>
+                    <a href="{{ url_for('quiz_category', category='Structures et typedef') }}" class="category-btn">
+                        <span class="btn-icon">🎯</span>
+                        Commencer
+                    </a>
+                </div>
+                
+                <div class="category-card advanced">
+                    <div class="category-header">
+                        <div class="category-icon">🔧</div>
+                        <h4 class="category-title">Compilation et erreurs</h4>
+                        <span class="category-count">{{ categories['Compilation et erreurs']|length }} questions</span>
+                    </div>
+                    <div class="category-description">
+                        <p>Processus de compilation, débogage</p>
+                        <div class="category-topics">
+                            <span class="topic-tag">gcc</span>
+                            <span class="topic-tag">Debug</span>
+                            <span class="topic-tag">Linking</span>
+                        </div>
+                    </div>
+                    <a href="{{ url_for('quiz_category', category='Compilation et erreurs') }}" class="category-btn">
+                        <span class="btn-icon">🎯</span>
+                        Commencer
+                    </a>
+                </div>
+                
+                <div class="category-card advanced">
+                    <div class="category-header">
+                        <div class="category-icon">🚀</div>
+                        <h4 class="category-title">Concepts avancés</h4>
+                        <span class="category-count">{{ categories['Concepts avancés']|length }} questions</span>
+                    </div>
+                    <div class="category-description">
+                        <p>Techniques avancées de programmation C</p>
+                        <div class="category-topics">
+                            <span class="topic-tag">Macros</span>
+                            <span class="topic-tag">Bibliothèques</span>
+                            <span class="topic-tag">Optimisation</span>
+                        </div>
+                    </div>
+                    <a href="{{ url_for('quiz_category', category='Concepts avancés') }}" class="category-btn">
+                        <span class="btn-icon">🎯</span>
+                        Commencer
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Section informations quiz améliorée -->
+    <div class="quiz-info-section">
+        <div class="section-header">
+            <h2 class="section-title">
+                <span class="section-icon">ℹ️</span>
+                Informations Quiz
+            </h2>
+            <div class="section-subtitle">Tout ce que vous devez savoir avant de commencer</div>
+        </div>
         
-        <div class="tips-list">
-            <div class="tip-item">
-                <span class="tip-number">1</span>
-                <p>Lisez attentivement chaque question</p>
+        <div class="info-grid">
+            <div class="info-card enhanced">
+                <div class="info-header">
+                    <div class="info-icon pulse">📝</div>
+                    <h4 class="info-title">Format du Quiz</h4>
+                </div>
+                <div class="info-content">
+                    <div class="info-detail">
+                        <span class="detail-label">Questions par catégorie:</span>
+                        <span class="detail-value">5 questions</span>
+                    </div>
+                    <div class="info-detail">
+                        <span class="detail-label">Type de réponses:</span>
+                        <span class="detail-value">Texte libre & code</span>
+                    </div>
+                    <div class="info-detail">
+                        <span class="detail-label">Niveau:</span>
+                        <span class="detail-value">Adaptatif</span>
+                    </div>
+                </div>
+                <div class="info-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 100%"></div>
+                    </div>
+                </div>
             </div>
             
-            <div class="tip-item">
-                <span class="tip-number">2</span>
-                <p>Donnez des réponses complètes et détaillées</p>
+            <div class="info-card enhanced">
+                <div class="info-header">
+                    <div class="info-icon pulse">⏱️</div>
+                    <h4 class="info-title">Gestion du Temps</h4>
+                </div>
+                <div class="info-content">
+                    <div class="info-detail">
+                        <span class="detail-label">Limite de temps:</span>
+                        <span class="detail-value">Aucune</span>
+                    </div>
+                    <div class="info-detail">
+                        <span class="detail-label">Temps recommandé:</span>
+                        <span class="detail-value">2-3 min/question</span>
+                    </div>
+                    <div class="info-detail">
+                        <span class="detail-label">Sauvegarde:</span>
+                        <span class="detail-value">Automatique</span>
+                    </div>
+                </div>
+                <div class="info-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 85%"></div>
+                    </div>
+                </div>
             </div>
             
-            <div class="tip-item">
-                <span class="tip-number">3</span>
-                <p>N'hésitez pas à donner des exemples de code</p>
+            <div class="info-card enhanced">
+                <div class="info-header">
+                    <div class="info-icon pulse">🏆</div>
+                    <h4 class="info-title">Système de Points</h4>
+                </div>
+                <div class="info-content">
+                    <div class="info-detail">
+                        <span class="detail-label">Points max/question:</span>
+                        <span class="detail-value">20 points</span>
+                    </div>
+                    <div class="info-detail">
+                        <span class="detail-label">Bonus code:</span>
+                        <span class="detail-value">+5 points</span>
+                    </div>
+                    <div class="info-detail">
+                        <span class="detail-label">Critères:</span>
+                        <span class="detail-value">Précision & clarté</span>
+                    </div>
+                </div>
+                <div class="info-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 75%"></div>
+                    </div>
+                </div>
             </div>
             
-            <div class="tip-item">
-                <span class="tip-number">4</span>
-                <p>Utilisez une syntaxe C correcte dans vos exemples</p>
+            <div class="info-card enhanced">
+                <div class="info-header">
+                    <div class="info-icon pulse">📈</div>
+                    <h4 class="info-title">Suivi Progression</h4>
+                </div>
+                <div class="info-content">
+                    <div class="info-detail">
+                        <span class="detail-label">Statistiques:</span>
+                        <span class="detail-value">Temps réel</span>
+                    </div>
+                    <div class="info-detail">
+                        <span class="detail-label">Badges:</span>
+                        <span class="detail-value">5 niveaux</span>
+                    </div>
+                    <div class="info-detail">
+                        <span class="detail-label">Historique:</span>
+                        <span class="detail-value">Complet</span>
+                    </div>
+                </div>
+                <div class="info-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 90%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Section conseils améliorée -->
+    <div class="quiz-tips-section">
+        <div class="section-header">
+            <h2 class="section-title">
+                <span class="section-icon">💡</span>
+                Guide de Réussite
+            </h2>
+            <div class="section-subtitle">Optimisez vos performances avec ces conseils d'experts</div>
+        </div>
+        
+        <div class="tips-container">
+            <div class="tips-grid">
+                <div class="tip-card">
+                    <div class="tip-header">
+                        <div class="tip-number">01</div>
+                        <div class="tip-icon">📖</div>
+                    </div>
+                    <div class="tip-content">
+                        <h4 class="tip-title">Lecture Attentive</h4>
+                        <p class="tip-description">Prenez le temps de bien comprendre chaque question avant de répondre</p>
+                        <div class="tip-tags">
+                            <span class="tip-tag">Analyse</span>
+                            <span class="tip-tag">Compréhension</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tip-card">
+                    <div class="tip-header">
+                        <div class="tip-number">02</div>
+                        <div class="tip-icon">✍️</div>
+                    </div>
+                    <div class="tip-content">
+                        <h4 class="tip-title">Réponses Détaillées</h4>
+                        <p class="tip-description">Expliquez votre raisonnement et donnez des exemples concrets</p>
+                        <div class="tip-tags">
+                            <span class="tip-tag">Détail</span>
+                            <span class="tip-tag">Exemples</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tip-card">
+                    <div class="tip-header">
+                        <div class="tip-number">03</div>
+                        <div class="tip-icon">💻</div>
+                    </div>
+                    <div class="tip-content">
+                        <h4 class="tip-title">Code Correct</h4>
+                        <p class="tip-description">Utilisez une syntaxe C correcte dans vos exemples de code</p>
+                        <div class="tip-tags">
+                            <span class="tip-tag">Syntaxe</span>
+                            <span class="tip-tag">Bonnes pratiques</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tip-card">
+                    <div class="tip-header">
+                        <div class="tip-number">04</div>
+                        <div class="tip-icon">🎯</div>
+                    </div>
+                    <div class="tip-content">
+                        <h4 class="tip-title">Pratique Régulière</h4>
+                        <p class="tip-description">Revenez régulièrement pour consolider vos connaissances</p>
+                        <div class="tip-tags">
+                            <span class="tip-tag">Régularité</span>
+                            <span class="tip-tag">Progression</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Conseil bonus -->
+            <div class="bonus-tip">
+                <div class="bonus-header">
+                    <span class="bonus-icon">🌟</span>
+                    <h3 class="bonus-title">Conseil Expert</h3>
+                </div>
+                <div class="bonus-content">
+                    <p>Commencez par les catégories de base avant de passer aux concepts avancés. 
+                    La progression logique vous aidera à mieux assimiler les notions complexes.</p>
+                </div>
             </div>
         </div>
     </div>
@@ -133,23 +480,177 @@
 {% block scripts %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Animation d'entrée pour les cartes
-    const cards = document.querySelectorAll('.category-card');
-    cards.forEach((card, index) => {
+    // Animation d'entrée pour les cartes de catégories
+    const categoryCards = document.querySelectorAll('.category-card');
+    categoryCards.forEach((card, index) => {
         card.style.animationDelay = `${index * 0.1}s`;
         card.classList.add('fade-in-up');
     });
     
-    // Effet hover sur les cartes
-    cards.forEach(card => {
+    // Animation d'entrée pour les cartes d'information
+    const infoCards = document.querySelectorAll('.info-card.enhanced');
+    infoCards.forEach((card, index) => {
+        card.style.animationDelay = `${(index + categoryCards.length) * 0.1}s`;
+        card.classList.add('fade-in-up');
+    });
+    
+    // Animation d'entrée pour les cartes de conseils
+    const tipCards = document.querySelectorAll('.tip-card');
+    tipCards.forEach((card, index) => {
+        card.style.animationDelay = `${(index + categoryCards.length + infoCards.length) * 0.1}s`;
+        card.classList.add('fade-in-up');
+    });
+    
+    // Effet hover amélioré sur les cartes de catégories
+    categoryCards.forEach(card => {
         card.addEventListener('mouseenter', function() {
             this.style.transform = 'translateY(-10px) scale(1.02)';
+            
+            // Effet sur les tags de sujets
+            const tags = this.querySelectorAll('.topic-tag');
+            tags.forEach((tag, index) => {
+                setTimeout(() => {
+                    tag.style.transform = 'scale(1.1)';
+                    tag.style.background = 'rgba(0, 255, 65, 0.2)';
+                }, index * 50);
+            });
         });
         
         card.addEventListener('mouseleave', function() {
             this.style.transform = 'translateY(0) scale(1)';
+            
+            // Remettre les tags à l'état normal
+            const tags = this.querySelectorAll('.topic-tag');
+            tags.forEach(tag => {
+                tag.style.transform = 'scale(1)';
+                tag.style.background = 'rgba(0, 255, 65, 0.1)';
+            });
         });
     });
+    
+    // Animation des barres de progression
+    const progressBars = document.querySelectorAll('.progress-fill');
+    const observerOptions = {
+        threshold: 0.5,
+        rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const progressObserver = new IntersectionObserver(function(entries) {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const progressBar = entry.target;
+                const width = progressBar.style.width;
+                progressBar.style.width = '0%';
+                
+                setTimeout(() => {
+                    progressBar.style.transition = 'width 1.5s ease-out';
+                    progressBar.style.width = width;
+                }, 200);
+                
+                progressObserver.unobserve(progressBar);
+            }
+        });
+    }, observerOptions);
+    
+    progressBars.forEach(bar => {
+        progressObserver.observe(bar);
+    });
+    
+    // Animation des numéros de conseils
+    const tipNumbers = document.querySelectorAll('.tip-number');
+    tipNumbers.forEach((number, index) => {
+        setTimeout(() => {
+            number.style.animation = 'bounce 0.6s ease-out';
+        }, (index + 1) * 200);
+    });
+    
+    // Effet de typing sur le titre du conseil bonus
+    const bonusTitle = document.querySelector('.bonus-title');
+    if (bonusTitle) {
+        const text = bonusTitle.textContent;
+        bonusTitle.textContent = '';
+        
+        setTimeout(() => {
+            let i = 0;
+            const typeWriter = setInterval(() => {
+                bonusTitle.textContent += text.charAt(i);
+                i++;
+                if (i > text.length - 1) {
+                    clearInterval(typeWriter);
+                    bonusTitle.style.borderRight = 'none';
+                }
+            }, 100);
+            bonusTitle.style.borderRight = '2px solid var(--primary-green)';
+        }, 2000);
+    }
+    
+    // Parallax léger sur les icônes flottantes
+    window.addEventListener('scroll', function() {
+        const scrolled = window.pageYOffset;
+        const parallaxElements = document.querySelectorAll('.section-icon, .hero-icon');
+        
+        parallaxElements.forEach(element => {
+            const speed = 0.5;
+            element.style.transform = `translateY(${scrolled * speed}px)`;
+        });
+    });
+    
+    // Animation au scroll pour les sections
+    const sections = document.querySelectorAll('.quiz-info-section, .quiz-tips-section');
+    const sectionObserver = new IntersectionObserver(function(entries) {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.animation = 'slideInFromLeft 0.8s ease-out';
+            }
+        });
+    }, { threshold: 0.3 });
+    
+    sections.forEach(section => {
+        sectionObserver.observe(section);
+    });
 });
+
+// Animations CSS supplémentaires
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes fade-in-up {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    @keyframes bounce {
+        0%, 20%, 60%, 100% {
+            transform: translateY(0);
+        }
+        40% {
+            transform: translateY(-10px);
+        }
+        80% {
+            transform: translateY(-5px);
+        }
+    }
+    
+    @keyframes slideInFromLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+    
+    .fade-in-up {
+        animation: fade-in-up 0.6s ease-out both;
+    }
+`;
+document.head.appendChild(style);
 </script>
 {% endblock %}
