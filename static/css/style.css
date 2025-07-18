@@ -947,17 +947,20 @@ a:hover {
     color: var(--text-light);
 }
 
-.terminal-cursor {
-    color: var(--primary-green);
-    animation: blink 1s infinite;
-}
-
 @keyframes blink {
     0%, 50% { opacity: 1; }
     51%, 100% { opacity: 0; }
 }
 
 /* Styles pour la console interactive */
+.terminal-input-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+    flex: 1;
+    margin-left: 0.5rem;
+}
+
 .terminal-input {
     background: transparent;
     border: none;
@@ -966,11 +969,26 @@ a:hover {
     font-size: 0.9rem;
     outline: none;
     width: 100%;
-    margin-left: 0.5rem;
 }
 
 .terminal-input::placeholder {
     color: var(--text-darker);
+}
+
+.terminal-cursor {
+    color: var(--primary-green);
+    animation: blink 1s infinite;
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+    pointer-events: none;
+    transition: left 0.1s ease;
+}
+
+.current-line {
+    display: flex;
+    align-items: center;
+    gap: 0;
 }
 
 .terminal-line.executed .terminal-command {
@@ -1147,6 +1165,282 @@ a:hover {
 @keyframes matrix-glow {
     from { text-shadow: 0 0 5px var(--primary-green); }
     to { text-shadow: 0 0 20px var(--primary-green), 0 0 30px var(--primary-green); }
+}
+
+/* Styles pour terminal Unix-like avancé */
+.terminal-buttons {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.terminal-button {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.terminal-button.close {
+    background-color: #ff5f57;
+}
+
+.terminal-button.minimize {
+    background-color: #ffbd2e;
+}
+
+.terminal-button.maximize {
+    background-color: #28ca42;
+}
+
+.terminal-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: linear-gradient(135deg, #2a2a2a, #1a1a1a);
+    border-bottom: 1px solid var(--border-gray);
+}
+
+.terminal-status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 12px;
+    background: #0a0a0a;
+    font-size: 0.75rem;
+    color: var(--text-darker);
+    border-bottom: 1px solid var(--border-gray);
+}
+
+.terminal-info {
+    color: var(--text-muted);
+}
+
+.system-info .terminal-text {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+.current-line {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Styles pour commandes système */
+.df-header, .df-line {
+    font-family: monospace;
+    color: var(--text-light);
+}
+
+.free-header, .free-line {
+    font-family: monospace;
+    color: var(--text-light);
+}
+
+.uptime {
+    color: var(--secondary-green);
+}
+
+.ping-header, .ping-line, .ping-stats {
+    color: var(--text-light);
+    font-family: monospace;
+}
+
+.netstat-header, .netstat-line {
+    color: var(--text-light);
+    font-family: monospace;
+}
+
+.process-line {
+    color: var(--text-light);
+    font-family: monospace;
+    font-size: 0.85rem;
+}
+
+.top-header {
+    color: var(--secondary-green);
+    font-weight: bold;
+}
+
+/* Styles pour développement */
+.gcc-output, .make-output {
+    color: var(--secondary-green);
+}
+
+.git-output, .git-commit, .git-author, .git-date, .git-message, .git-branch {
+    color: var(--text-light);
+    font-family: monospace;
+}
+
+.py-color {
+    color: #3776ab;
+}
+
+.dir-color {
+    color: var(--primary-green);
+    font-weight: bold;
+}
+
+.file-color {
+    color: var(--text-light);
+}
+
+.hidden-color {
+    color: var(--text-darker);
+}
+
+/* Styles pour commandes spéciales */
+.hack-title {
+    color: #ff0040;
+    font-weight: bold;
+    text-shadow: 0 0 10px #ff0040;
+    animation: pulse 1s ease-in-out infinite;
+}
+
+.hack-target {
+    color: var(--accent-orange);
+}
+
+.hack-step {
+    color: var(--primary-green);
+    animation: flicker 0.3s ease-in-out infinite alternate;
+}
+
+.hack-success {
+    color: var(--secondary-green);
+    font-weight: bold;
+    text-shadow: 0 0 15px var(--secondary-green);
+}
+
+.decode-header, .encrypt-header {
+    color: var(--accent-orange);
+    font-weight: bold;
+}
+
+.decode-input, .decode-output, .encrypt-input, .encrypt-output {
+    color: var(--text-light);
+    font-family: monospace;
+}
+
+.decode-status, .encrypt-status {
+    color: var(--secondary-green);
+}
+
+/* Styles pour utilitaires */
+.grep-match {
+    color: var(--accent-orange);
+    background: rgba(255, 107, 53, 0.1);
+}
+
+.wc-output {
+    color: var(--text-light);
+    font-family: monospace;
+}
+
+.history-line {
+    color: var(--text-muted);
+    font-family: monospace;
+}
+
+.find-result {
+    color: var(--primary-green);
+}
+
+.cowsay {
+    color: var(--text-light);
+    font-family: monospace;
+    white-space: pre;
+    line-height: 1.2;
+}
+
+.fortune {
+    color: var(--secondary-green);
+    font-style: italic;
+    border-left: 2px solid var(--primary-green);
+    padding-left: 1rem;
+}
+
+/* Styles pour sudo */
+.sudo-header {
+    color: #ff6b35;
+    font-weight: bold;
+}
+
+/* Styles pour pages man */
+.man-section {
+    color: var(--accent-orange);
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.cmd-category {
+    color: var(--accent-orange);
+    font-weight: bold;
+    margin: 0.5rem 0;
+}
+
+.help-tip {
+    color: var(--text-muted);
+    font-style: italic;
+    margin-top: 1rem;
+}
+
+/* Styles pour SSH et wget */
+.ssh-connecting {
+    color: var(--secondary-green);
+}
+
+.wget-progress {
+    color: var(--primary-green);
+    font-family: monospace;
+}
+
+/* Styles pour vim/nano */
+.vim-output, .nano-output {
+    color: var(--secondary-green);
+}
+
+.nano-help {
+    color: var(--text-darker);
+    font-size: 0.8rem;
+}
+
+/* Animation pour mode plein écran */
+#terminal.fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10000;
+    background: var(--background-black);
+    border-radius: 0;
+    padding: 1rem;
+}
+
+#terminal.fullscreen .terminal-content {
+    height: calc(100vh - 120px);
+    overflow-y: auto;
+}
+
+/* Amélioration responsive */
+@media (max-width: 768px) {
+    .terminal-controls {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .terminal-status-bar {
+        flex-direction: column;
+        gap: 0.25rem;
+        text-align: center;
+    }
+    
+    .terminal-buttons {
+        order: 2;
+    }
 }
 
 /* ==========================================================================

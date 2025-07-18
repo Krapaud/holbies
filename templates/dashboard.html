@@ -237,19 +237,40 @@
             <div class="card-content">
                 <div class="console-terminal" id="terminal">
                     <div class="terminal-header">
-                        <span class="terminal-title">~/matrix-console v2.0</span>
-                        <span class="terminal-status">CONNECTED</span>
+                        <div class="terminal-controls">
+                            <div class="terminal-buttons">
+                                <span class="terminal-button close"></span>
+                                <span class="terminal-button minimize"></span>
+                                <span class="terminal-button maximize"></span>
+                            </div>
+                            <span class="terminal-title">matrix@hackaton: ~/dev</span>
+                        </div>
+                        <div class="terminal-status-bar">
+                            <span class="terminal-info">TTY: /dev/pts/1</span>
+                            <span class="terminal-info">Shell: bash</span>
+                            <span class="terminal-info">User: {{ user.username }}</span>
+                            <span class="terminal-status">ONLINE</span>
+                        </div>
                     </div>
                     <div class="terminal-content" id="terminal-content">
-                        <div class="terminal-line welcome">
-                            <span class="terminal-text">Matrix Development Console - Logged in as {{ user.username }}</span>
+                        <div class="terminal-line system-info">
+                            <span class="terminal-text">Last login: {{ "Jul 18 17:20:15 2025" }} from 192.168.1.42</span>
+                        </div>
+                        <div class="terminal-line system-info">
+                            <span class="terminal-text">Matrix Development Environment v3.1.4 - Kernel 5.15.0-matrix</span>
+                        </div>
+                        <div class="terminal-line system-info">
+                            <span class="terminal-text">Welcome to the Matrix, {{ user.username }}. Your current access level: {% if user.is_admin %}ROOT{% else %}USER{% endif %}</span>
                         </div>
                         <div class="terminal-line">
-                            <span class="terminal-text">Type 'help' for available commands</span>
+                            <span class="terminal-text">Type 'help' or 'man matrix' for available commands</span>
                         </div>
-                        <div class="terminal-line">
-                            <span class="terminal-prompt">{{ user.username }}@matrix:~$</span>
-                            <input type="text" class="terminal-input" id="terminal-input" placeholder="Tapez une commande..." autocomplete="off">
+                        <div class="terminal-line current-line">
+                            <span class="terminal-prompt">{{ user.username }}@matrix:~/dev$</span>
+                            <div class="terminal-input-container">
+                                <input type="text" class="terminal-input" id="terminal-input" placeholder="" autocomplete="off" spellcheck="false">
+                                <span class="terminal-cursor">█</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -261,16 +282,16 @@
 
 {% block scripts %}
 <script>
-// Données utilisateur pour les commandes
-window.userData = {
-    username: '{{ user.username | safe }}',
-    level: {{ user.level | default(1) }},
-    xp: {{ user.xp_points | default(0) }},
-    quizzes: {{ user.total_quizzes | default(0) }},
-    completionRate: {{ user.completion_rate | default(0) }},
-    isAdmin: {% if user.is_admin %}true{% else %}false{% endif %},
-    bestCategory: '{{ user.best_category | default("Aucune") | safe }}'
-};
+// Données utilisateur pour les commandes (format JSON sécurisé)
+window.userData = {{ {
+    'username': user.username or 'guest',
+    'level': user.level or 1,
+    'xp': user.xp_points or 0,
+    'quizzes': user.total_quizzes or 0,
+    'completionRate': user.completion_rate or 0,
+    'isAdmin': user.is_admin or False,
+    'bestCategory': user.best_category or 'Aucune'
+} | tojson }};
 </script>
 
 <script>
@@ -330,141 +351,319 @@ let isFullscreen = false;
 // Récupération des données utilisateur
 const userData = window.userData;
 
-// Commandes disponibles
+// Commandes disponibles - Terminal Unix-like complet
 const commands = {
+    // Commandes système de base
     help: {
         description: 'Affiche la liste des commandes disponibles',
-        execute: () => {
-            return `
-<span class="cmd-help">Commandes disponibles:</span>
-• help - Affiche cette aide
-• whoami - Informations utilisateur  
-• stats - Statistiques de progression
-• quiz - Informations sur les quiz
-• matrix - Animation Matrix
-• clear - Effacer l'écran
-• date - Date et heure actuelles
-• ls - Liste des "fichiers" disponibles
-• cat [file] - Affiche le contenu d'un fichier
-• sudo [command] - Exécuter en mode admin ${userData.isAdmin ? '(disponible)' : '(non autorisé)'}
-• hack - Mode hacker 😈
-• joke - Blague de développeur
-• quote - Citation inspirante`;
-        }
-    },
-    
-    whoami: {
-        description: 'Affiche les informations utilisateur',
-        execute: () => {
-            return `
-<span class="user-info">Utilisateur: ${userData.username}</span>
-<span class="user-info">Niveau: ${userData.level}</span>
-<span class="user-info">Statut: ${userData.isAdmin ? 'ADMINISTRATEUR' : 'UTILISATEUR'}</span>
-<span class="user-info">Accès: ${userData.isAdmin ? 'FULL_ACCESS_GRANTED' : 'LIMITED_ACCESS'}</span>`;
-        }
-    },
-    
-    stats: {
-        description: 'Affiche les statistiques de progression',
-        execute: () => {
-            return `
-<span class="stats-header">═══ STATISTIQUES DE PROGRESSION ═══</span>
-<span class="stat-line">Niveau actuel: ${userData.level}</span>
-<span class="stat-line">Points XP: ${userData.xp}</span>
-<span class="stat-line">Quiz complétés: ${userData.quizzes}</span>
-<span class="stat-line">Taux de réussite: ${userData.completionRate.toFixed(1)}%</span>
-<span class="stat-line">Spécialité: ${userData.bestCategory || 'En cours de détermination'}</span>`;
-        }
-    },
-    
-    quiz: {
-        description: 'Informations sur les quiz',
-        execute: () => {
-            return `
-<span class="quiz-info">╔═══ SYSTÈME DE QUIZ C ═══╗</span>
-<span class="quiz-info">║ 10 catégories disponibles   ║</span>
-<span class="quiz-info">║ 100 questions au total      ║</span>
-<span class="quiz-info">║ Système XP intégré          ║</span>
-<span class="quiz-info">╚═══════════════════════════════╝</span>
-<span class="quiz-tip">Tapez 'quiz start' pour commencer un quiz</span>`;
-        }
-    },
-    
-    'quiz start': {
-        description: 'Démarre un quiz',
-        execute: () => {
-            setTimeout(() => window.location.href = '{{ url_for("quiz_home") }}', 1000);
-            return '<span class="success">Redirection vers les quiz...</span>';
-        }
-    },
-    
-    matrix: {
-        description: 'Lance l\'animation Matrix',
-        execute: () => {
-            if (typeof matrix === 'function') {
-                matrix();
-                return '<span class="matrix-text">Mode Matrix activé... Suivez le lapin blanc 🐰</span>';
+        usage: 'help [command]',
+        execute: (args) => {
+            if (args[0]) {
+                const cmd = commands[args[0]];
+                if (cmd) {
+                    return `<span class="cmd-help">MANUEL: ${args[0]}</span>
+<span class="man-section">DESCRIPTION:</span>
+${cmd.description}
+
+<span class="man-section">UTILISATION:</span>
+${cmd.usage || args[0]}
+
+<span class="man-section">EXEMPLES:</span>
+${cmd.examples || 'Aucun exemple disponible'}`;
+                }
+                return `<span class="error">help: commande '${args[0]}' non trouvée</span>`;
             }
-            return '<span class="error">Animation Matrix non disponible</span>';
+            
+            return `<span class="cmd-help">COMMANDES SYSTÈME DISPONIBLES:</span>
+
+<span class="cmd-category">═══ NAVIGATION & FICHIERS ═══</span>
+• pwd         - Affiche le répertoire courant
+• ls [-la]    - Liste le contenu du répertoire
+• cd [dir]    - Change de répertoire
+• cat [file]  - Affiche le contenu d'un fichier
+• mkdir [dir] - Crée un répertoire
+• touch [file]- Crée un fichier vide
+• rm [file]   - Supprime un fichier
+• cp [src] [dest] - Copie un fichier
+• mv [src] [dest] - Déplace/renomme un fichier
+• find [path] [name] - Recherche de fichiers
+
+<span class="cmd-category">═══ SYSTÈME & INFORMATIONS ═══</span>
+• whoami      - Nom d'utilisateur actuel
+• id          - Informations utilisateur détaillées
+• uname [-a]  - Informations système
+• ps [aux]    - Liste des processus
+• top         - Moniteur de processus en temps réel
+• df [-h]     - Espace disque
+• free [-h]   - Utilisation mémoire
+• uptime      - Temps de fonctionnement système
+• date        - Date et heure actuelles
+• history     - Historique des commandes
+
+<span class="cmd-category">═══ RÉSEAU & SÉCURITÉ ═══</span>
+• ping [host] - Test de connectivité réseau
+• netstat     - Connexions réseau
+• sudo [cmd]  - Exécuter en tant que superutilisateur
+• ssh [user@host] - Connexion SSH
+• wget [url]  - Téléchargement de fichiers
+
+<span class="cmd-category">═══ DÉVELOPPEMENT ═══</span>
+• gcc [file]  - Compilateur C
+• make        - Outil de construction
+• git [cmd]   - Contrôle de version Git
+• vim [file]  - Éditeur de texte
+• nano [file] - Éditeur de texte simple
+
+<span class="cmd-category">═══ MATRIX SPÉCIAL ═══</span>
+• matrix      - Animation Matrix
+• hack        - Mode hacker avancé
+• quiz        - Système de quiz interactif
+• stats       - Statistiques utilisateur
+• decode [text] - Décodeur Matrix
+• encrypt [text] - Chiffreur Matrix
+
+<span class="cmd-category">═══ UTILITAIRES ═══</span>
+• clear       - Effacer l'écran
+• man [cmd]   - Manuel d'une commande
+• which [cmd] - Localise une commande
+• echo [text] - Affiche du texte
+• grep [pattern] [file] - Recherche dans fichiers
+• wc [file]   - Compte lignes/mots/caractères
+• fortune     - Citations aléatoires
+• cowsay [text] - Vache qui parle
+
+<span class="help-tip">Tapez 'man [commande]' pour plus d'informations sur une commande spécifique</span>`;
         }
     },
-    
-    clear: {
-        description: 'Efface l\'écran',
-        execute: () => {
-            clearTerminal();
+
+    man: {
+        description: 'Manuel des commandes',
+        usage: 'man [command]',
+        execute: (args) => commands.help.execute(args)
+    },
+
+    // Navigation et fichiers
+    pwd: {
+        description: 'Affiche le répertoire de travail actuel',
+        usage: 'pwd',
+        execute: () => '/home/' + userData.username + '/dev/matrix-project'
+    },
+
+    ls: {
+        description: 'Liste le contenu du répertoire',
+        usage: 'ls [-la] [directory]',
+        examples: 'ls -la\nls /home\nls *.c',
+        execute: (args) => {
+            const showHidden = args.includes('-a') || args.includes('-la');
+            const longFormat = args.includes('-l') || args.includes('-la');
+            
+            const files = [
+                { name: 'app.py', size: '2.4K', date: 'Jul 18 14:32', type: 'file', perms: '-rw-r--r--' },
+                { name: 'quiz_data.py', size: '15K', date: 'Jul 18 12:15', type: 'file', perms: '-rw-r--r--' },
+                { name: 'templates/', size: '4.0K', date: 'Jul 18 14:30', type: 'dir', perms: 'drwxr-xr-x' },
+                { name: 'static/', size: '4.0K', date: 'Jul 18 14:25', type: 'dir', perms: 'drwxr-xr-x' },
+                { name: 'database.db', size: '64K', date: 'Jul 18 14:35', type: 'file', perms: '-rw-------' },
+                { name: 'README.md', size: '1.2K', date: 'Jul 18 10:00', type: 'file', perms: '-rw-r--r--' },
+                { name: 'requirements.txt', size: '256B', date: 'Jul 18 10:05', type: 'file', perms: '-rw-r--r--' }
+            ];
+            
+            if (showHidden) {
+                files.unshift(
+                    { name: '.', size: '4.0K', date: 'Jul 18 14:35', type: 'dir', perms: 'drwxr-xr-x' },
+                    { name: '..', size: '4.0K', date: 'Jul 18 10:00', type: 'dir', perms: 'drwxr-xr-x' },
+                    { name: '.git/', size: '4.0K', date: 'Jul 18 10:00', type: 'dir', perms: 'drwxr-xr-x' },
+                    { name: '.env', size: '128B', date: 'Jul 18 10:05', type: 'file', perms: '-rw-------' }
+                );
+            }
+            
+            if (longFormat) {
+                let total = files.filter(f => f.name !== '.' && f.name !== '..').length;
+                let output = `total ${total}\n`;
+                files.forEach(file => {
+                    const color = file.type === 'dir' ? 'dir-color' : 
+                                 file.name.endsWith('.py') ? 'py-color' : 
+                                 file.name.startsWith('.') ? 'hidden-color' : 'file-color';
+                    output += `<span class="${color}">${file.perms} 1 ${userData.username} ${userData.username} ${file.size.padStart(6)} ${file.date} ${file.name}</span>\n`;
+                });
+                return output;
+            } else {
+                return files.map(file => {
+                    const color = file.type === 'dir' ? 'dir-color' : 
+                                 file.name.endsWith('.py') ? 'py-color' : 
+                                 file.name.startsWith('.') ? 'hidden-color' : 'file-color';
+                    return `<span class="${color}">${file.name}</span>`;
+                }).join('  ');
+            }
+        }
+    },
+
+    cd: {
+        description: 'Change le répertoire courant',
+        usage: 'cd [directory]',
+        examples: 'cd ..\ncd /home\ncd templates',
+        execute: (args) => {
+            const dir = args[0] || '~';
+            currentPath = dir === '~' ? '/home/' + userData.username : 
+                         dir === '..' ? '/home/' + userData.username :
+                         dir === '/' ? '/' :
+                         currentPath + '/' + dir;
+            updatePrompt();
             return null;
         }
     },
-    
-    date: {
-        description: 'Affiche la date et l\'heure',
-        execute: () => {
-            return `<span class="date-info">${new Date().toLocaleString('fr-FR')}</span>`;
+
+    cat: {
+        description: 'Affiche le contenu d\'un fichier',
+        usage: 'cat [file...]',
+        examples: 'cat README.md\ncat app.py | head',
+        execute: (args) => {
+            if (!args[0]) return '<span class="error">cat: argument manquant</span>';
+            
+            const files = {
+                'README.md': `<span class="file-content"># Matrix Development Hub
+
+## Description
+Application Flask avec système de quiz interactif en C
+Thème Matrix avec progression utilisateur et achievements
+
+## Installation
+\`\`\`bash
+pip install -r requirements.txt
+python app.py
+\`\`\`
+
+## Fonctionnalités
+- Authentification utilisateur
+- Quiz programmation C (100 questions)
+- Système de progression XP/Niveaux
+- Console Matrix interactive
+- Interface administrateur</span>`,
+
+                'app.py': `<span class="py-color">#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Matrix Development Hub - Application Flask principale
+Auteur: ${userData.username}
+Date: July 18, 2025
+"""
+
+from flask import Flask, render_template, request, redirect, url_for
+import sqlite3
+import hashlib
+from quiz_data import questions, answers, categories
+
+app = Flask(__name__)
+app.secret_key = 'matrix_secret_key_2025'
+
+# Configuration base de données
+DATABASE = 'database.db'
+...</span>`,
+
+                'requirements.txt': `<span class="file-content">Flask==2.3.3
+Werkzeug==2.3.7
+Jinja2==3.1.2
+sqlite3
+hashlib</span>`,
+
+                '.env': userData.isAdmin ? 
+                    `<span class="secret">FLASK_ENV=development
+DEBUG=True
+SECRET_KEY=matrix_ultimate_secret_2025
+ADMIN_TOKEN=${userData.username}_admin_access
+MATRIX_CODE=follow_the_white_rabbit</span>` :
+                    '<span class="error">cat: .env: Permission denied</span>',
+
+                'database.db': '<span class="error">cat: database.db: Impossible d\'afficher un fichier binaire</span>',
+
+                'profile.txt': `<span class="user-profile">═══ PROFIL SYSTÈME UTILISATEUR ═══
+Login:          ${userData.username}
+UID:            1001
+GID:            1001
+Home:           /home/${userData.username}
+Shell:          /bin/bash
+Groups:         ${userData.isAdmin ? 'sudo,admin,matrix' : 'users,matrix'}
+Level:          ${userData.level}
+XP:             ${userData.xp}
+Clearance:      ${userData.isAdmin ? 'TOP_SECRET' : 'RESTRICTED'}
+Last Login:     ${new Date().toISOString()}
+Terminal:       /dev/pts/1
+Access Status:  ACTIVE</span>`
+            };
+            
+            const file = args[0];
+            if (files[file]) {
+                return files[file];
+            } else {
+                return `<span class="error">cat: ${file}: Aucun fichier ou dossier de ce type</span>`;
+            }
         }
     },
-    
-    ls: {
-        description: 'Liste les fichiers disponibles',
-        execute: () => {
-            return `
-<span class="file-list">profile.txt    quiz_data.db    achievements.log</span>
-<span class="file-list">matrix.exe     settings.conf   secret.txt</span>`;
+
+    // Commandes système
+    whoami: {
+        description: 'Affiche le nom d\'utilisateur actuel',
+        usage: 'whoami',
+        execute: () => userData.username
+    },
+
+    id: {
+        description: 'Affiche les informations d\'identification utilisateur',
+        usage: 'id [user]',
+        execute: (args) => {
+            const user = args[0] || userData.username;
+            if (user === userData.username) {
+                return `uid=1001(${userData.username}) gid=1001(${userData.username}) groups=1001(${userData.username}),27(sudo),1000(matrix)${userData.isAdmin ? ',0(root)' : ''}`;
+            }
+            return `id: ${user}: utilisateur inexistant`;
         }
     },
-    
-    hack: {
-        description: 'Mode hacker',
-        execute: () => {
-            return `
-<span class="hack-mode">HACK MODE ACTIVATED</span>
-<span class="hack-text">Initializing quantum algorithms...</span>
-<span class="hack-text">Bypassing firewall... ████████████ 100%</span>
-<span class="hack-text">Access granted to mainframe</span>
-<span class="hack-warning">⚠️  WARNING: You're now in the Matrix ⚠️</span>`;
+
+    uname: {
+        description: 'Informations système',
+        usage: 'uname [-a]',
+        execute: (args) => {
+            if (args.includes('-a')) {
+                return 'Linux matrix 5.15.0-matrix #1 SMP PREEMPT Jul 18 2025 x86_64 x86_64 x86_64 GNU/Linux';
+            }
+            return 'Linux';
         }
     },
-    
-    joke: {
-        description: 'Blague de développeur',
-        execute: () => {
-            const jokes = [
-                "Pourquoi les développeurs préfèrent-ils le mode sombre ? Parce que la lumière attire les bugs ! 🐛",
-                "Comment appelle-t-on un développeur qui ne code qu'en C ? Un Ciste ! 😄",
-                "Que dit un développeur quand il est en colère ? Segmentation fault ! 💥"
+
+    ps: {
+        description: 'Affiche les processus en cours',
+        usage: 'ps [aux]',
+        execute: (args) => {
+            const processes = [
+                'PID TTY          TIME CMD',
+                '  1 ?        00:00:01 systemd',
+                '  2 ?        00:00:00 kthreadd',
+                '  3 ?        00:00:00 rcu_gp',
+                `1001 pts/1   00:00:00 bash`,
+                `1042 pts/1   00:00:02 python3 app.py`,
+                `1055 pts/1   00:00:01 matrix-console`,
+                `1067 pts/1   00:00:00 ps`
             ];
-            return `<span class="joke">${jokes[Math.floor(Math.random() * jokes.length)]}</span>`;
+            
+            if (args.includes('aux') || args.includes('ax')) {
+                return processes.map(p => `<span class="process-line">${p}</span>`).join('\n');
+            }
+            return processes.slice(3).map(p => `<span class="process-line">${p}</span>`).join('\n');
         }
     },
-    
-    quote: {
-        description: 'Citation inspirante',
+
+    top: {
+        description: 'Moniteur de processus en temps réel',
+        usage: 'top',
         execute: () => {
-            const quotes = [
-                '"Le code est comme l\'humour. Quand vous devez l\'expliquer, c\'est mauvais." - Cory House',
-                '"La meilleure façon de prédire l\'avenir est de le programmer." - Alan Kay'
-            ];
-            return `<span class="quote">${quotes[Math.floor(Math.random() * quotes.length)]}</span>`;
+            return `<span class="top-header">top - ${new Date().toLocaleTimeString()} up 2 days, 14:32, 1 user, load average: 0.15, 0.08, 0.05</span>
+<span class="top-header">Tasks: 156 total, 1 running, 155 sleeping, 0 stopped, 0 zombie</span>
+<span class="top-header">%Cpu(s): 2.3 us, 1.1 sy, 0.0 ni, 96.5 id, 0.1 wa, 0.0 hi, 0.0 si, 0.0 st</span>
+<span class="top-header">MiB Mem: 8192.0 total, 2048.5 free, 4096.2 used, 2047.3 buff/cache</span>
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
+ 1042 ${userData.username}   20   0  234512  45328  12544 S   1.3   0.6   0:02.15 python3
+ 1055 ${userData.username}   20   0   18456   3584   2816 S   0.3   0.0   0:01.22 matrix-console
+    1 root      20   0  168656  13312   8448 S   0.0   0.2   0:01.45 systemd`;
         }
     }
 };
@@ -498,21 +697,96 @@ commands.cat = {
     }
 };
 
+// Variables globales pour terminal avancé
+let currentPath = '/home/' + userData.username + '/dev/matrix-project';
+let commandCount = 0;
+
+// Fonction pour mettre à jour le prompt
+function updatePrompt() {
+    const input = document.getElementById('terminal-input');
+    if (input && input.parentElement) {
+        const prompt = input.parentElement.querySelector('.terminal-prompt');
+        if (prompt) {
+            const shortPath = currentPath.replace('/home/' + userData.username, '~');
+            prompt.textContent = `${userData.username}@matrix:${shortPath}$`;
+        }
+    }
+}
+
+// Commandes système avancées
+Object.assign(commands, {
+    // Gestion fichiers
+    mkdir: { description: 'Crée un répertoire', usage: 'mkdir [dir]', execute: (args) => args[0] ? `<span class="success">mkdir: '${args[0]}' créé</span>` : '<span class="error">mkdir: argument manquant</span>' },
+    touch: { description: 'Crée un fichier', usage: 'touch [file]', execute: (args) => args[0] ? `<span class="success">touch: '${args[0]}' créé</span>` : '<span class="error">touch: argument manquant</span>' },
+    rm: { description: 'Supprime un fichier', usage: 'rm [file]', execute: (args) => args[0] && !args.includes('/') ? `<span class="warning">rm: '${args[0]}' supprimé</span>` : '<span class="error">rm: opération non autorisée</span>' },
+    
+    // Système
+    df: { description: 'Espace disque', execute: () => `<span class="df-line">/dev/sda1        15G  8.2G   6.2G  57% /</span><span class="df-line">/dev/sda2       100G   45G    55G  45% /home</span>` },
+    free: { description: 'Mémoire', execute: () => `<span class="free-line">Mem:           8.0G        4.0G        1.2G        512M        2.8G        3.5G</span>` },
+    uptime: { description: 'Temps de fonctionnement', execute: () => `<span class="uptime"> ${new Date().toTimeString().slice(0,8)} up 2 days, 14:32, 1 user, load average: 0.15, 0.08, 0.05</span>` },
+    
+    // Réseau
+    ping: { description: 'Test réseau', execute: (args) => { const host = args[0] || 'matrix.local'; return `<span class="ping-line">PING ${host}: 64 bytes from 192.168.1.42: time=0.234 ms</span><span class="ping-stats">1 packets transmitted, 1 received, 0% packet loss</span>`; }},
+    netstat: { description: 'Connexions réseau', execute: () => `<span class="netstat-line">tcp   127.0.0.1:5001   LISTEN</span><span class="netstat-line">tcp   0.0.0.0:22       LISTEN</span>` },
+    
+    // Développement
+    gcc: { description: 'Compilateur C', execute: (args) => args[0] && args[0].endsWith('.c') ? `<span class="success">gcc: compilation de ${args[0]} réussie</span>` : '<span class="error">gcc: fichier .c requis</span>' },
+    make: { description: 'Construction', execute: () => `<span class="make-output">make: construction terminée avec succès</span>` },
+    git: { description: 'Contrôle version', execute: (args) => { const cmd = args[0] || 'status'; const gitCmds = { status: 'On branch main\nnothing to commit', log: 'commit abc123\nAuthor: ' + userData.username }; return gitCmds[cmd] || 'git: commande inconnue'; }},
+    
+    // Utilitaires
+    echo: { description: 'Affiche texte', execute: (args) => args.join(' ') },
+    which: { description: 'Localise commande', execute: (args) => commands[args[0]] ? `/usr/bin/${args[0]}` : `which: ${args[0]} non trouvé` },
+    grep: { description: 'Recherche motifs', execute: (args) => args.length >= 2 ? `<span class="grep-match">Motif "${args[0]}" trouvé dans ${args[1]}</span>` : '<span class="error">grep: motif et fichier requis</span>' },
+    wc: { description: 'Compte mots', execute: (args) => `<span class="wc-output">   42  284 1642 ${args[0] || 'stdin'}</span>` },
+    
+    // Matrix spécial
+    hack: { description: 'Mode hacker Matrix', execute: (args) => `<span class="hack-title">MATRIX HACK v3.0</span><span class="hack-step">Breach initié sur ${args[0] || 'localhost'}... ████████████ 100%</span><span class="hack-success">ACCÈS ACCORDÉ - Bienvenue dans la Matrix</span>` },
+    decode: { description: 'Décodeur Matrix', execute: (args) => args[0] ? `<span class="decode-output">Décodé: ${args.join(' ').split('').map(c => String.fromCharCode(c.charCodeAt(0) + 1)).join('')}</span>` : '<span class="error">decode: texte requis</span>' },
+    encrypt: { description: 'Chiffreur Matrix', execute: (args) => args[0] ? `<span class="encrypt-output">Chiffré: ${args.join(' ').split('').map(c => String.fromCharCode(c.charCodeAt(0) - 1)).join('')}</span>` : '<span class="error">encrypt: texte requis</span>' },
+    
+    // Fun
+    fortune: { description: 'Citations', execute: () => { const quotes = ['"The Matrix is everywhere" - Morpheus', '"There is no spoon" - Spoon Boy', '"Code is poetry" - WordPress']; return `<span class="fortune">${quotes[Math.floor(Math.random() * quotes.length)]}</span>`; }},
+    cowsay: { description: 'Vache parlante', execute: (args) => { const text = args.join(' ') || 'Hello Matrix!'; return `<span class="cowsay"> ${'_'.repeat(text.length + 2)}\n< ${text} >\n ${'‾'.repeat(text.length + 2)}\n        \\   ^__^\n         \\  (oo)\\_______\n            (__)\\       )\\/\\\n                ||----w |\n                ||     ||</span>`; }},
+    
+    // Admin
+    sudo: { description: 'Superutilisateur', execute: (args) => { if (!userData.isAdmin) return `<span class="error">sudo: accès refusé pour ${userData.username}</span>`; if (!args[0]) return '<span class="error">sudo: commande requise</span>'; const cmd = commands[args[0]]; return cmd ? `<span class="sudo-header">[sudo] ${args.join(' ')}</span>\n${cmd.execute(args.slice(1))}` : `<span class="error">sudo: ${args[0]} non trouvée</span>`; }}
+});
+
 function initTerminal() {
     const input = document.getElementById('terminal-input');
     const content = document.getElementById('terminal-content');
+    const cursor = document.querySelector('.terminal-cursor');
     
     if (!input || !content) return;
+    
+    // Fonction pour mettre à jour la position du curseur
+    function updateCursorPosition() {
+        if (cursor && input) {
+            const text = input.value;
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            context.font = '0.9rem JetBrains Mono, monospace';
+            const textWidth = context.measureText(text).width;
+            cursor.style.left = textWidth + 'px';
+        }
+    }
+    
+    // Mettre à jour le curseur lors de la saisie
+    input.addEventListener('input', updateCursorPosition);
+    input.addEventListener('keyup', updateCursorPosition);
     
     input.addEventListener('keydown', function(e) {
         if (e.key === 'Enter') {
             executeCommand(input.value.trim());
             input.value = '';
+            updateCursorPosition();
         } else if (e.key === 'ArrowUp') {
             e.preventDefault();
             if (historyIndex < commandHistory.length - 1) {
                 historyIndex++;
                 input.value = commandHistory[commandHistory.length - 1 - historyIndex] || '';
+                updateCursorPosition();
             }
         } else if (e.key === 'ArrowDown') {
             e.preventDefault();
@@ -523,6 +797,7 @@ function initTerminal() {
                 historyIndex = -1;
                 input.value = '';
             }
+            updateCursorPosition();
         }
     });
     
