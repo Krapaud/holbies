@@ -1,0 +1,290 @@
+{% extends "base.html" %}
+
+{% block title %}Résultats Quiz {{ results.category }} - Dev Learning Hub{% endblock %}
+
+{% block content %}
+<div class="quiz-results-container">
+    <div class="results-header">
+        <h1 class="results-title">
+            <span class="title-icon">🎯</span>
+            Résultats du Quiz
+        </h1>
+        <p class="results-subtitle">{{ results.category }}</p>
+    </div>
+    
+    <div class="score-card">
+        <div class="score-circle">
+            <div class="score-number">{{ results.score }}/{{ results.total }}</div>
+            <div class="score-percentage">{{ results.percentage }}%</div>
+        </div>
+        
+        <div class="score-details">
+            <h3 class="score-title">
+                {% if results.percentage >= 80 %}
+                    🏆 Excellent !
+                {% elif results.percentage >= 60 %}
+                    👍 Bien joué !
+                {% elif results.percentage >= 40 %}
+                    📚 Peut mieux faire
+                {% else %}
+                    💪 Continuez vos efforts !
+                {% endif %}
+            </h3>
+            
+            <div class="score-stats">
+                <div class="stat-item">
+                    <span class="stat-label">Bonnes réponses</span>
+                    <span class="stat-value">{{ results.score }}</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Total questions</span>
+                    <span class="stat-value">{{ results.total }}</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Pourcentage</span>
+                    <span class="stat-value">{{ results.percentage }}%</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Progression Display -->
+    {% if results.progression %}
+    <div class="progression-display">
+        <h3 class="progression-title">
+            <span class="progression-icon">📈</span>
+            Progression
+        </h3>
+        
+        {% if results.progression.level_up %}
+        <div class="level-up-notification">
+            🎉 NIVEAU SUPÉRIEUR ! Vous êtes maintenant niveau {{ results.progression.new_level }} ! 🎉
+        </div>
+        {% endif %}
+        
+        <div class="xp-gained">
+            +{{ results.progression.xp_gained }} XP gagnés !
+        </div>
+        
+        <div class="progression-stats">
+            <div class="stat-group">
+                <span class="stat-label">XP Total</span>
+                <span class="stat-value">{{ results.progression.total_xp }}</span>
+            </div>
+            <div class="stat-group">
+                <span class="stat-label">Niveau Actuel</span>
+                <span class="stat-value">{{ results.progression.new_level }}</span>
+            </div>
+        </div>
+        
+        {% if results.achievements %}
+        <div class="new-achievements">
+            <h4 style="color: var(--primary-green); margin-bottom: var(--spacing-md); grid-column: 1 / -1;">
+                🏆 Nouveaux Achievements !
+            </h4>
+            {% for achievement in results.achievements %}
+            <div class="new-achievement">
+                <div class="new-achievement-icon">🏅</div>
+                <div class="new-achievement-name">{{ achievement[0] }}</div>
+                <div class="new-achievement-desc">{{ achievement[1] }}</div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+    
+    <div class="performance-badge">
+        {% if results.percentage >= 90 %}
+            <div class="badge expert">
+                <span class="badge-icon">🌟</span>
+                <span class="badge-text">Expert C</span>
+            </div>
+        {% elif results.percentage >= 80 %}
+            <div class="badge advanced">
+                <span class="badge-icon">🔥</span>
+                <span class="badge-text">Niveau Avancé</span>
+            </div>
+        {% elif results.percentage >= 60 %}
+            <div class="badge intermediate">
+                <span class="badge-icon">📈</span>
+                <span class="badge-text">Niveau Intermédiaire</span>
+            </div>
+        {% elif results.percentage >= 40 %}
+            <div class="badge beginner">
+                <span class="badge-icon">🌱</span>
+                <span class="badge-text">Débutant</span>
+            </div>
+        {% else %}
+            <div class="badge novice">
+                <span class="badge-icon">📚</span>
+                <span class="badge-text">À approfondir</span>
+            </div>
+        {% endif %}
+    </div>
+    
+    <div class="answers-review">
+        <h3 class="review-title">
+            <span class="review-icon">📝</span>
+            Révision des réponses
+        </h3>
+        
+        {% for answer_data in results.answers %}
+        <div class="answer-card {% if answer_data.is_correct %}correct{% else %}incorrect{% endif %}">
+            <div class="answer-header">
+                <span class="question-number">Q{{ loop.index }}</span>
+                <span class="answer-status">
+                    {% if answer_data.is_correct %}
+                        <span class="status-icon correct">✅</span>
+                        <span class="status-text">Bonne réponse</span>
+                    {% else %}
+                        <span class="status-icon incorrect">❌</span>
+                        <span class="status-text">À revoir</span>
+                    {% endif %}
+                </span>
+            </div>
+            
+            <div class="answer-content">
+                <div class="question-section">
+                    <h4 class="section-title">Question :</h4>
+                    <p class="question-text">{{ answer_data.question }}</p>
+                </div>
+                
+                <div class="user-answer-section">
+                    <h4 class="section-title">Votre réponse :</h4>
+                    <div class="user-answer">{{ answer_data.user_answer }}</div>
+                </div>
+                
+                <div class="correct-answer-section">
+                    <h4 class="section-title">Réponse attendue :</h4>
+                    <div class="correct-answer">{{ answer_data.correct_answer }}</div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <div class="results-actions">
+        <a href="{{ url_for('quiz_home') }}" class="btn btn-primary">
+            <span class="btn-icon">🎯</span>
+            Faire un autre Quiz
+        </a>
+        
+        <a href="{{ url_for('quiz_category', category=results.category) }}" class="btn btn-secondary">
+            <span class="btn-icon">🔄</span>
+            Refaire ce Quiz
+        </a>
+        
+        <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
+            <span class="btn-icon">📊</span>
+            Voir mes Statistiques
+        </a>
+    </div>
+    
+    <div class="recommendations">
+        <h3 class="recommendations-title">
+            <span class="recommendations-icon">💡</span>
+            Recommandations
+        </h3>
+        
+        <div class="recommendations-content">
+            {% if results.percentage >= 80 %}
+                <div class="recommendation">
+                    <span class="rec-icon">🚀</span>
+                    <p>Excellent niveau ! Essayez les catégories plus avancées ou aidez d'autres développeurs.</p>
+                </div>
+            {% elif results.percentage >= 60 %}
+                <div class="recommendation">
+                    <span class="rec-icon">📖</span>
+                    <p>Bon niveau ! Révisez les questions ratées et pratiquez avec des exercices de code.</p>
+                </div>
+            {% else %}
+                <div class="recommendation">
+                    <span class="rec-icon">📚</span>
+                    <p>Continuez l'apprentissage ! Consultez la documentation C et pratiquez les bases.</p>
+                </div>
+                <div class="recommendation">
+                    <span class="rec-icon">💻</span>
+                    <p>Écrivez du code C régulièrement pour consolider vos connaissances.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Animation d'entrée
+    const resultsContainer = document.querySelector('.quiz-results-container');
+    resultsContainer.classList.add('fade-in');
+    
+    // Animation du score circle
+    const scoreCircle = document.querySelector('.score-circle');
+    setTimeout(() => {
+        scoreCircle.classList.add('animate-score');
+    }, 500);
+    
+    // Animation des cartes de réponses
+    const answerCards = document.querySelectorAll('.answer-card');
+    answerCards.forEach((card, index) => {
+        card.style.animationDelay = `${index * 0.1}s`;
+        card.classList.add('slide-in-left');
+    });
+    
+    // Animation du badge de performance
+    const badge = document.querySelector('.performance-badge .badge');
+    setTimeout(() => {
+        badge.classList.add('bounce-in');
+    }, 1000);
+    
+    // Confetti pour les bons scores
+    const percentage = parseInt('{{ results.percentage }}');
+    if (percentage >= 80) {
+        setTimeout(() => {
+            createConfetti();
+        }, 1500);
+    }
+});
+
+function createConfetti() {
+    const colors = ['#00ff41', '#00cc33', '#ff6b35', '#00ccff'];
+    const confettiContainer = document.createElement('div');
+    confettiContainer.className = 'confetti-container';
+    document.body.appendChild(confettiContainer);
+    
+    for (let i = 0; i < 50; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        confetti.style.left = Math.random() * 100 + '%';
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.animationDelay = Math.random() * 3 + 's';
+        confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+        confettiContainer.appendChild(confetti);
+    }
+    
+    setTimeout(() => {
+        confettiContainer.remove();
+    }, 6000);
+}
+
+// Partage des résultats (simulation)
+function shareResults() {
+    const text = 'Je viens de faire {{ results.score }}/{{ results.total }} au quiz {{ results.category }} sur Dev Learning Hub ! 🎯';
+    
+    if (navigator.share) {
+        navigator.share({
+            title: 'Mes résultats de quiz C',
+            text: text,
+            url: window.location.href
+        });
+    } else {
+        // Copier dans le presse-papiers
+        navigator.clipboard.writeText(text).then(() => {
+            showNotification('Résultats copiés dans le presse-papiers !', 'success');
+        });
+    }
+}
+</script>
+{% endblock %}

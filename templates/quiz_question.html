@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+
+{% block title %}Question {{ progress.current }}/{{ progress.total }} - Quiz {{ category }}{% endblock %}
+
+{% block content %}
+<div class="quiz-question-container">
+    <div class="quiz-progress">
+        <div class="progress-header">
+            <span class="progress-text">Question {{ progress.current }} sur {{ progress.total }}</span>
+            <span class="category-badge">{{ category }}</span>
+        </div>
+        <div class="progress-bar">
+            <div class="progress-fill" data-progress="{{ (progress.current / progress.total * 100)|round }}"></div>
+        </div>
+    </div>
+    
+    <div class="question-card">
+        <div class="question-header">
+            <h2 class="question-title">
+                <span class="question-icon">❓</span>
+                Question {{ progress.current }}
+            </h2>
+        </div>
+        
+        <div class="question-content">
+            <p class="question-text">{{ question }}</p>
+        </div>
+        
+        <form method="POST" action="{{ url_for('quiz_answer') }}" class="answer-form">
+            <div class="form-group">
+                <label for="answer" class="form-label">
+                    <span class="label-icon">✍️</span>
+                    Votre réponse
+                </label>
+                <textarea 
+                    id="answer" 
+                    name="answer" 
+                    class="form-textarea"
+                    placeholder="Écrivez votre réponse ici... Soyez précis et donnez des exemples si nécessaire."
+                    required
+                    rows="6"
+                ></textarea>
+                <div class="input-glow"></div>
+                <small class="form-hint">
+                    💡 Conseil : Plus votre réponse est détaillée et précise, plus vous avez de chances d'obtenir des points !
+                </small>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary btn-large">
+                    <span class="btn-icon">➡️</span>
+                    {% if progress.current == progress.total %}
+                        Terminer le Quiz
+                    {% else %}
+                        Question Suivante
+                    {% endif %}
+                </button>
+            </div>
+        </form>
+    </div>
+    
+    <div class="quiz-navigation">
+        <a href="{{ url_for('quiz_home') }}" class="btn btn-secondary">
+            <span class="btn-icon">🏠</span>
+            Retour aux Quiz
+        </a>
+        
+        <div class="question-counter">
+            <div class="counter-circles">
+                {% for i in range(1, progress.total + 1) %}
+                    <div class="counter-circle {% if i <= progress.current %}completed{% elif i == progress.current + 1 %}current{% endif %}">
+                        {{ i }}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="quiz-tips-mini">
+        <div class="tip-mini">
+            <span class="tip-icon">💭</span>
+            <span class="tip-text">Prenez votre temps pour réfléchir</span>
+        </div>
+        <div class="tip-mini">
+            <span class="tip-icon">📝</span>
+            <span class="tip-text">N'hésitez pas à donner des exemples</span>
+        </div>
+        <div class="tip-mini">
+            <span class="tip-icon">🎯</span>
+            <span class="tip-text">Soyez précis dans vos réponses</span>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Animation d'entrée
+    const questionCard = document.querySelector('.question-card');
+    questionCard.classList.add('slide-in');
+    
+    // Focus automatique sur le textarea
+    const textarea = document.getElementById('answer');
+    textarea.focus();
+    
+    // Animation de la barre de progression
+    const progressFill = document.querySelector('.progress-fill');
+    const progressValue = progressFill.getAttribute('data-progress');
+    progressFill.style.width = progressValue + '%';
+    setTimeout(() => {
+        progressFill.style.transition = 'width 1s ease-out';
+    }, 500);
+    
+    // Effet de focus sur le textarea
+    textarea.addEventListener('focus', function() {
+        this.parentElement.classList.add('focused');
+    });
+    
+    textarea.addEventListener('blur', function() {
+        if (!this.value) {
+            this.parentElement.classList.remove('focused');
+        }
+    });
+    
+    // Compteur de caractères
+    textarea.addEventListener('input', function() {
+        const length = this.value.length;
+        const hint = this.parentElement.querySelector('.form-hint');
+        
+        if (length < 10) {
+            hint.textContent = `💡 Conseil : Votre réponse est un peu courte (${length} caractères). Essayez d'être plus détaillé.`;
+            hint.style.color = '#ff6b35';
+        } else if (length < 50) {
+            hint.textContent = `💡 Bien ! Votre réponse prend forme (${length} caractères). Continuez...`;
+            hint.style.color = '#00cc33';
+        } else {
+            hint.textContent = `💡 Excellent ! Réponse détaillée (${length} caractères). Vous êtes sur la bonne voie !`;
+            hint.style.color = '#00ff41';
+        }
+    });
+    
+    // Animation des cercles de progression
+    const circles = document.querySelectorAll('.counter-circle');
+    circles.forEach((circle, index) => {
+        circle.style.animationDelay = `${index * 0.1}s`;
+        circle.classList.add('fade-in');
+    });
+    
+    // Sauvegarde automatique (localStorage)
+    textarea.addEventListener('input', function() {
+        localStorage.setItem('quiz_answer_draft', this.value);
+    });
+    
+    // Restaurer le brouillon
+    const draft = localStorage.getItem('quiz_answer_draft');
+    if (draft && textarea.value === '') {
+        textarea.value = draft;
+        textarea.dispatchEvent(new Event('input'));
+    }
+    
+    // Nettoyer le brouillon à la soumission
+    document.querySelector('.answer-form').addEventListener('submit', function() {
+        localStorage.removeItem('quiz_answer_draft');
+    });
+});
+
+// Raccourci clavier Ctrl+Enter pour soumettre
+document.addEventListener('keydown', function(e) {
+    if (e.ctrlKey && e.key === 'Enter') {
+        e.preventDefault();
+        document.querySelector('.answer-form').submit();
+    }
+});
+</script>
+{% endblock %}

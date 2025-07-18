@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+
+{% block title %}Quiz C - Dev Learning Hub{% endblock %}
+
+{% block content %}
+<div class="quiz-container">
+    <div class="quiz-header">
+        <h1 class="quiz-title">
+            <span class="title-icon">🧠</span>
+            Quiz sur le Langage C
+        </h1>
+        <p class="quiz-subtitle">Testez vos connaissances en programmation C</p>
+    </div>
+    
+    <div class="categories-grid">
+        {% for category, question_indices in categories.items() %}
+        <div class="category-card">
+            <div class="category-header">
+                <h3 class="category-title">{{ category }}</h3>
+                <span class="category-count">{{ question_indices|length }} questions</span>
+            </div>
+            
+            <div class="category-description">
+                {% if category == "Notions de base" %}
+                    <p>Variables, types de données, syntaxe de base</p>
+                    <div class="category-icon">📚</div>
+                {% elif category == "Structures de contrôle" %}
+                    <p>Conditions, boucles, branchements</p>
+                    <div class="category-icon">🔀</div>
+                {% elif category == "Tableaux et chaînes" %}
+                    <p>Manipulation des tableaux et chaînes de caractères</p>
+                    <div class="category-icon">📊</div>
+                {% elif category == "Fonctions" %}
+                    <p>Déclaration, appel, paramètres des fonctions</p>
+                    <div class="category-icon">⚙️</div>
+                {% elif category == "Pointeurs" %}
+                    <p>Adresses mémoire, allocation dynamique</p>
+                    <div class="category-icon">👉</div>
+                {% elif category == "Fichiers" %}
+                    <p>Lecture, écriture, manipulation de fichiers</p>
+                    <div class="category-icon">📁</div>
+                {% elif category == "Structures et typedef" %}
+                    <p>Structures de données personnalisées</p>
+                    <div class="category-icon">🏗️</div>
+                {% elif category == "Compilation et erreurs" %}
+                    <p>Processus de compilation, débogage</p>
+                    <div class="category-icon">🔧</div>
+                {% elif category == "Arithmétique et logique" %}
+                    <p>Opérateurs, expressions, logique booléenne</p>
+                    <div class="category-icon">🧮</div>
+                {% elif category == "Concepts avancés" %}
+                    <p>Techniques avancées de programmation C</p>
+                    <div class="category-icon">🚀</div>
+                {% endif %}
+            </div>
+            
+            <div class="category-difficulty">
+                {% set difficulty_level = loop.index %}
+                {% if difficulty_level <= 3 %}
+                    <span class="difficulty easy">Facile</span>
+                {% elif difficulty_level <= 6 %}
+                    <span class="difficulty medium">Moyen</span>
+                {% else %}
+                    <span class="difficulty hard">Difficile</span>
+                {% endif %}
+            </div>
+            
+            <a href="{{ url_for('quiz_category', category=category) }}" class="btn btn-primary category-btn">
+                <span class="btn-icon">🎯</span>
+                Commencer le Quiz
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <div class="quiz-info">
+        <div class="info-card">
+            <div class="info-icon">📝</div>
+            <h4>Format du Quiz</h4>
+            <p>5 questions par catégorie, réponses courtes ou explications</p>
+        </div>
+        
+        <div class="info-card">
+            <div class="info-icon">⏱️</div>
+            <h4>Temps</h4>
+            <p>Pas de limite de temps, prenez le temps de réfléchir</p>
+        </div>
+        
+        <div class="info-card">
+            <div class="info-icon">🏆</div>
+            <h4>Scoring</h4>
+            <p>Points accordés selon la qualité et complétude des réponses</p>
+        </div>
+        
+        <div class="info-card">
+            <div class="info-icon">📈</div>
+            <h4>Progression</h4>
+            <p>Suivez vos progrès dans votre profil utilisateur</p>
+        </div>
+    </div>
+    
+    <div class="quiz-tips">
+        <h3 class="tips-title">
+            <span class="tips-icon">💡</span>
+            Conseils pour réussir
+        </h3>
+        
+        <div class="tips-list">
+            <div class="tip-item">
+                <span class="tip-number">1</span>
+                <p>Lisez attentivement chaque question</p>
+            </div>
+            
+            <div class="tip-item">
+                <span class="tip-number">2</span>
+                <p>Donnez des réponses complètes et détaillées</p>
+            </div>
+            
+            <div class="tip-item">
+                <span class="tip-number">3</span>
+                <p>N'hésitez pas à donner des exemples de code</p>
+            </div>
+            
+            <div class="tip-item">
+                <span class="tip-number">4</span>
+                <p>Utilisez une syntaxe C correcte dans vos exemples</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Animation d'entrée pour les cartes
+    const cards = document.querySelectorAll('.category-card');
+    cards.forEach((card, index) => {
+        card.style.animationDelay = `${index * 0.1}s`;
+        card.classList.add('fade-in-up');
+    });
+    
+    // Effet hover sur les cartes
+    cards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-10px) scale(1.02)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0) scale(1)';
+        });
+    });
+});
+</script>
+{% endblock %}
