@@ -29,14 +29,14 @@ document.addEventListener('DOMContentLoaded', function() {
         if (typeof glitch === 'function') {
             glitch();
         }
-    }, 1000);
+    }, 2000);
     
-    // Déclencher l'effet glitch périodiquement (toutes les 10 secondes)
+    // Déclencher l'effet glitch périodiquement (toutes les 15 secondes)
     setInterval(() => {
-        if (Math.random() > 0.7 && typeof glitch === 'function') { // 30% de chance
+        if (Math.random() > 0.8 && typeof glitch === 'function') { // 20% de chance
             glitch();
         }
-    }, 10000);
+    }, 15000);
 });
 
 // Nouvelles fonctions pour les améliorations du dashboard
@@ -694,28 +694,17 @@ window.matrix = function() {
 
 // Fonction glitch pour l'effet sur les titres
 function glitch() {
-    console.log('🔀 Fonction glitch appelée');
     const glitchElements = document.querySelectorAll('.title-glitch');
-    console.log('🔍 Éléments trouvés:', glitchElements.length);
     
-    if (glitchElements.length === 0) {
-        console.warn('⚠️ Aucun élément .title-glitch trouvé !');
-        return;
-    }
-    
-    glitchElements.forEach((element, index) => {
-        console.log(`🎯 Application glitch sur élément ${index + 1}:`, element);
+    glitchElements.forEach(element => {
         // Ajouter la classe glitch-active
         element.classList.add('glitch-active');
         
-        // Retirer la classe après l'animation
+        // Retirer la classe après l'animation (800ms)
         setTimeout(() => {
             element.classList.remove('glitch-active');
-            console.log(`✅ Glitch retiré de l'élément ${index + 1}`);
-        }, 1000);
+        }, 800);
     });
-    
-    console.log('🔀 Glitch effect activated!');
 }
 
 window.glitch = function() {
