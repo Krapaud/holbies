@@ -1,28 +1,28 @@
 {% extends "base.html" %}
 
-{% block title %}Accueil - Dev Learning Hub{% endblock %}
+{% block title %}Accueil - Matrix Dev Hub{% endblock %}
 
 {% block content %}
 <div class="hero-section">
     <div class="hero-content">
         <h1 class="hero-title">
-            <span class="title-glitch" data-text="Dev Learning Hub">Dev Learning Hub</span>
+            <span class="title-glitch" data-text="Matrix Dev Hub">Matrix Dev Hub</span>
         </h1>
         <p class="hero-subtitle">
-            Plongez dans l'univers du développement avec notre plateforme d'apprentissage geek
+            Maîtrisez la programmation C dans l'univers Matrix - Plateforme d'apprentissage avancée
         </p>
         <div class="hero-stats">
             <div class="stat-item">
-                <span class="stat-number">1337</span>
-                <span class="stat-label">Développeurs</span>
+                <span class="stat-number">100</span>
+                <span class="stat-label">Questions C</span>
             </div>
             <div class="stat-item">
-                <span class="stat-number">42</span>
-                <span class="stat-label">Projets</span>
+                <span class="stat-number">5</span>
+                <span class="stat-label">Niveaux</span>
             </div>
             <div class="stat-item">
                 <span class="stat-number">∞</span>
-                <span class="stat-label">Possibilités</span>
+                <span class="stat-label">Connaissances</span>
             </div>
         </div>
     </div>
@@ -37,27 +37,27 @@
         
         <div class="features-grid">
             <div class="feature-card">
-                <div class="feature-icon">🔐</div>
-                <h3>Authentification Sécurisée</h3>
-                <p>Inscription et connexion avec chiffrement avancé et gestion des rôles</p>
+                <div class="feature-icon">🧠</div>
+                <h3>Quiz Programmation C</h3>
+                <p>100 questions interactives couvrant tous les aspects du langage C</p>
             </div>
             
             <div class="feature-card">
-                <div class="feature-icon">🎨</div>
-                <h3>Interface Matrix</h3>
-                <p>Design sombre avec effets Matrix, animations et thème cyberpunk</p>
+                <div class="feature-icon">📊</div>
+                <h3>Système de Progression</h3>
+                <p>Niveaux XP, badges et suivi détaillé de votre apprentissage</p>
             </div>
             
             <div class="feature-card">
-                <div class="feature-icon">⚙️</div>
-                <h3>Panel Admin</h3>
-                <p>Gestion complète des utilisateurs et statistiques en temps réel</p>
+                <div class="feature-icon">💻</div>
+                <h3>Console Interactive</h3>
+                <p>Terminal Matrix avec 80+ commandes Unix pour une expérience immersive</p>
             </div>
             
             <div class="feature-card">
-                <div class="feature-icon">📱</div>
-                <h3>Responsive</h3>
-                <p>Interface adaptative pour desktop, tablette et mobile</p>
+                <div class="feature-icon">�</div>
+                <h3>Python Tutor</h3>
+                <p>Exécuteur de code multi-langages (Python, JavaScript, C) intégré</p>
             </div>
         </div>
     </div>
@@ -66,8 +66,8 @@
 <div class="cta-section">
     <div class="container">
         <div class="cta-content">
-            <h2 class="cta-title">Prêt à rejoindre la matrice ?</h2>
-            <p class="cta-subtitle">Créez votre compte et commencez votre aventure dans le développement</p>
+            <h2 class="cta-title">Prêt à maîtriser le langage C ?</h2>
+            <p class="cta-subtitle">Rejoignez la Matrix et développez vos compétences en programmation C</p>
             <div class="cta-buttons">
                 {% if not session.user_id %}
                     <a href="{{ url_for('register') }}" class="btn btn-primary">
