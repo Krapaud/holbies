@@ -253,15 +253,27 @@ class SimpleHandler(http.server.BaseHTTPRequestHandler):
                 self.send_header('Content-Type', 'application/json')
                 self.send_header('Access-Control-Allow-Origin', '*')
                 self.end_headers()
-                self.wfile.write(json.dumps(response).encode('utf-8'))
                 
+                try:
+                    self.wfile.write(json.dumps(response).encode('utf-8'))
+                except BrokenPipeError:
+                    # Client a fermé la connexion
+                    pass
+                    
+            except BrokenPipeError:
+                # Client a fermé la connexion pendant la lecture
+                pass
             except Exception as e:
-                error_response = {"error": str(e), "trace": []}
-                self.send_response(500)
-                self.send_header('Content-Type', 'application/json')
-                self.send_header('Access-Control-Allow-Origin', '*')
-                self.end_headers()
-                self.wfile.write(json.dumps(error_response).encode('utf-8'))
+                try:
+                    error_response = {"error": str(e), "trace": []}
+                    self.send_response(500)
+                    self.send_header('Content-Type', 'application/json')
+                    self.send_header('Access-Control-Allow-Origin', '*')
+                    self.end_headers()
+                    self.wfile.write(json.dumps(error_response).encode('utf-8'))
+                except BrokenPipeError:
+                    # Client a fermé la connexion
+                    pass
         else:
             self.send_response(404)
             self.end_headers()

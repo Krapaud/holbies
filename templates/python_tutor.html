@@ -688,7 +688,7 @@ class MatrixPythonTutor {
     async simulateExecution(code) {
         // Appel réel au serveur Python Tutor
         try {
-            const response = await fetch("http://localhost:8001/run", {
+            const response = await fetch("http://localhost:8002/run", {
                 method: "POST",
                 headers: { 
                     "Content-Type": "application/json",
