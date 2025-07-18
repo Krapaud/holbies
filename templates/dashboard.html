@@ -228,29 +228,29 @@
                     <span class="card-icon">💻</span>
                     Console Hacker
                 </h3>
+                <div class="console-controls">
+                    <button class="console-btn" onclick="clearTerminal()" title="Effacer">🗑️</button>
+                    <button class="console-btn" onclick="showHelp()" title="Aide">❓</button>
+                    <button class="console-btn" onclick="toggleFullscreen()" title="Plein écran">⛶</button>
+                </div>
             </div>
             <div class="card-content">
-                <div class="console-terminal">
+                <div class="console-terminal" id="terminal">
                     <div class="terminal-header">
-                        <span class="terminal-title">~/hacker-console</span>
+                        <span class="terminal-title">~/matrix-console v2.0</span>
+                        <span class="terminal-status">CONNECTED</span>
                     </div>
-                    <div class="terminal-content">
-                        <p class="terminal-line">
-                            <span class="terminal-prompt">root@matrix:~$</span>
-                            <span class="terminal-text">whoami</span>
-                        </p>
-                        <p class="terminal-line">{{ user.username }}</p>
-                        <p class="terminal-line">
-                            <span class="terminal-prompt">root@matrix:~$</span>
-                            <span class="terminal-text">access_level</span>
-                        </p>
-                        <p class="terminal-line">
-                            {% if user.is_admin %}ADMIN_ACCESS_GRANTED{% else %}USER_LEVEL_AUTHENTICATED{% endif %}
-                        </p>
-                        <p class="terminal-line">
-                            <span class="terminal-prompt">root@matrix:~$</span>
-                            <span class="terminal-cursor">|</span>
-                        </p>
+                    <div class="terminal-content" id="terminal-content">
+                        <div class="terminal-line welcome">
+                            <span class="terminal-text">Matrix Development Console - Logged in as {{ user.username }}</span>
+                        </div>
+                        <div class="terminal-line">
+                            <span class="terminal-text">Type 'help' for available commands</span>
+                        </div>
+                        <div class="terminal-line">
+                            <span class="terminal-prompt">{{ user.username }}@matrix:~$</span>
+                            <input type="text" class="terminal-input" id="terminal-input" placeholder="Tapez une commande..." autocomplete="off">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -260,6 +260,19 @@
 {% endblock %}
 
 {% block scripts %}
+<script>
+// Données utilisateur pour les commandes
+window.userData = {
+    username: '{{ user.username | safe }}',
+    level: {{ user.level | default(1) }},
+    xp: {{ user.xp_points | default(0) }},
+    quizzes: {{ user.total_quizzes | default(0) }},
+    completionRate: {{ user.completion_rate | default(0) }},
+    isAdmin: {% if user.is_admin %}true{% else %}false{% endif %},
+    bestCategory: '{{ user.best_category | default("Aucune") | safe }}'
+};
+</script>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Animation d'entrée pour les cartes
@@ -304,7 +317,297 @@ document.addEventListener('DOMContentLoaded', function() {
             bestCategory.classList.add('glow-effect');
         }, 2000);
     }
+    
+    // Initialiser la console interactive
+    initTerminal();
 });
+
+// Variables globales pour la console
+let commandHistory = [];
+let historyIndex = -1;
+let isFullscreen = false;
+
+// Récupération des données utilisateur
+const userData = window.userData;
+
+// Commandes disponibles
+const commands = {
+    help: {
+        description: 'Affiche la liste des commandes disponibles',
+        execute: () => {
+            return `
+<span class="cmd-help">Commandes disponibles:</span>
+• help - Affiche cette aide
+• whoami - Informations utilisateur  
+• stats - Statistiques de progression
+• quiz - Informations sur les quiz
+• matrix - Animation Matrix
+• clear - Effacer l'écran
+• date - Date et heure actuelles
+• ls - Liste des "fichiers" disponibles
+• cat [file] - Affiche le contenu d'un fichier
+• sudo [command] - Exécuter en mode admin ${userData.isAdmin ? '(disponible)' : '(non autorisé)'}
+• hack - Mode hacker 😈
+• joke - Blague de développeur
+• quote - Citation inspirante`;
+        }
+    },
+    
+    whoami: {
+        description: 'Affiche les informations utilisateur',
+        execute: () => {
+            return `
+<span class="user-info">Utilisateur: ${userData.username}</span>
+<span class="user-info">Niveau: ${userData.level}</span>
+<span class="user-info">Statut: ${userData.isAdmin ? 'ADMINISTRATEUR' : 'UTILISATEUR'}</span>
+<span class="user-info">Accès: ${userData.isAdmin ? 'FULL_ACCESS_GRANTED' : 'LIMITED_ACCESS'}</span>`;
+        }
+    },
+    
+    stats: {
+        description: 'Affiche les statistiques de progression',
+        execute: () => {
+            return `
+<span class="stats-header">═══ STATISTIQUES DE PROGRESSION ═══</span>
+<span class="stat-line">Niveau actuel: ${userData.level}</span>
+<span class="stat-line">Points XP: ${userData.xp}</span>
+<span class="stat-line">Quiz complétés: ${userData.quizzes}</span>
+<span class="stat-line">Taux de réussite: ${userData.completionRate.toFixed(1)}%</span>
+<span class="stat-line">Spécialité: ${userData.bestCategory || 'En cours de détermination'}</span>`;
+        }
+    },
+    
+    quiz: {
+        description: 'Informations sur les quiz',
+        execute: () => {
+            return `
+<span class="quiz-info">╔═══ SYSTÈME DE QUIZ C ═══╗</span>
+<span class="quiz-info">║ 10 catégories disponibles   ║</span>
+<span class="quiz-info">║ 100 questions au total      ║</span>
+<span class="quiz-info">║ Système XP intégré          ║</span>
+<span class="quiz-info">╚═══════════════════════════════╝</span>
+<span class="quiz-tip">Tapez 'quiz start' pour commencer un quiz</span>`;
+        }
+    },
+    
+    'quiz start': {
+        description: 'Démarre un quiz',
+        execute: () => {
+            setTimeout(() => window.location.href = '{{ url_for("quiz_home") }}', 1000);
+            return '<span class="success">Redirection vers les quiz...</span>';
+        }
+    },
+    
+    matrix: {
+        description: 'Lance l\'animation Matrix',
+        execute: () => {
+            if (typeof matrix === 'function') {
+                matrix();
+                return '<span class="matrix-text">Mode Matrix activé... Suivez le lapin blanc 🐰</span>';
+            }
+            return '<span class="error">Animation Matrix non disponible</span>';
+        }
+    },
+    
+    clear: {
+        description: 'Efface l\'écran',
+        execute: () => {
+            clearTerminal();
+            return null;
+        }
+    },
+    
+    date: {
+        description: 'Affiche la date et l\'heure',
+        execute: () => {
+            return `<span class="date-info">${new Date().toLocaleString('fr-FR')}</span>`;
+        }
+    },
+    
+    ls: {
+        description: 'Liste les fichiers disponibles',
+        execute: () => {
+            return `
+<span class="file-list">profile.txt    quiz_data.db    achievements.log</span>
+<span class="file-list">matrix.exe     settings.conf   secret.txt</span>`;
+        }
+    },
+    
+    hack: {
+        description: 'Mode hacker',
+        execute: () => {
+            return `
+<span class="hack-mode">HACK MODE ACTIVATED</span>
+<span class="hack-text">Initializing quantum algorithms...</span>
+<span class="hack-text">Bypassing firewall... ████████████ 100%</span>
+<span class="hack-text">Access granted to mainframe</span>
+<span class="hack-warning">⚠️  WARNING: You're now in the Matrix ⚠️</span>`;
+        }
+    },
+    
+    joke: {
+        description: 'Blague de développeur',
+        execute: () => {
+            const jokes = [
+                "Pourquoi les développeurs préfèrent-ils le mode sombre ? Parce que la lumière attire les bugs ! 🐛",
+                "Comment appelle-t-on un développeur qui ne code qu'en C ? Un Ciste ! 😄",
+                "Que dit un développeur quand il est en colère ? Segmentation fault ! 💥"
+            ];
+            return `<span class="joke">${jokes[Math.floor(Math.random() * jokes.length)]}</span>`;
+        }
+    },
+    
+    quote: {
+        description: 'Citation inspirante',
+        execute: () => {
+            const quotes = [
+                '"Le code est comme l\'humour. Quand vous devez l\'expliquer, c\'est mauvais." - Cory House',
+                '"La meilleure façon de prédire l\'avenir est de le programmer." - Alan Kay'
+            ];
+            return `<span class="quote">${quotes[Math.floor(Math.random() * quotes.length)]}</span>`;
+        }
+    }
+};
+
+// Commandes cat pour les fichiers
+commands.cat = {
+    description: 'Affiche le contenu d\'un fichier',
+    execute: (args) => {
+        const file = args[0];
+        const files = {
+            'profile.txt': `
+<span class="file-content">═══ PROFIL UTILISATEUR ═══</span>
+<span class="file-content">Nom: ${userData.username}</span>
+<span class="file-content">Niveau: ${userData.level}</span>
+<span class="file-content">XP: ${userData.xp}</span>`,
+            
+            'secret.txt': userData.isAdmin ? 
+                '<span class="secret">🔓 ACCÈS ADMIN: Les codes de la Matrix sont 1337, 42, et 0xFF</span>' :
+                '<span class="error">🔒 Accès refusé: Privilèges administrateur requis</span>'
+        };
+        
+        if (!file) {
+            return '<span class="error">Usage: cat [nom_fichier]</span>';
+        }
+        
+        if (files[file]) {
+            return files[file];
+        } else {
+            return `<span class="error">cat: ${file}: Fichier introuvable</span>`;
+        }
+    }
+};
+
+function initTerminal() {
+    const input = document.getElementById('terminal-input');
+    const content = document.getElementById('terminal-content');
+    
+    if (!input || !content) return;
+    
+    input.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            executeCommand(input.value.trim());
+            input.value = '';
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            if (historyIndex < commandHistory.length - 1) {
+                historyIndex++;
+                input.value = commandHistory[commandHistory.length - 1 - historyIndex] || '';
+            }
+        } else if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            if (historyIndex > 0) {
+                historyIndex--;
+                input.value = commandHistory[commandHistory.length - 1 - historyIndex] || '';
+            } else if (historyIndex === 0) {
+                historyIndex = -1;
+                input.value = '';
+            }
+        }
+    });
+    
+    // Focus automatique sur l'input
+    input.focus();
+    content.addEventListener('click', () => input.focus());
+}
+
+function executeCommand(commandLine) {
+    if (!commandLine) return;
+    
+    const content = document.getElementById('terminal-content');
+    const input = document.getElementById('terminal-input');
+    
+    // Ajouter la commande à l'historique
+    commandHistory.push(commandLine);
+    historyIndex = -1;
+    
+    // Afficher la commande tapée
+    const commandElement = document.createElement('div');
+    commandElement.className = 'terminal-line executed';
+    commandElement.innerHTML = `<span class="terminal-prompt">${userData.username}@matrix:~$</span> <span class="terminal-command">${commandLine}</span>`;
+    
+    const inputLine = input.parentElement;
+    content.insertBefore(commandElement, inputLine);
+    
+    // Parse commande et arguments
+    const parts = commandLine.split(' ');
+    const command = parts[0].toLowerCase();
+    const args = parts.slice(1);
+    
+    // Rechercher la commande
+    let result = null;
+    const fullCommand = parts.join(' ').toLowerCase();
+    
+    if (commands[fullCommand]) {
+        result = commands[fullCommand].execute(args);
+    } else if (commands[command]) {
+        result = commands[command].execute(args);
+    } else {
+        result = `<span class="error">Commande non trouvée: ${command}. Tapez 'help' pour voir les commandes disponibles.</span>`;
+    }
+    
+    // Afficher le résultat
+    if (result !== null) {
+        const resultElement = document.createElement('div');
+        resultElement.className = 'terminal-line result';
+        resultElement.innerHTML = result;
+        content.insertBefore(resultElement, inputLine);
+    }
+    
+    // Scroll vers le bas
+    content.scrollTop = content.scrollHeight;
+}
+
+function clearTerminal() {
+    const content = document.getElementById('terminal-content');
+    const inputLine = document.getElementById('terminal-input').parentElement;
+    
+    content.innerHTML = `
+        <div class="terminal-line welcome">
+            <span class="terminal-text">Matrix Development Console - Logged in as ${userData.username}</span>
+        </div>
+        <div class="terminal-line">
+            <span class="terminal-text">Type 'help' for available commands</span>
+        </div>`;
+    
+    content.appendChild(inputLine);
+    document.getElementById('terminal-input').focus();
+}
+
+function showHelp() {
+    executeCommand('help');
+}
+
+function toggleFullscreen() {
+    const terminal = document.getElementById('terminal');
+    isFullscreen = !isFullscreen;
+    
+    if (isFullscreen) {
+        terminal.classList.add('fullscreen');
+    } else {
+        terminal.classList.remove('fullscreen');
+    }
+}
 
 // Raccourcis clavier
 document.addEventListener('keydown', function(e) {
@@ -316,9 +619,9 @@ document.addEventListener('keydown', function(e) {
                 break;
             case 'A':
                 e.preventDefault();
-                {% if user.is_admin %}
+                if (userData.isAdmin) {
                     window.location.href = "{{ url_for('admin') }}";
-                {% endif %}
+                }
                 break;
             case 'L':
                 e.preventDefault();
