@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Python Tutor API Server
-Serveur HTTP simple pour exécuter du code Python, JavaScript et C
+D.L.H. Tutor API Server
+Serveur simple pour exécuter du code Python et retourner les résultats
 """
 
 import sys

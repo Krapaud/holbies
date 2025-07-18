@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """
-Python Tutor API Server - Version Multi-langages
+Simple Multi-Language Code Executor
+D.L.H. Tutor API Server - Version Multi-langages
+Support Python, JavaScript et C avec visualisation d'exécution
 """
 
 import sys
@@ -280,7 +282,7 @@ class SimpleHandler(http.server.BaseHTTPRequestHandler):
     
     def do_GET(self):
         if self.path == '/':
-            response = {"message": "Python Tutor API", "status": "OK", "languages": ["python", "javascript", "c"]}
+            response = {"message": "D.L.H. Tutor API", "status": "OK", "languages": ["python", "javascript", "c"]}
             self.send_response(200)
             self.send_header('Content-Type', 'application/json')
             self.send_header('Access-Control-Allow-Origin', '*')
@@ -293,9 +295,9 @@ class SimpleHandler(http.server.BaseHTTPRequestHandler):
 
 if __name__ == "__main__":
     PORT = 8002
-    print(f"🚀 Serveur Python Tutor Multi-langages")
+    print(f"🚀 Serveur D.L.H. Tutor Multi-langages")
     print(f"📍 URL: http://localhost:{PORT}")
-    print(f"🐍 Support: Python, JavaScript, C")
+    print(f"� Support: Python, JavaScript, C")
     print(f"📋 Dépendances: Node.js (pour JS), GCC (pour C)")
     
     try:
