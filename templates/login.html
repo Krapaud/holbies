@@ -29,67 +29,10 @@
             <div class="auth-footer">
                 <p>Pas encore de compte ? <a href="/register">S'inscrire</a></p>
                 <p style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--matrix-gray); color: var(--text-muted); font-size: 0.9rem;">
-                    <strong>Test vidéo :</strong> 
-                    <button type="button" id="test-video-btn" onclick="testVideo()" 
-                            style="background: none; border: 1px solid var(--primary-green); color: var(--primary-green); padding: 0.25rem 0.5rem; border-radius: 4px; cursor: pointer; margin-left: 0.5rem;">
-                        Tester vidéo
-                    </button>
                     <span id="test-status" style="margin-left: 0.5rem; font-size: 0.8rem;"></span>
                 </p>
             </div>
             
-            <script>
-                // Fonction de test simple
-                function testVideo() {
-                    console.log('🎬 Test vidéo lancé depuis le bouton');
-                    const statusEl = document.getElementById('test-status');
-                    statusEl.textContent = '🎬 Test...';
-                    statusEl.style.color = 'var(--primary-green)';
-                    
-                    // Utiliser la fonction universelle si disponible
-                    if (window.universalVideoTest) {
-                        window.universalVideoTest();
-                    } else if (window.quickVideoTest) {
-                        window.quickVideoTest();
-                    } else {
-                        // Fallback modal simple
-                        const modal = document.createElement('div');
-                        modal.style.cssText = `
-                            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-                            background: rgba(0, 0, 0, 0.9); display: flex; align-items: center;
-                            justify-content: center; z-index: 9999; font-family: monospace; color: #00ff41;
-                        `;
-                        modal.innerHTML = `
-                            <div style="background: #0d1117; border: 2px solid #00ff41; border-radius: 8px; padding: 2rem; text-align: center;">
-                                <h2>🎬 VIDÉO DE TEST</h2>
-                                <p>Votre vidéo s'affichera ici</p>
-                                <button onclick="this.closest('div').parentNode.remove()" 
-                                        style="background: none; border: 1px solid #00ff41; color: #00ff41; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer; margin-top: 1rem;">
-                                    Fermer
-                                </button>
-                            </div>
-                        `;
-                        document.body.appendChild(modal);
-                        setTimeout(() => modal.remove(), 3000);
-                    }
-                    
-                    setTimeout(() => { statusEl.textContent = ''; }, 2000);
-                }
-                
-                // Vérifier l'état au chargement
-                document.addEventListener('DOMContentLoaded', function() {
-                    setTimeout(() => {
-                        const statusEl = document.getElementById('test-status');
-                        if (window.testVideoModal || window.showTestWelcomeVideo) {
-                            statusEl.textContent = '✓ Prêt';
-                            statusEl.style.color = 'var(--success-green)';
-                        } else {
-                            statusEl.textContent = '⚠ Chargement...';
-                            statusEl.style.color = 'var(--warning-yellow)';
-                        }
-                    }, 1000);
-                });
-            </script>
             
             <div class="auth-message" id="auth-message"></div>
         </div>
