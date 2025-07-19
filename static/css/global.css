@@ -1221,10 +1221,10 @@ h1, h2, h3, h4, h5, h6 {
 
 .video-container {
     position: relative;
-    max-width: 70vw;
-    max-height: 70vh;
-    width: 800px;
-    height: 450px;
+    max-width: 85vw;
+    max-height: 85vh;
+    width: 1200px;
+    height: 675px;
     border: 2px solid var(--primary-green);
     border-radius: var(--border-radius);
     box-shadow: var(--shadow-glow);
@@ -1292,8 +1292,8 @@ h1, h2, h3, h4, h5, h6 {
 /* Responsive pour la vidéo modal */
 @media (max-width: 768px) {
     .video-container {
-        max-width: 90vw;
-        max-height: 60vh;
+        max-width: 95vw;
+        max-height: 70vh;
         width: auto;
         height: auto;
     }
@@ -1301,14 +1301,14 @@ h1, h2, h3, h4, h5, h6 {
 
 @media (max-height: 600px) {
     .video-container {
-        max-height: 80vh;
+        max-height: 85vh;
         height: auto;
     }
 }
 
 @media (max-height: 500px) {
     .video-container {
-        max-height: 70vh;
+        max-height: 80vh;
         height: auto;
     }
 }
