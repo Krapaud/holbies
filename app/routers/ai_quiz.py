@@ -1,12 +1,16 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
+from sqlalchemy.sql import func
 from typing import List, Dict
 from pydantic import BaseModel
 import difflib
 import re
+import json
+from datetime import datetime
 
 from app.database import get_db
-from app.models import User
+from app.models import User, AIQuizSession, AIQuizAnswer
+from app.schemas import AIQuizSession as AIQuizSessionSchema, AIQuizAnswer as AIQuizAnswerSchema, AIQuizAnswerSubmission, AIQuizResult
 from app.auth import get_current_active_user
 
 router = APIRouter()
@@ -195,6 +199,68 @@ AI_QUESTIONS_DB = {
     }
 }
 
+# AI Quiz Session Management Endpoints
+@router.get("/sessions", response_model=List[AIQuizSessionSchema])
+async def get_user_ai_quiz_sessions(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
+    """Récupère toutes les sessions AI Quiz de l'utilisateur"""
+    sessions = db.query(AIQuizSession).filter(
+        AIQuizSession.user_id == current_user.id
+    ).order_by(AIQuizSession.started_at.desc()).all()
+    return sessions
+
+@router.get("/sessions/active", response_model=AIQuizSessionSchema)
+async def get_active_ai_quiz_session(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
+    """Récupère la session AI Quiz active de l'utilisateur"""
+    active_session = db.query(AIQuizSession).filter(
+        AIQuizSession.user_id == current_user.id,
+        AIQuizSession.completed == False
+    ).first()
+    
+    if not active_session:
+        raise HTTPException(
+            status_code=404,
+            detail="No active AI quiz session found"
+        )
+    
+    return active_session
+
+@router.post("/start", response_model=AIQuizSessionSchema)
+async def start_ai_quiz_session(
+    force_new: bool = False,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
+    """Démarre une nouvelle session AI Quiz"""
+    # Vérifier s'il y a une session active
+    active_session = db.query(AIQuizSession).filter(
+        AIQuizSession.user_id == current_user.id,
+        AIQuizSession.completed == False
+    ).first()
+    
+    if active_session and not force_new:
+        # Retourner la session existante
+        return active_session
+    elif active_session and force_new:
+        # Marquer l'ancienne session comme complétée
+        active_session.completed = True
+        db.commit()
+    
+    # Créer une nouvelle session
+    ai_quiz_session = AIQuizSession(
+        user_id=current_user.id,
+        total_questions=len(AI_QUESTIONS_DB)
+    )
+    db.add(ai_quiz_session)
+    db.commit()
+    db.refresh(ai_quiz_session)
+    return ai_quiz_session
+
 @router.get("/ai-questions", response_model=List[AIQuestionResponse])
 async def get_ai_questions(
     current_user: User = Depends(get_current_active_user)
@@ -220,12 +286,118 @@ async def get_ai_question(
     question_data = AI_QUESTIONS_DB[question_id]
     return AIQuestionResponse(**question_data)
 
-@router.post("/ai-submit", response_model=AIAnswerResult)
+@router.post("/submit-answer", response_model=AIAnswerResult)
 async def submit_ai_answer(
+    submission: AIQuizAnswerSubmission,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
+    """Soumet une réponse textuelle pour correction par IA et sauvegarde dans une session"""
+    if submission.question_id not in AI_QUESTIONS_DB:
+        raise HTTPException(
+            status_code=404,
+            detail="Question not found"
+        )
+    
+    # Vérifier que la session existe et appartient à l'utilisateur
+    session = db.query(AIQuizSession).filter(
+        AIQuizSession.id == submission.session_id,
+        AIQuizSession.user_id == current_user.id,
+        AIQuizSession.completed == False
+    ).first()
+    
+    if not session:
+        raise HTTPException(
+            status_code=404,
+            detail="Active AI quiz session not found"
+        )
+    
+    question_data = AI_QUESTIONS_DB[submission.question_id]
+    
+    # Correction par IA
+    result = ai_corrector.correct_answer(question_data, submission.user_answer)
+    
+    # Sauvegarder la réponse dans la base de données
+    ai_answer = AIQuizAnswer(
+        session_id=session.id,
+        question_id=submission.question_id,
+        question_text=question_data["question_text"],
+        user_answer=submission.user_answer,
+        expected_answer=question_data["expected_answer"],
+        score=result["score"],
+        max_score=result["max_score"],
+        percentage=result["percentage"],
+        similarity=result["similarity"],
+        technical_terms_found=json.dumps(result["technical_terms_found"]),
+        technical_bonus=result["technical_bonus"],
+        feedback=result["feedback"]
+    )
+    
+    db.add(ai_answer)
+    
+    # Mettre à jour le score total de la session
+    session.total_score += result["score"]
+    
+    db.commit()
+    db.refresh(ai_answer)
+    
+    return AIAnswerResult(**result)
+
+@router.post("/complete", response_model=AIQuizResult)
+async def complete_ai_quiz_session(
+    session_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
+    """Marque une session AI Quiz comme complétée et retourne les résultats"""
+    session = db.query(AIQuizSession).filter(
+        AIQuizSession.id == session_id,
+        AIQuizSession.user_id == current_user.id,
+        AIQuizSession.completed == False
+    ).first()
+    
+    if not session:
+        raise HTTPException(
+            status_code=404,
+            detail="Active AI quiz session not found"
+        )
+    
+    # Marquer comme complétée
+    session.completed = True
+    session.completed_at = datetime.utcnow()
+    
+    # Calculer le nombre de questions répondues
+    answered_questions = db.query(AIQuizAnswer).filter(
+        AIQuizAnswer.session_id == session.id
+    ).count()
+    
+    session.total_questions = answered_questions
+    
+    db.commit()
+    
+    # Récupérer toutes les réponses pour les résultats
+    answers = db.query(AIQuizAnswer).filter(
+        AIQuizAnswer.session_id == session.id
+    ).all()
+    
+    # Calculer le pourcentage moyen
+    average_percentage = (session.total_score / (answered_questions * 100)) * 100 if answered_questions > 0 else 0
+    
+    return AIQuizResult(
+        session_id=session.id,
+        total_score=session.total_score,
+        total_questions=session.total_questions,
+        average_percentage=average_percentage,
+        answers=answers
+    )
+
+# Ancien endpoint maintenu pour compatibilité (sans session)
+@router.post("/ai-submit", response_model=AIAnswerResult)
+async def submit_ai_answer_legacy(
     submission: AIAnswerSubmission,
     current_user: User = Depends(get_current_active_user)
 ):
-    """Soumet une réponse textuelle pour correction par IA"""
+    """Soumet une réponse textuelle pour correction par IA (legacy - sans session)"""
     if submission.question_id not in AI_QUESTIONS_DB:
         raise HTTPException(
             status_code=404,

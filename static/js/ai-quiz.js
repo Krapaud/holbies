@@ -58,18 +58,28 @@ class AIQuizManager {
         }
     }
 
-    startQuiz() {
+    async startQuiz() {
         if (this.questions.length === 0) {
             window.holbiesApp.showMessage('Aucune question disponible. Rechargez la page.', 'error');
             return;
         }
 
-        this.currentQuestionIndex = 0;
-        this.results = [];
-        this.totalScore = 0;
-        this.maxTotalScore = 0;
+        try {
+            // Créer une nouvelle session AI Quiz
+            this.currentSession = await window.holbiesApp.apiRequest('/api/ai-quiz/start', {
+                method: 'POST'
+            });
+            
+            this.currentQuestionIndex = 0;
+            this.results = [];
+            this.totalScore = 0;
+            this.maxTotalScore = 0;
 
-        this.showQuestion();
+            this.showQuestion();
+        } catch (error) {
+            console.error('Error starting AI quiz session:', error);
+            window.holbiesApp.showMessage('Erreur lors du démarrage du quiz', 'error');
+        }
     }
 
     showQuestion() {
@@ -112,6 +122,11 @@ class AIQuizManager {
             return;
         }
 
+        if (!this.currentSession) {
+            window.holbiesApp.showMessage('Aucune session active. Redémarrez le quiz.', 'error');
+            return;
+        }
+
         const submitBtn = document.getElementById('submit-ai-answer-btn');
         if (window.holbiesApp) {
             window.holbiesApp.showLoading(submitBtn);
@@ -121,13 +136,14 @@ class AIQuizManager {
             const question = this.questions[this.currentQuestionIndex];
             
             const submission = {
+                session_id: this.currentSession.id,
                 question_id: question.question_id,
                 user_answer: userAnswer
             };
 
             console.log('Submitting AI answer:', submission);
 
-            const result = await window.holbiesApp.apiRequest('/api/ai-quiz/ai-submit', {
+            const result = await window.holbiesApp.apiRequest('/api/ai-quiz/submit-answer', {
                 method: 'POST',
                 body: JSON.stringify(submission)
             });
@@ -238,9 +254,22 @@ class AIQuizManager {
         }
     }
 
-    showFinalResults() {
+    async showFinalResults() {
         const questionScreen = document.getElementById('ai-quiz-question');
         const resultsScreen = document.getElementById('ai-quiz-results');
+        
+        // Compléter la session sur le serveur
+        if (this.currentSession) {
+            try {
+                await window.holbiesApp.apiRequest(`/api/ai-quiz/complete?session_id=${this.currentSession.id}`, {
+                    method: 'POST'
+                });
+                console.log('AI Quiz session completed successfully');
+            } catch (error) {
+                console.error('Error completing AI quiz session:', error);
+                // Continue with displaying results even if completion fails
+            }
+        }
         
         // Hide question screen, show results
         questionScreen.classList.add('hidden');
@@ -297,6 +326,7 @@ class AIQuizManager {
         this.results = [];
         this.totalScore = 0;
         this.maxTotalScore = 0;
+        this.currentSession = null; // Reset session
 
         // Show start screen
         const startScreen = document.getElementById('ai-quiz-start');

@@ -82,3 +82,50 @@ class QuizResult(BaseModel):
     percentage: float
     correct_answers: List[int]
     incorrect_answers: List[int]
+
+# AI Quiz schemas
+class AIQuizSessionCreate(BaseModel):
+    pass
+
+class AIQuizSession(BaseModel):
+    id: int
+    user_id: int
+    total_score: float
+    total_questions: int
+    completed: bool
+    started_at: datetime
+    completed_at: Optional[datetime] = None
+    
+    class Config:
+        from_attributes = True
+
+class AIQuizAnswerSubmission(BaseModel):
+    session_id: int
+    question_id: int
+    user_answer: str
+
+class AIQuizAnswer(BaseModel):
+    id: int
+    session_id: int
+    question_id: int
+    question_text: str
+    user_answer: str
+    expected_answer: str
+    score: float
+    max_score: int
+    percentage: float
+    similarity: float
+    technical_terms_found: str  # JSON string
+    technical_bonus: int
+    feedback: str
+    answered_at: datetime
+    
+    class Config:
+        from_attributes = True
+
+class AIQuizResult(BaseModel):
+    session_id: int
+    total_score: float
+    total_questions: int
+    average_percentage: float
+    answers: List[AIQuizAnswer]

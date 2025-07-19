@@ -45,7 +45,34 @@ class DashboardManager {
 
     async loadQuizSessions() {
         try {
-            this.sessions = await window.holbiesApp.apiRequest('/api/quiz/sessions');
+            // Charger les sessions de quiz classiques
+            const quizSessions = await window.holbiesApp.apiRequest('/api/quiz/sessions');
+            
+            // Charger les sessions de quiz IA (PLD)
+            let aiQuizSessions = [];
+            try {
+                aiQuizSessions = await window.holbiesApp.apiRequest('/api/ai-quiz/sessions');
+            } catch (aiError) {
+                console.warn('AI Quiz sessions not available yet:', aiError);
+            }
+            
+            // Combiner les sessions et les standardiser
+            this.sessions = [
+                ...quizSessions.map(session => ({
+                    ...session,
+                    type: 'classic',
+                    // Pour quiz classique : score = nombre correct, total_questions = nombre total
+                    percentage: session.total_questions > 0 ? (session.score / session.total_questions * 100) : 0
+                })),
+                ...aiQuizSessions.map(session => ({
+                    ...session,
+                    type: 'ai',
+                    // Pour AI quiz : total_score = points obtenus, total_questions * 100 = points max
+                    score: Math.round(session.total_score), // Arrondir le score total
+                    percentage: session.total_questions > 0 ? (session.total_score / (session.total_questions * 100) * 100) : 0
+                }))
+            ].sort((a, b) => new Date(b.completed_at || b.started_at) - new Date(a.completed_at || a.started_at));
+            
             this.displayRecentSessions();
         } catch (error) {
             console.error('Error loading quiz sessions:', error);
@@ -61,10 +88,13 @@ class DashboardManager {
 
     updateStats() {
         const completedQuizzes = this.sessions.filter(s => s.completed).length;
-        const totalScore = this.sessions.reduce((sum, s) => sum + (s.completed ? s.score : 0), 0);
-        const totalQuestions = this.sessions.reduce((sum, s) => sum + (s.completed ? s.total_questions : 0), 0);
         
-        const averageScore = totalQuestions > 0 ? (totalScore / totalQuestions * 100) : 0;
+        // Calculer la moyenne des pourcentages plutôt que le ratio score/questions total
+        const completedSessions = this.sessions.filter(s => s.completed);
+        const averageScore = completedSessions.length > 0 
+            ? completedSessions.reduce((sum, s) => sum + s.percentage, 0) / completedSessions.length
+            : 0;
+        
         const bestScore = this.getBestScore();
         const streak = this.getCurrentStreak();
 
@@ -117,9 +147,7 @@ class DashboardManager {
         const completedSessions = this.sessions.filter(s => s.completed);
         if (completedSessions.length === 0) return 0;
         
-        return Math.max(...completedSessions.map(s => 
-            s.total_questions > 0 ? (s.score / s.total_questions * 100) : 0
-        ));
+        return Math.max(...completedSessions.map(s => s.percentage));
     }
 
     getCurrentStreak() {
@@ -131,8 +159,7 @@ class DashboardManager {
         const passingScore = 60; // 60% minimum for streak
         
         for (const session of completedSessions) {
-            const score = session.total_questions > 0 ? (session.score / session.total_questions * 100) : 0;
-            if (score >= passingScore) {
+            if (session.percentage >= passingScore) {
                 streak++;
             } else {
                 break;
@@ -163,15 +190,19 @@ class DashboardManager {
 
         sessionsList.innerHTML = recentSessions.map(session => {
             const date = new Date(session.completed_at).toLocaleDateString('fr-FR');
-            const score = session.total_questions > 0 ? 
-                (session.score / session.total_questions * 100) : 0;
+            const score = session.percentage || 0; // Utiliser le pourcentage déjà calculé
+            const typeIcon = session.type === 'ai' ? '🤖' : '📝';
+            const typeName = session.type === 'ai' ? 'PLD' : 'Quiz';
+            const scoreDisplay = session.type === 'ai' 
+                ? `${Math.round(session.total_score)}/${session.total_questions * 100} pts`
+                : `${session.score}/${session.total_questions} questions`;
             
             return `
                 <div class="session-item">
                     <div class="session-info">
-                        <div class="session-date">${date}</div>
+                        <div class="session-date">${typeIcon} ${typeName} - ${date}</div>
                         <div class="session-details">
-                            ${session.score}/${session.total_questions} questions
+                            ${scoreDisplay}
                         </div>
                     </div>
                     <div class="session-score">
@@ -202,11 +233,11 @@ class DashboardManager {
             .sort((a, b) => new Date(a.completed_at) - new Date(b.completed_at))
             .slice(-10);
 
-        const labels = completedSessions.map((session, index) => `Quiz ${index + 1}`);
-        const scores = completedSessions.map(session => 
-            session.total_questions > 0 ? 
-                Math.round(session.score / session.total_questions * 100) : 0
-        );
+        const labels = completedSessions.map((session, index) => {
+            const type = session.type === 'ai' ? 'PLD' : 'Quiz';
+            return `${type} ${index + 1}`;
+        });
+        const scores = completedSessions.map(session => Math.round(session.percentage));
 
         // If no data, show placeholder
         if (scores.length === 0) {

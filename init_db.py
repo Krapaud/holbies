@@ -4,7 +4,7 @@ Script pour initialiser la base de données avec les tables nécessaires
 """
 
 from app.database import engine, Base
-from app.models import User, Question, QuizSession, QuizAnswer
+from app.models import User, Question, QuizSession, QuizAnswer, AIQuizSession, AIQuizAnswer
 
 def init_database():
     """Crée toutes les tables dans la base de données"""
@@ -18,6 +18,8 @@ def init_database():
         print("  - questions (questions de quiz)")
         print("  - quiz_sessions (sessions de quiz)")
         print("  - quiz_answers (réponses de quiz)")
+        print("  - ai_quiz_sessions (sessions de quiz IA)")
+        print("  - ai_quiz_answers (réponses de quiz IA)")
     except Exception as e:
         print(f"❌ Erreur lors de la création des tables: {e}")
         raise
