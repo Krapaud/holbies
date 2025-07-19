@@ -195,9 +195,6 @@ class QuizManager {
             
             const response = await window.holbiesApp.apiRequest('/api/quiz/submit-answer', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
                 body: JSON.stringify({
                     session_id: this.currentSession.id,
                     question_id: question.id,

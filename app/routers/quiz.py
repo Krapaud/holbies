@@ -42,7 +42,7 @@ async def get_user_quiz_sessions(
     """Récupère toutes les sessions de quiz de l'utilisateur"""
     sessions = db.query(QuizSession).filter(
         QuizSession.user_id == current_user.id
-    ).order_by(QuizSession.created_at.desc()).all()
+    ).order_by(QuizSession.started_at.desc()).all()
     return sessions
 
 @router.get("/sessions/active", response_model=QuizSessionSchema)
