@@ -321,11 +321,9 @@ h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-title);
     font-weight: 900;
     color: var(--primary-green);
-    text-shadow: 
-        0 0 3px var(--primary-green),
-        0 0 8px var(--primary-green);
+    text-shadow: 0 0 1px var(--primary-green);
     position: relative;
-    animation: glitch 4s infinite;
+    animation: glitch 16s infinite;
 }
 
 .glitch::before,
@@ -336,18 +334,18 @@ h1, h2, h3, h4, h5, h6 {
     left: 0;
     width: 100%;
     height: 100%;
-    opacity: 0.3;
+    opacity: 0.08;
 }
 
 .glitch::before {
-    animation: glitch-1 1.5s infinite;
-    color: rgba(255, 0, 0, 0.4);
+    animation: glitch-1 6s infinite;
+    color: rgba(255, 0, 0, 0.08);
     z-index: -1;
 }
 
 .glitch::after {
-    animation: glitch-2 1.8s infinite;
-    color: rgba(0, 255, 255, 0.4);
+    animation: glitch-2 6.4s infinite;
+    color: rgba(0, 255, 255, 0.08);
     z-index: -2;
 }
 
