@@ -7,9 +7,10 @@ class HolbiesApp {
     }
 
     init() {
-        this.setupNavigation();
-        this.checkAuthentication();
-        this.setupMatrixBackground();
+        this.token = localStorage.getItem('access_token');
+        console.log('App initialized. Token from localStorage:', this.token);
+        this.checkAuth();
+        this.setupEventListeners();
     }
 
     setupNavigation() {
@@ -172,25 +173,36 @@ class HolbiesApp {
 
     // API helper methods
     async apiRequest(url, options = {}) {
-        const defaultOptions = {
-            headers: {
-                'Content-Type': 'application/json',
-                ...options.headers
-            }
+        const headers = {
+            'Content-Type': 'application/json',
+            ...options.headers
         };
 
         if (this.token && !options.skipAuth) {
-            defaultOptions.headers.Authorization = `Bearer ${this.token}`;
+            headers.Authorization = `Bearer ${this.token}`;
         }
 
-        const response = await fetch(url, { ...defaultOptions, ...options });
+        const finalOptions = {
+            ...options,
+            headers
+        };
+
+        console.log('API Request:', url, finalOptions);
+        console.log('Token:', this.token);
+
+        const response = await fetch(url, finalOptions);
+        
+        console.log('API Response status:', response.status, response.statusText);
         
         if (!response.ok) {
             const error = await response.json().catch(() => ({ detail: 'Network error' }));
+            console.error('API Error:', error);
             throw new Error(error.detail || 'Request failed');
         }
 
-        return response.json();
+        const result = await response.json();
+        console.log('API Result:', result);
+        return result;
     }
 }
 

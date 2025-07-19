@@ -20,28 +20,52 @@ function setupAuthForms() {
 async function handleLogin(e) {
     e.preventDefault();
     
+    console.log('Login form submitted');
+    
     const form = e.target;
     const formData = new FormData(form);
     const submitBtn = form.querySelector('button[type="submit"]');
     
+    console.log('Form data:', {
+        username: formData.get('username'),
+        password: formData.get('password') ? '[HIDDEN]' : 'MISSING'
+    });
+    
     // Show loading
-    window.holbiesApp.showLoading(submitBtn);
+    if (window.holbiesApp && window.holbiesApp.showLoading) {
+        window.holbiesApp.showLoading(submitBtn);
+    } else {
+        console.error('holbiesApp not available');
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Connexion...';
+    }
 
     try {
+        console.log('Sending request to /api/auth/token');
+        
         const response = await fetch('/api/auth/token', {
             method: 'POST',
             body: formData
         });
 
+        console.log('Response status:', response.status);
+        
         const data = await response.json();
+        console.log('Response data:', data);
 
         if (response.ok) {
             // Store token
             localStorage.setItem('access_token', data.access_token);
-            window.holbiesApp.token = data.access_token;
+            if (window.holbiesApp) {
+                window.holbiesApp.token = data.access_token;
+            }
+            
+            console.log('Token stored, redirecting...');
             
             // Show success message
-            window.holbiesApp.showMessage('Connexion réussie! Redirection...', 'success');
+            if (window.holbiesApp && window.holbiesApp.showMessage) {
+                window.holbiesApp.showMessage('Connexion réussie! Redirection...', 'success');
+            }
             
             // Redirect after delay
             setTimeout(() => {
@@ -51,9 +75,19 @@ async function handleLogin(e) {
             throw new Error(data.detail || 'Erreur de connexion');
         }
     } catch (error) {
-        window.holbiesApp.showMessage(error.message, 'error');
+        console.error('Login error:', error);
+        if (window.holbiesApp && window.holbiesApp.showMessage) {
+            window.holbiesApp.showMessage(error.message, 'error');
+        } else {
+            alert('Erreur: ' + error.message);
+        }
     } finally {
-        window.holbiesApp.hideLoading(submitBtn);
+        if (window.holbiesApp && window.holbiesApp.hideLoading) {
+            window.holbiesApp.hideLoading(submitBtn);
+        } else {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Se connecter';
+        }
     }
 }
 
