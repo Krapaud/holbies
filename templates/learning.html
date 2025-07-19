@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learning Hub - Holbies Learning Hub</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Source+Code+Pro:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+    <style>
+        .learning-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            gap: 2rem;
+        }
+        
+        /* Section d'accueil et sélection */
+        .learning-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .learning-header h1 {
+            color: #00ff41;
+            font-family: 'Orbitron', monospace;
+            font-size: 3rem;
+            font-weight: 900;
+            text-shadow: 0 0 20px rgba(0, 255, 65, 0.6);
+            margin-bottom: 1rem;
+            animation: titleGlow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes titleGlow {
+            from { text-shadow: 0 0 20px rgba(0, 255, 65, 0.6); }
+            to { text-shadow: 0 0 30px rgba(0, 255, 65, 0.8); }
+        }
+        
+        .learning-subtitle {
+            color: #c9d1d9;
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+        }
+        
+        /* Sélecteur de mode d'apprentissage */
+        .learning-mode-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .mode-card {
+            background: linear-gradient(135deg, rgba(0, 255, 65, 0.15), rgba(0, 255, 65, 0.05));
+            border: 3px solid rgba(0, 255, 65, 0.3);
+            border-radius: 20px;
+            padding: 2.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .mode-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 65, 0.1), transparent);
+            animation: cardShimmer 3s infinite;
+        }
+        
+        @keyframes cardShimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        .mode-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(0, 255, 65, 0.6);
+            box-shadow: 0 15px 40px rgba(0, 255, 65, 0.2);
+            background: linear-gradient(135deg, rgba(0, 255, 65, 0.25), rgba(0, 255, 65, 0.15));
+        }
+        
+        .mode-card.active {
+            border-color: #00ff41;
+            box-shadow: 0 0 30px rgba(0, 255, 65, 0.4);
+            background: linear-gradient(135deg, rgba(0, 255, 65, 0.3), rgba(0, 255, 65, 0.2));
+        }
+        
+        .mode-icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            display: block;
+        }
+        
+        .mode-title {
+            color: #00ff41;
+            font-family: 'Orbitron', monospace;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
+        }
+        
+        .mode-description {
+            color: #c9d1d9;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+        
+        .mode-features {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .mode-features li {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.95rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(0, 255, 65, 0.2);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .mode-features li:before {
+            content: '✓';
+            color: #00ff41;
+            font-weight: bold;
+            margin-right: 0.8rem;
+        }
+        
+        /* Zone de contenu des quiz */
+        .learning-content {
+            position: relative;
+            min-height: 600px;
+        }
+        
+        /* Styles pour le Quiz Classique intégré */
+        .quiz-mode {
+            display: none;
+        }
+        
+        .quiz-mode.active {
+            display: block;
+        }
+        
+        .quiz-container {
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid rgba(0, 255, 65, 0.4);
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 0 25px rgba(0, 255, 65, 0.15);
+        }
+        
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .quiz-title {
+            color: #00ff41;
+            font-family: 'Orbitron', monospace;
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 15px rgba(0, 255, 65, 0.6);
+        }
+        
+        .quiz-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #c9d1d9;
+            font-size: 1.1rem;
+        }
+        
+        .quiz-progress {
+            margin-bottom: 2rem;
+        }
+        
+        .progress-bar {
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 25px;
+            height: 20px;
+            overflow: hidden;
+            border: 2px solid rgba(0, 255, 65, 0.5);
+        }
+        
+        .progress-fill {
+            background: linear-gradient(90deg, #00ff41, #00cc33);
+            height: 100%;
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 25px;
+        }
+        
+        /* Styles pour le PLD intégré */
+        .ai-quiz-mode {
+            display: none;
+        }
+        
+        .ai-quiz-mode.active {
+            display: grid;
+            gap: 1.5rem;
+        }
+        
+        /* Boutons de navigation entre modes */
+        .mode-switcher {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .mode-switch-btn {
+            padding: 1rem 2rem;
+            border: 2px solid rgba(0, 255, 65, 0.4);
+            background: rgba(0, 0, 0, 0.6);
+            color: #c9d1d9;
+            border-radius: 10px;
+            font-family: 'Orbitron', monospace;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .mode-switch-btn:hover {
+            border-color: rgba(0, 255, 65, 0.6);
+            color: #00ff41;
+            box-shadow: 0 5px 15px rgba(0, 255, 65, 0.2);
+        }
+        
+        .mode-switch-btn.active {
+            border-color: #00ff41;
+            color: #00ff41;
+            background: rgba(0, 255, 65, 0.1);
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.3);
+        }
+        
+        /* Styles pour les sections d'information */
+        .learning-info-section {
+            background: linear-gradient(135deg, rgba(0, 255, 65, 0.15), rgba(0, 255, 65, 0.05));
+            border: 2px solid rgba(0, 255, 65, 0.3);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.1);
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .info-item {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(0, 255, 65, 0.2);
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        .info-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        
+        .info-title {
+            color: #00ff41;
+            font-family: 'Orbitron', monospace;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+        }
+        
+        .info-description {
+            color: #c9d1d9;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .learning-container {
+                padding: 1rem;
+            }
+            
+            .learning-header h1 {
+                font-size: 2.2rem;
+            }
+            
+            .learning-mode-selector {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .mode-card {
+                padding: 2rem;
+            }
+            
+            .mode-title {
+                font-size: 1.5rem;
+            }
+            
+            .mode-switcher {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .mode-switch-btn {
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .learning-container {
+                padding: 0.5rem;
+            }
+            
+            .learning-header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .mode-card {
+                padding: 1.5rem;
+            }
+            
+            .mode-icon {
+                font-size: 3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="matrix-bg"></div>
+    
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <span class="logo-text">HOLBIES</span>
+                <span class="logo-subtext">LEARNING</span>
+            </div>
+            <div class="nav-menu" id="nav-menu">
+                <a href="/" class="nav-link">Accueil</a>
+                <a href="/learning" class="nav-link active">Learning Hub</a>
+                <a href="/tutor" class="nav-link">HLH Tutor</a>
+                <a href="/dashboard" class="nav-link">Dashboard</a>
+                <a href="/login" class="nav-link" id="auth-link">Connexion</a>
+            </div>
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="learning-container">
+            
+            <!-- En-tête principal -->
+            <div class="learning-header">
+                <h1>🎓 Learning Hub</h1>
+                <p class="learning-subtitle">Choisissez votre mode d'apprentissage et testez vos connaissances</p>
+            </div>
+            
+            <!-- Section d'information générale -->
+            <div class="learning-info-section">
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="info-icon">📊</span>
+                        <h3 class="info-title">Suivi des Progrès</h3>
+                        <p class="info-description">Suivez vos performances et identifiez vos points d'amélioration</p>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-icon">🎯</span>
+                        <h3 class="info-title">Apprentissage Adaptatif</h3>
+                        <p class="info-description">Deux modes d'apprentissage pour différents styles d'étude</p>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-icon">🚀</span>
+                        <h3 class="info-title">Amélioration Continue</h3>
+                        <p class="info-description">Feedback détaillé pour progresser efficacement</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sélecteur de mode d'apprentissage -->
+            <div class="learning-mode-selector">
+                <div class="mode-card" data-mode="quiz">
+                    <span class="mode-icon">📝</span>
+                    <h3 class="mode-title">Quiz Classique</h3>
+                    <p class="mode-description">Questions à choix multiples avec correction instantanée</p>
+                    <ul class="mode-features">
+                        <li>10 questions techniques</li>
+                        <li>Choix multiples</li>
+                        <li>Correction immédiate</li>
+                        <li>Explications détaillées</li>
+                        <li>Score en temps réel</li>
+                    </ul>
+                </div>
+                
+                <div class="mode-card" data-mode="ai-quiz">
+                    <span class="mode-icon">🤖</span>
+                    <h3 class="mode-title">PLD (Peer Learning Day)</h3>
+                    <p class="mode-description">Réponses libres corrigées par intelligence artificielle</p>
+                    <ul class="mode-features">
+                        <li>Réponses en texte libre</li>
+                        <li>Correction IA avancée</li>
+                        <li>Bonus termes techniques</li>
+                        <li>Feedback personnalisé</li>
+                        <li>Analyse sémantique</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Zone de contenu dynamique -->
+            <div class="learning-content">
+                
+                <!-- Mode Quiz Classique -->
+                <div class="quiz-mode" id="quiz-mode">
+                    <div class="mode-switcher">
+                        <button class="mode-switch-btn active" data-target="quiz">📝 Quiz Classique</button>
+                        <button class="mode-switch-btn" data-target="ai-quiz">🤖 PLD</button>
+                    </div>
+                    
+                    <div class="quiz-container">
+                        <div class="quiz-header">
+                            <h1 class="quiz-title">Quiz Technique</h1>
+                            <div class="quiz-info">
+                                <span class="quiz-question-counter">Question <span id="current-question">1</span> sur <span id="total-questions">10</span></span>
+                                <span class="quiz-timer" id="timer">00:00</span>
+                            </div>
+                        </div>
+                        
+                        <div class="quiz-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="progress-fill"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="quiz-content" id="quiz-content">
+                            <!-- Quiz Start Screen -->
+                            <div class="quiz-start" id="quiz-start">
+                                <div class="start-info">
+                                    <h2>Prêt à tester vos connaissances ?</h2>
+                                    <div class="quiz-rules">
+                                        <h3>Règles du quiz :</h3>
+                                        <ul>
+                                            <li>10 questions à choix multiples</li>
+                                            <li>Une seule réponse correcte par question</li>
+                                            <li>Pas de limite de temps</li>
+                                            <li>Correction instantanée avec explications</li>
+                                        </ul>
+                                    </div>
+                                    <button class="btn btn-primary" id="start-quiz-btn">Commencer le Quiz</button>
+                                </div>
+                            </div>
+                            
+                            <!-- Quiz Question -->
+                            <div class="quiz-question hidden" id="quiz-question">
+                                <div class="question-content">
+                                    <h2 class="question-text" id="question-text"></h2>
+                                    <div class="question-options" id="question-options">
+                                        <!-- Options will be inserted here -->
+                                    </div>
+                                    <button class="btn btn-primary" id="submit-answer-btn" disabled>Valider</button>
+                                </div>
+                            </div>
+                            
+                            <!-- Quiz Results -->
+                            <div class="quiz-results hidden" id="quiz-results">
+                                <div class="results-content">
+                                    <h2>Résultats du Quiz</h2>
+                                    <div class="score-display">
+                                        <div class="score-circle">
+                                            <span class="score-value" id="score-value">0</span>
+                                            <span class="score-total">/ 10</span>
+                                        </div>
+                                        <div class="score-percentage" id="score-percentage">0%</div>
+                                    </div>
+                                    <div class="results-details" id="results-details">
+                                        <!-- Results details will be inserted here -->
+                                    </div>
+                                    <div class="results-actions">
+                                        <button class="btn btn-primary" id="retake-quiz-btn">Refaire le Quiz</button>
+                                        <a href="/dashboard" class="btn btn-secondary">Voir le Dashboard</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Mode AI Quiz (PLD) -->
+                <div class="ai-quiz-mode" id="ai-quiz-mode">
+                    <div class="mode-switcher">
+                        <button class="mode-switch-btn" data-target="quiz">📝 Quiz Classique</button>
+                        <button class="mode-switch-btn active" data-target="ai-quiz">🤖 PLD</button>
+                    </div>
+                    
+                    <!-- Contenu du PLD (repris de ai-quiz.html) -->
+                    <!-- Écran de démarrage PLD -->
+                    <section id="ai-quiz-start" class="quiz-section">
+                        <div class="quiz-header">
+                            <h1 class="glitch" data-text="PLD">PLD</h1>
+                            <p class="quiz-subtitle">Peer Learning Day</p>
+                        </div>
+                        
+                        <div class="ai-start-info">
+                            <h3>🧠 Comment fonctionne le PLD ?</h3>
+                            <ul>
+                                <li><strong>Réponses libres :</strong> Répondez avec vos propres mots en texte libre</li>
+                                <li><strong>Correction automatique :</strong> L'IA analyse votre réponse et la compare à la réponse attendue</li>
+                                <li><strong>Scoring intelligent :</strong> 70% pour la similarité, 30% pour l'usage de termes techniques</li>
+                                <li><strong>Bonus technique :</strong> +5 points par terme technique utilisé correctement</li>
+                                <li><strong>Feedback détaillé :</strong> Explication personnalisée de votre performance</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="quiz-actions">
+                            <button id="start-ai-quiz-btn" class="btn btn-primary btn-large">
+                                <span>🚀 Commencer le PLD</span>
+                                <div class="btn-loading"></div>
+                            </button>
+                        </div>
+                        
+                        <div class="quiz-stats">
+                            <div class="stat-item">
+                                <div class="stat-number" id="ai-total-questions">5</div>
+                                <div class="stat-label">Questions</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">100</div>
+                                <div class="stat-label">Points/Question</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">∞</div>
+                                <div class="stat-label">Apprentissage</div>
+                            </div>
+                        </div>
+                    </section>
+                    
+                    <!-- Les autres sections du PLD seraient ajoutées ici -->
+                    <!-- ... (sections question, résultats, etc.) ... -->
+                    
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modals -->
+    <!-- Quiz Modal -->
+    <div class="modal hidden" id="answer-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Résultat</h3>
+                <button class="modal-close" id="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="answer-feedback" id="answer-feedback">
+                    <!-- Feedback content will be inserted here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="next-question-btn">Question Suivante</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Quiz Modal -->
+    <div id="ai-answer-modal" class="ai-modal hidden">
+        <div class="ai-modal-content">
+            <h2 id="ai-modal-title">Résultat de la correction</h2>
+            <div id="ai-answer-feedback">
+                <!-- Contenu généré dynamiquement -->
+            </div>
+            <div class="modal-actions">
+                <button id="next-ai-question-btn" class="btn btn-primary">
+                    <span>Question Suivante</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2025 Holbies Learning Hub. Learning Hub - Centre d'apprentissage unifié.</p>
+            <p>Quiz classique et PLD dans une seule interface</p>
+        </div>
+    </footer>
+
+    <script src="/static/js/main.js"></script>
+    <script>
+        // Script pour gérer la navigation entre les modes
+        document.addEventListener('DOMContentLoaded', function() {
+            const modeCards = document.querySelectorAll('.mode-card');
+            const modeSwitchBtns = document.querySelectorAll('.mode-switch-btn');
+            const quizMode = document.getElementById('quiz-mode');
+            const aiQuizMode = document.getElementById('ai-quiz-mode');
+            
+            // Gestion des cartes de sélection de mode
+            modeCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    const mode = this.getAttribute('data-mode');
+                    switchToMode(mode);
+                });
+            });
+            
+            // Gestion des boutons de navigation
+            modeSwitchBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const target = this.getAttribute('data-target');
+                    switchToMode(target);
+                });
+            });
+            
+            function switchToMode(mode) {
+                // Réinitialiser les cartes
+                modeCards.forEach(card => card.classList.remove('active'));
+                
+                // Réinitialiser les boutons de navigation
+                modeSwitchBtns.forEach(btn => btn.classList.remove('active'));
+                
+                // Masquer tous les modes
+                quizMode.classList.remove('active');
+                aiQuizMode.classList.remove('active');
+                
+                if (mode === 'quiz') {
+                    // Activer le mode Quiz
+                    document.querySelector('.mode-card[data-mode="quiz"]').classList.add('active');
+                    document.querySelectorAll('.mode-switch-btn[data-target="quiz"]').forEach(btn => btn.classList.add('active'));
+                    quizMode.classList.add('active');
+                } else if (mode === 'ai-quiz') {
+                    // Activer le mode PLD
+                    document.querySelector('.mode-card[data-mode="ai-quiz"]').classList.add('active');
+                    document.querySelectorAll('.mode-switch-btn[data-target="ai-quiz"]').forEach(btn => btn.classList.add('active'));
+                    aiQuizMode.classList.add('active');
+                }
+            }
+            
+            // Mode par défaut
+            switchToMode('quiz');
+        });
+    </script>
+    <script src="/static/js/quiz.js"></script>
+    <script src="/static/js/ai-quiz.js"></script>
+</body>
+</html>

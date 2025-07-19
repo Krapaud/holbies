@@ -53,6 +53,10 @@ async def register_page(request: Request):
 async def quiz_page(request: Request):
     return templates.TemplateResponse("quiz.html", {"request": request})
 
+@app.get("/learning", response_class=HTMLResponse)
+async def learning_page(request: Request):
+    return templates.TemplateResponse("learning.html", {"request": request})
+
 @app.get("/dashboard", response_class=HTMLResponse)
 async def dashboard_page(request: Request):
     return templates.TemplateResponse("dashboard.html", {"request": request})
