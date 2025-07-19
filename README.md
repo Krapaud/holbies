@@ -1,30 +1,67 @@
 # hackaton
-## 🚀 Fonctionnalités
+## 🚀 Dev Learning Hub Matrix - Edition Simplifiée
 
-### 🔐 Authentification
-- Inscription et connexion sécurisées
-- Mots de passe hashés avec salt
-- Sessions sécurisées
-- Gestion des rôles (Utilisateur/Administrateur)
+> Plateforme d'apprentissage interactive sans authentification
 
-### 🎨 Interface
-- Thème geek sombre avec effets Matrix
-- Design responsive et moderne
-- Animations CSS et JavaScript
-- Interface utilisateur intuitive
+## 🎯 Fonctionnalités
 
-### ⚙️ Administration
-- Panel d'administration complet
-- Gestion des utilisateurs
-- Statistiques en temps réel
-- Contrôle d'accès basé sur les rôles
+- **Dashboard** : Interface principale avec terminal intégré
+- **Quiz C** : Questions interactives sur le langage C
+- **DLH Tutor** : Exécution de code Python, JavaScript et C en temps réel
+- **Interface Matrix** : Design futuriste inspiré de Matrix
 
-### 🛠️ Technologies
-- **Backend**: Python/Flask
-- **Frontend**: HTML5, CSS3, JavaScript
-- **Base de données**: SQLite
-- **Sécurité**: Werkzeug Security
-- **Design**: CSS Grid, Flexbox, Animations
+## 🛠️ Technologies
+
+- **FastAPI** : Framework web moderne et rapide
+- **Jinja2** : Moteur de templates
+- **CSS Matrix Theme** : Interface utilisateur futuriste
+- **JavaScript** : Interactivité côté client
+
+## 🚀 Installation et Lancement
+
+```bash
+# Installation des dépendances
+pip install fastapi uvicorn jinja2 python-dotenv
+
+# Lancement de l'application
+python app_simple.py
+```
+
+L'application sera accessible sur `http://localhost:5001`
+
+## 📁 Structure
+
+```
+├── app_simple.py          # Application principale FastAPI
+├── quiz_data.py          # Données des quiz
+├── tutor_engine.py       # Moteur d'exécution de code
+├── templates/            # Templates HTML
+│   ├── base.html
+│   ├── index.html
+│   ├── dashboard.html
+│   ├── python_tutor.html
+│   └── quiz_*.html
+└── static/              # Fichiers statiques (CSS, JS)
+    ├── css/
+    └── js/
+```
+
+## 🎮 Utilisation
+
+1. **Page d'accueil** : `http://localhost:5001/`
+2. **Dashboard** : `http://localhost:5001/dashboard`
+3. **Quiz** : `http://localhost:5001/quiz`
+4. **DLH Tutor** : `http://localhost:5001/python-tutor`
+
+## 🔧 Développement
+
+L'application est maintenant simplifiée sans système d'authentification. Tous les utilisateurs ont accès à toutes les fonctionnalités.
+
+## 📝 Notes
+
+- Version simplifiée sans base de données
+- Pas d'authentification ni de gestion d'utilisateurs
+- Accès libre à toutes les fonctionnalités
 
 ## 📋 Installation
 

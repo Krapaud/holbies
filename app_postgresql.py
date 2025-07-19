@@ -128,9 +128,10 @@ async def index(request: Request, db: Session = Depends(get_db)):
     return templates.TemplateResponse("index.html", {"request": request, "user": user})
 
 @app.get("/login", response_class=HTMLResponse)
-async def login_page(request: Request):
+async def login_page(request: Request, db: Session = Depends(get_db)):
     """Page de connexion"""
-    return templates.TemplateResponse("login.html", {"request": request})
+    user = get_current_user(request, db)
+    return templates.TemplateResponse("login.html", {"request": request, "user": user})
 
 @app.post("/login")
 async def login(request: Request, username: str = Form(...), password: str = Form(...), db: Session = Depends(get_db)):
@@ -150,13 +151,15 @@ async def login(request: Request, username: str = Form(...), password: str = For
     else:
         return templates.TemplateResponse("login.html", {
             "request": request, 
-            "error": "Nom d'utilisateur ou mot de passe incorrect"
+            "error": "Nom d'utilisateur ou mot de passe incorrect",
+            "user": None
         })
 
 @app.get("/register", response_class=HTMLResponse)
-async def register_page(request: Request):
+async def register_page(request: Request, db: Session = Depends(get_db)):
     """Page d'inscription"""
-    return templates.TemplateResponse("register.html", {"request": request})
+    user = get_current_user(request, db)
+    return templates.TemplateResponse("register.html", {"request": request, "user": user})
 
 @app.post("/register")
 async def register(request: Request, username: str = Form(...), email: str = Form(...), password: str = Form(...), db: Session = Depends(get_db)):
@@ -169,7 +172,8 @@ async def register(request: Request, username: str = Form(...), email: str = For
     if existing_user:
         return templates.TemplateResponse("register.html", {
             "request": request, 
-            "error": "Nom d'utilisateur ou email déjà utilisé"
+            "error": "Nom d'utilisateur ou email déjà utilisé",
+            "user": None
         })
     
     # Créer le nouvel utilisateur avec bcrypt
@@ -266,6 +270,13 @@ async def cleanup_sessions(user: User = Depends(require_admin), db: Session = De
     deleted = db.query(UserSession).filter(UserSession.expires_at < datetime.now()).delete()
     db.commit()
     return {"message": f"{deleted} sessions expirées supprimées"}
+
+# Route de démonstration du menu utilisateur
+@app.get("/demo/menu", response_class=HTMLResponse)
+async def demo_menu():
+    """Page de démonstration du menu utilisateur avec instructions"""
+    with open("demo_menu.html", "r", encoding="utf-8") as f:
+        return HTMLResponse(content=f.read())
 
 if __name__ == "__main__":
     import uvicorn

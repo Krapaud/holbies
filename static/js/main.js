@@ -1,5 +1,7 @@
 // Main JavaScript for Dev Learning Hub
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 DOM Content Loaded - Starting initialization');
+    
     // Initialize flash message close buttons
     initFlashMessages();
     
@@ -9,11 +11,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize keyboard shortcuts
     initKeyboardShortcuts();
     
-    // Initialize user menu
-    initUserMenu();
+    // Initialize user dropdown - avec délai pour s'assurer que tout est chargé
+    setTimeout(initUserDropdown, 100);
     
-    // Initialize dashboard enhancements
-    initDashboardEnhancements();
+    // Initialize mobile navigation
+    initMobileNav();
     
     // Initialize particles background
     initParticles();
@@ -23,9 +25,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialize progress bars animation
     initProgressBars();
-    
-    // Initialize admin dropdown
-    initAdminDropdown();
     
     // Déclencher l'effet glitch au chargement
     setTimeout(() => {
@@ -362,72 +361,6 @@ function toggleMobileMenu() {
     }
 }
 
-// Fonction pour gérer le menu utilisateur
-function toggleUserMenu() {
-    const dropdown = document.getElementById('userDropdown');
-    const trigger = document.querySelector('.user-menu-trigger');
-    
-    if (dropdown && trigger) {
-        const isOpen = dropdown.classList.contains('show');
-        
-        if (isOpen) {
-            closeUserMenu();
-        } else {
-            openUserMenu();
-        }
-    }
-}
-
-function openUserMenu() {
-    const dropdown = document.getElementById('userDropdown');
-    const trigger = document.querySelector('.user-menu-trigger');
-    
-    if (dropdown && trigger) {
-        dropdown.classList.add('show');
-        trigger.classList.add('active');
-        
-        // Animation d'entrée pour les éléments du menu
-        const items = dropdown.querySelectorAll('.dropdown-item');
-        items.forEach((item, index) => {
-            item.style.opacity = '0';
-            item.style.transform = 'translateX(-10px)';
-            setTimeout(() => {
-                item.style.transition = 'all 0.2s ease';
-                item.style.opacity = '1';
-                item.style.transform = 'translateX(0)';
-            }, index * 50);
-        });
-    }
-}
-
-function closeUserMenu() {
-    const dropdown = document.getElementById('userDropdown');
-    const trigger = document.querySelector('.user-menu-trigger');
-    
-    if (dropdown && trigger) {
-        dropdown.classList.remove('show');
-        trigger.classList.remove('active');
-    }
-}
-
-function initUserMenu() {
-    // Fermer le menu quand on clique ailleurs
-    document.addEventListener('click', function(event) {
-        const userMenuContainer = document.querySelector('.user-menu-container');
-        
-        if (userMenuContainer && !userMenuContainer.contains(event.target)) {
-            closeUserMenu();
-        }
-    });
-    
-    // Fermer avec la touche Escape
-    document.addEventListener('keydown', function(event) {
-        if (event.key === 'Escape') {
-            closeUserMenu();
-        }
-    });
-}
-
 // Fonctions pour les éléments du menu
 function showSettings() {
     alert('Paramètres - Fonctionnalité à venir !');
@@ -759,39 +692,183 @@ document.addEventListener('DOMContentLoaded', function() {
 // Admin Dropdown Menu Functions
 // =============================================================================
 
-function initAdminDropdown() {
+function initUserDropdown() {
+    console.log('🔧 Initializing user dropdown...');
+    
+    // Attendre un peu plus si les éléments ne sont pas encore là
+    const maxRetries = 5;
+    let retries = 0;
+    
+    function tryInit() {
+        const userTrigger = document.getElementById('userTrigger');
+        const userDropdown = document.getElementById('userDropdown');
+        
+        console.log(`🎯 Tentative ${retries + 1}/${maxRetries}:`, {
+            userTrigger: !!userTrigger,
+            userDropdown: !!userDropdown
+        });
+        
+        if (userTrigger && userDropdown) {
+            console.log('✅ Both elements found!');
+            
+            // Nettoyer les anciens listeners
+            const newTrigger = userTrigger.cloneNode(true);
+            userTrigger.parentNode.replaceChild(newTrigger, userTrigger);
+            
+            // Ajouter le listener sur le nouvel élément
+            newTrigger.addEventListener('click', function(event) {
+                console.log('🚀 User menu clicked!');
+                event.preventDefault();
+                event.stopPropagation();
+                
+                const dropdown = document.getElementById('userDropdown');
+                if (dropdown) {
+                    const isOpen = dropdown.classList.contains('show');
+                    
+                    if (isOpen) {
+                        dropdown.classList.remove('show');
+                        newTrigger.classList.remove('active');
+                        console.log('📋 Menu fermé');
+                    } else {
+                        dropdown.classList.add('show');
+                        newTrigger.classList.add('active');
+                        console.log('📋 Menu ouvert');
+                        
+                        // Animation des items
+                        const items = dropdown.querySelectorAll('.dropdown-item');
+                        items.forEach((item, index) => {
+                            item.style.animationDelay = `${index * 0.05}s`;
+                            item.style.animation = 'fadeInLeft 0.3s ease-out forwards';
+                        });
+                    }
+                } else {
+                    console.log('❌ Dropdown not found during click');
+                }
+            });
+            
+            console.log('✅ Event listener attached successfully!');
+            return true; // Success
+            
+        } else if (retries < maxRetries - 1) {
+            retries++;
+            console.log(`⏳ Retrying in 200ms...`);
+            setTimeout(tryInit, 200);
+            return false;
+        } else {
+            console.log('❌ Failed to find elements after all retries');
+            return false;
+        }
+    }
+    
+    tryInit();
+    
     // Fermer le menu quand on clique ailleurs
     document.addEventListener('click', function(event) {
-        const dropdown = document.getElementById('adminDropdown');
-        const toggle = document.querySelector('.dropdown-toggle');
+        const dropdown = document.getElementById('userDropdown');
+        const trigger = document.getElementById('userTrigger');
         
-        if (dropdown && !dropdown.contains(event.target) && !toggle.contains(event.target)) {
+        if (dropdown && trigger && 
+            !dropdown.contains(event.target) && 
+            !trigger.contains(event.target)) {
             dropdown.classList.remove('show');
-            toggle.classList.remove('active');
+            trigger.classList.remove('active');
         }
     });
 }
 
-function toggleAdminMenu(event) {
-    event.preventDefault();
-    event.stopPropagation();
+// Navigation mobile - Menu burger
+function initMobileNav() {
+    const navToggle = document.getElementById('navToggle');
+    const navMenu = document.getElementById('navMenu');
+    const navOverlay = document.getElementById('navOverlay');
     
-    const dropdown = document.getElementById('adminDropdown');
-    const toggle = event.currentTarget;
+    if (!navToggle || !navMenu || !navOverlay) {
+        console.log('Mobile nav elements not found');
+        return;
+    }
     
-    if (dropdown) {
-        dropdown.classList.toggle('show');
-        toggle.classList.toggle('active');
+    // Toggle du menu burger
+    function toggleMobileMenu() {
+        const isActive = navToggle.classList.contains('active');
         
-        // Animation d'entrée pour les items
-        if (dropdown.classList.contains('show')) {
-            const items = dropdown.querySelectorAll('.dropdown-item');
-            items.forEach((item, index) => {
-                item.style.animationDelay = `${index * 0.05}s`;
-            });
+        if (isActive) {
+            closeMobileMenu();
+        } else {
+            openMobileMenu();
         }
     }
+    
+    // Ouvrir le menu mobile
+    function openMobileMenu() {
+        navToggle.classList.add('active');
+        navMenu.classList.add('active');
+        navOverlay.classList.add('active');
+        document.body.style.overflow = 'hidden'; // Empêcher le scroll
+        
+        // Animation des liens de navigation
+        const navLinks = navMenu.querySelectorAll('.nav-link');
+        navLinks.forEach((link, index) => {
+            link.style.transform = 'translateX(-20px)';
+            link.style.opacity = '0';
+            setTimeout(() => {
+                link.style.transition = 'all 0.3s ease';
+                link.style.transform = 'translateX(0)';
+                link.style.opacity = '1';
+            }, index * 100);
+        });
+    }
+    
+    // Fermer le menu mobile
+    function closeMobileMenu() {
+        navToggle.classList.remove('active');
+        navMenu.classList.remove('active');
+        navOverlay.classList.remove('active');
+        document.body.style.overflow = ''; // Rétablir le scroll
+        
+        // Reset des animations
+        const navLinks = navMenu.querySelectorAll('.nav-link');
+        navLinks.forEach(link => {
+            link.style.transition = '';
+            link.style.transform = '';
+            link.style.opacity = '';
+        });
+    }
+    
+    // Event listeners
+    navToggle.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleMobileMenu();
+    });
+    
+    // Fermer en cliquant sur l'overlay
+    navOverlay.addEventListener('click', closeMobileMenu);
+    
+    // Fermer avec la touche Escape
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && navMenu.classList.contains('active')) {
+            closeMobileMenu();
+        }
+    });
+    
+    // Fermer le menu lors du clic sur un lien (navigation)
+    const navLinks = navMenu.querySelectorAll('.nav-link');
+    navLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            // Petit délai pour permettre la navigation
+            setTimeout(closeMobileMenu, 150);
+        });
+    });
+    
+    // Gérer le redimensionnement de la fenêtre
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 768 && navMenu.classList.contains('active')) {
+            closeMobileMenu();
+        }
+    });
+    
+    console.log('Mobile navigation initialized');
 }
 
 // Fonction globale pour être accessible depuis le HTML
-window.toggleAdminMenu = toggleAdminMenu;
+window.toggleUserMenu = toggleUserMenu;
