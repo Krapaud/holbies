@@ -6,14 +6,25 @@ style PLD Holberton School - Organisé par difficulté avec réponses équilibr�
 
 import sys
 import os
+from dotenv import load_dotenv
+
+# Load environment variables first
+load_dotenv()
+
+# Force PostgreSQL URL
+os.environ['DATABASE_URL'] = 'postgresql://postgres@localhost/holbies_db'
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from sqlalchemy.orm import Session
 from app.database import SessionLocal, engine
 from app.models import Base, Question
 
+print(f"Using database: {engine.url}")
+
 # Créer les tables
 Base.metadata.create_all(bind=engine)
+print("Tables créées!")
 
 # Questions de quiz sur le langage C - style PLD Holberton School
 # Organisées par difficulté : easy -> medium -> hard
