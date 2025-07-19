@@ -8,7 +8,6 @@ from fastapi import FastAPI, Request, Form, Depends, HTTPException, status
 from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
-from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from pydantic import BaseModel
 from quiz_data import questions, answers, categories
 from tutor_engine import TutorEngine
@@ -16,7 +15,7 @@ from tutor_engine import TutorEngine
 # Initialisation FastAPI
 app = FastAPI(
     title="Dev Learning Hub Matrix",
-    description="Plateforme d'apprentissage avec thème Matrix",
+    description="Plateforme d'apprentissage avec thème Matrix - FastAPI Edition",
     version="2.0.0"
 )
 
@@ -35,19 +34,11 @@ class UserLogin(BaseModel):
     username: str
     password: str
 
-class UserRegister(BaseModel):
-    username: str
-    email: str
-    password: str
-
 class TutorRequest(BaseModel):
     code: str
     language: str
 
-class QuizSubmission(BaseModel):
-    answers: dict
-
-# Session management (simple in-memory for now)
+# Session management simple
 active_sessions = {}
 
 def get_db_connection():
@@ -116,12 +107,12 @@ init_db()
 async def index(request: Request):
     """Page d'accueil"""
     user = get_current_user(request)
-    return templates.TemplateResponse("index.html", {"request": request, "user": user})
+    return templates.TemplateResponse("index_simple.html", {"request": request, "user": user})
 
 @app.get("/login", response_class=HTMLResponse)
 async def login_page(request: Request):
     """Page de connexion"""
-    return templates.TemplateResponse("login.html", {"request": request})
+    return templates.TemplateResponse("login_simple.html", {"request": request})
 
 @app.post("/login")
 async def login(request: Request, username: str = Form(...), password: str = Form(...)):
@@ -138,7 +129,7 @@ async def login(request: Request, username: str = Form(...), password: str = For
         response.set_cookie(key="session_id", value=session_id, httponly=True)
         return response
     else:
-        return templates.TemplateResponse("login.html", {
+        return templates.TemplateResponse("login_simple.html", {
             "request": request, 
             "error": "Nom d'utilisateur ou mot de passe incorrect"
         })
@@ -146,7 +137,7 @@ async def login(request: Request, username: str = Form(...), password: str = For
 @app.get("/register", response_class=HTMLResponse)
 async def register_page(request: Request):
     """Page d'inscription"""
-    return templates.TemplateResponse("register.html", {"request": request})
+    return templates.TemplateResponse("register_simple.html", {"request": request})
 
 @app.post("/register")
 async def register(request: Request, username: str = Form(...), email: str = Form(...), password: str = Form(...)):
@@ -160,7 +151,7 @@ async def register(request: Request, username: str = Form(...), email: str = For
     
     if existing_user:
         conn.close()
-        return templates.TemplateResponse("register.html", {
+        return templates.TemplateResponse("register_simple.html", {
             "request": request, 
             "error": "Nom d'utilisateur ou email déjà utilisé"
         })
@@ -197,7 +188,7 @@ async def logout(request: Request):
 @app.get("/dashboard", response_class=HTMLResponse)
 async def dashboard(request: Request, user: dict = Depends(require_auth)):
     """Tableau de bord utilisateur"""
-    return templates.TemplateResponse("dashboard.html", {"request": request, "user": user})
+    return templates.TemplateResponse("dashboard_simple.html", {"request": request, "user": user})
 
 @app.get("/python-tutor", response_class=HTMLResponse)
 async def python_tutor(request: Request, user: dict = Depends(require_auth)):
@@ -231,69 +222,11 @@ async def quiz_home(request: Request, user: dict = Depends(require_auth)):
         "categories": categories
     })
 
-@app.get("/quiz/{category}", response_class=HTMLResponse)
-async def quiz_category(request: Request, category: str, user: dict = Depends(require_auth)):
-    """Quiz pour une catégorie donnée"""
-    if category not in categories:
-        raise HTTPException(status_code=404, detail="Catégorie non trouvée")
-    
-    return templates.TemplateResponse("quiz.html", {
-        "request": request,
-        "user": user,
-        "category": category,
-        "questions": questions[category]
-    })
-
-@app.post("/quiz/{category}/submit")
-async def submit_quiz(request: Request, category: str, quiz_submission: QuizSubmission, user: dict = Depends(require_auth)):
-    """Soumettre un quiz"""
-    if category not in categories:
-        raise HTTPException(status_code=404, detail="Catégorie non trouvée")
-    
-    score = 0
-    total_questions = len(questions[category])
-    user_answers = quiz_submission.answers
-    
-    for i, question in enumerate(questions[category]):
-        question_key = f"question_{i}"
-        if question_key in user_answers:
-            user_answer = int(user_answers[question_key])
-            if user_answer == answers[category][i]:
-                score += 1
-    
-    # Sauvegarder le score
-    conn = get_db_connection()
-    conn.execute(
-        'INSERT INTO quiz_scores (user_id, category, score, total_questions) VALUES (?, ?, ?, ?)',
-        (user['id'], category, score, total_questions)
-    )
-    conn.commit()
-    conn.close()
-    
-    return templates.TemplateResponse("quiz_result.html", {
-        "request": request,
-        "user": user,
-        "category": category,
-        "score": score,
-        "total": total_questions,
-        "percentage": round((score / total_questions) * 100, 1)
-    })
-
-@app.get("/profile", response_class=HTMLResponse)
-async def profile(request: Request, user: dict = Depends(require_auth)):
-    """Profil utilisateur"""
-    conn = get_db_connection()
-    scores = conn.execute(
-        'SELECT category, score, total_questions, date_taken FROM quiz_scores WHERE user_id = ? ORDER BY date_taken DESC',
-        (user['id'],)
-    ).fetchall()
-    conn.close()
-    
-    return templates.TemplateResponse("profile.html", {
-        "request": request,
-        "user": user,
-        "quiz_scores": scores
-    })
+# Route de test simple
+@app.get("/test")
+async def test():
+    """Route de test pour vérifier que FastAPI fonctionne"""
+    return {"message": "FastAPI fonctionne ! 🚀", "status": "success"}
 
 # Point d'entrée pour Uvicorn
 if __name__ == "__main__":

@@ -1,215 +1,64 @@
-{% extends "base.html" %}
-
-{% block title %}Inscription - Dev Learning Hub{% endblock %}
-
-{% block content %}
-<div class="auth-container">
-    <div class="auth-card">
-        <div class="auth-header">
-            <h2 class="auth-title">
-                <span class="auth-icon">📝</span>
-                Inscription
-            </h2>
-            <p class="auth-subtitle">Rejoignez la communauté</p>
-        </div>
-        
-        <form class="auth-form" method="POST" id="registerForm">
-            <div class="form-group">
-                <label for="username" class="form-label">
-                    <span class="label-icon">👤</span>
-                    Nom d'utilisateur
-                </label>
-                <input 
-                    type="text" 
-                    id="username" 
-                    name="username" 
-                    class="form-input"
-                    placeholder="Choisissez un nom d'utilisateur"
-                    required
-                    minlength="3"
-                    autocomplete="username"
-                >
-                <div class="input-glow"></div>
-                <small class="form-hint">Au moins 3 caractères</small>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription - Dev Learning Hub</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <h2 class="auth-title">
+                    <span class="auth-icon">📝</span>
+                    Inscription
+                </h2>
+                <p class="auth-subtitle">Rejoignez la matrice</p>
             </div>
             
-            <div class="form-group">
-                <label for="email" class="form-label">
-                    <span class="label-icon">📧</span>
-                    Email
-                </label>
-                <input 
-                    type="email" 
-                    id="email" 
-                    name="email" 
-                    class="form-input"
-                    placeholder="votre@email.com"
-                    required
-                    autocomplete="email"
-                >
-                <div class="input-glow"></div>
+            {% if error %}
+            <div class="error-message">
+                {{ error }}
             </div>
+            {% endif %}
             
-            <div class="form-group">
-                <label for="password" class="form-label">
-                    <span class="label-icon">🔒</span>
-                    Mot de passe
-                </label>
-                <input 
-                    type="password" 
-                    id="password" 
-                    name="password" 
-                    class="form-input"
-                    placeholder="Choisissez un mot de passe sécurisé"
-                    required
-                    minlength="6"
-                    autocomplete="new-password"
-                >
-                <div class="input-glow"></div>
-                <small class="form-hint">Au moins 6 caractères</small>
-            </div>
-            
-            <div class="form-group">
-                <label for="confirm_password" class="form-label">
-                    <span class="label-icon">🔐</span>
-                    Confirmer le mot de passe
-                </label>
-                <input 
-                    type="password" 
-                    id="confirm_password" 
-                    name="confirm_password" 
-                    class="form-input"
-                    placeholder="Répétez votre mot de passe"
-                    required
-                    autocomplete="new-password"
-                >
-                <div class="input-glow"></div>
-            </div>
-            
-            <div class="password-strength" id="passwordStrength">
-                <div class="strength-bar">
-                    <div class="strength-fill"></div>
+            <form class="auth-form" method="POST">
+                <div class="form-group">
+                    <label for="username" class="form-label">
+                        <span class="label-icon">👤</span>
+                        Nom d'utilisateur
+                    </label>
+                    <input type="text" id="username" name="username" class="form-input" required>
                 </div>
-                <span class="strength-text">Force du mot de passe</span>
-            </div>
+                
+                <div class="form-group">
+                    <label for="email" class="form-label">
+                        <span class="label-icon">📧</span>
+                        Email
+                    </label>
+                    <input type="email" id="email" name="email" class="form-input" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password" class="form-label">
+                        <span class="label-icon">🔒</span>
+                        Mot de passe
+                    </label>
+                    <input type="password" id="password" name="password" class="form-input" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary full-width">
+                    <span class="btn-icon">🚀</span>
+                    S'inscrire
+                </button>
+            </form>
             
-            <button type="submit" class="btn btn-primary btn-full">
-                <span class="btn-icon">🚀</span>
-                Créer mon compte
-            </button>
-        </form>
-        
-        <div class="auth-footer">
-            <p class="auth-link-text">
-                Déjà un compte ?
-                <a href="{{ url_for('login') }}" class="auth-link">Se connecter</a>
-            </p>
+            <div class="auth-footer">
+                <p>Déjà un compte ? <a href="/login" class="auth-link">Se connecter</a></p>
+                <p><a href="/" class="auth-link">← Retour à l'accueil</a></p>
+            </div>
         </div>
     </div>
-</div>
-{% endblock %}
-
-{% block scripts %}
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('registerForm');
-    const password = document.getElementById('password');
-    const confirmPassword = document.getElementById('confirm_password');
-    const strengthIndicator = document.getElementById('passwordStrength');
-    
-    // Animation d'entrée
-    const authCard = document.querySelector('.auth-card');
-    authCard.classList.add('slide-in');
-    
-    // Effet de focus sur les inputs
-    const inputs = document.querySelectorAll('.form-input');
-    inputs.forEach(input => {
-        input.addEventListener('focus', function() {
-            this.parentElement.classList.add('focused');
-        });
-        
-        input.addEventListener('blur', function() {
-            if (!this.value) {
-                this.parentElement.classList.remove('focused');
-            }
-        });
-    });
-    
-    // Vérification de la force du mot de passe
-    password.addEventListener('input', function() {
-        const strength = calculatePasswordStrength(this.value);
-        updateStrengthIndicator(strength);
-    });
-    
-    // Validation du formulaire
-    form.addEventListener('submit', function(e) {
-        if (password.value !== confirmPassword.value) {
-            e.preventDefault();
-            showError('Les mots de passe ne correspondent pas');
-            return;
-        }
-        
-        if (password.value.length < 6) {
-            e.preventDefault();
-            showError('Le mot de passe doit contenir au moins 6 caractères');
-            return;
-        }
-    });
-    
-    // Vérification en temps réel de la confirmation
-    confirmPassword.addEventListener('input', function() {
-        if (this.value && this.value !== password.value) {
-            this.classList.add('error');
-        } else {
-            this.classList.remove('error');
-        }
-    });
-});
-
-function calculatePasswordStrength(password) {
-    let strength = 0;
-    
-    if (password.length >= 6) strength += 1;
-    if (password.length >= 10) strength += 1;
-    if (/[a-z]/.test(password)) strength += 1;
-    if (/[A-Z]/.test(password)) strength += 1;
-    if (/[0-9]/.test(password)) strength += 1;
-    if (/[^a-zA-Z0-9]/.test(password)) strength += 1;
-    
-    return Math.min(strength, 4);
-}
-
-function updateStrengthIndicator(strength) {
-    const strengthFill = document.querySelector('.strength-fill');
-    const strengthText = document.querySelector('.strength-text');
-    
-    const levels = ['Très faible', 'Faible', 'Moyen', 'Fort', 'Très fort'];
-    const colors = ['#ff4444', '#ff8844', '#ffcc44', '#44ff44', '#00ff44'];
-    
-    strengthFill.style.width = `${(strength / 4) * 100}%`;
-    strengthFill.style.backgroundColor = colors[strength];
-    strengthText.textContent = levels[strength] || 'Force du mot de passe';
-}
-
-function showError(message) {
-    // Créer et afficher un message d'erreur temporaire
-    const errorDiv = document.createElement('div');
-    errorDiv.className = 'flash-message flash-error';
-    errorDiv.innerHTML = `
-        <span class="flash-icon">❌</span>
-        ${message}
-        <button class="flash-close">&times;</button>
-    `;
-    
-    document.body.appendChild(errorDiv);
-    
-    setTimeout(() => {
-        errorDiv.remove();
-    }, 5000);
-    
-    errorDiv.querySelector('.flash-close').addEventListener('click', () => {
-        errorDiv.remove();
-    });
-}
-</script>
-{% endblock %}
+</body>
+</html>

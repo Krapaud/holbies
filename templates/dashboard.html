@@ -1,1053 +1,265 @@
-{% extends "base.html" %}
-
-{% block title %}Dashboard - Dev Learning Hub{% endblock %}
-
-{% block content %}
-<div class="dashboard-container animated-bg">
-    <!-- Particules d'arrière-plan -->
-    <div class="particles" id="particles"></div>
-    
-    <div class="dashboard-header glass-effect">
-        <h1 class="dashboard-title glow-text">
-            <span class="title-icon rotating">📊</span>
-            Tableau de bord
-        </h1>
-        <p class="dashboard-subtitle fade-in">
-            Bienvenue, <span class="username-highlight neon-text">{{ user.username }}</span>
-        </p>
-    </div>
-    
-    <div class="dashboard-grid fade-in-grid">
-        <!-- Statistiques améliorées -->
-        <div class="dashboard-card stats-card floating-card">
-            <div class="card-header gradient-header">
-                <h3 class="card-title">
-                    <span class="card-icon pulse">📈</span>
-                    Progression
-                </h3>
-                <div class="header-decoration"></div>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Dev Learning Hub</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <a href="/">
+                    <span class="logo">DEV</span>
+                    <span class="logo-accent">LEARNING</span>
+                    <span class="logo">HUB</span>
+                </a>
             </div>
-            <div class="card-content">
-                <!-- Badge de niveau basé sur la progression -->
-                <div class="progression-badge-container floating-badge">
-                    <div id="progressionBadge" class="progression-badge animated-badge">
-                        <span class="badge-icon rotating-slow">🐣</span>
-                        <span class="badge-text">Débutant</span>
-                        <div class="badge-glow"></div>
+            
+            <div class="nav-menu">
+                <div class="nav-links">
+                    <a href="/dashboard" class="nav-link active">
+                        <span class="nav-icon">🏠</span>
+                        Dashboard
+                    </a>
+                    <a href="/quiz" class="nav-link">
+                        <span class="nav-icon">🧠</span>
+                        Quiz
+                    </a>
+                    <a href="/python-tutor" class="nav-link">
+                        <span class="nav-icon">🐍</span>
+                        DLH Tutor
+                    </a>
+                </div>
+                
+                <div class="nav-user">
+                    <span class="user-name">{{ user.username }}</span>
+                    <a href="/logout" class="logout-btn">Déconnexion</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="dashboard-header">
+                <h1>Bienvenue, {{ user.username }}!</h1>
+                <p>Votre tableau de bord personnel</p>
+            </div>
+            
+            <div class="dashboard-grid">
+                <!-- Console Hacker -->
+                <div class="dashboard-card console-card">
+                    <div class="card-header">
+                        <h3>🔧 Console Hacker</h3>
                     </div>
-                    <div class="badge-description glow-text">
-                        <span id="badgeDescription">Vous commencez votre parcours C</span>
+                    <div class="card-content">
+                        <div id="terminal" class="terminal">
+                            <div class="terminal-header">
+                                <div class="terminal-buttons">
+                                    <button onclick="clearTerminal()" class="terminal-btn">Clear</button>
+                                    <button onclick="showHelp()" class="terminal-btn">Help</button>
+                                    <button onclick="matrixRain()" class="terminal-btn">Matrix Rain</button>
+                                    <button onclick="toggleFullscreen()" class="terminal-btn">Fullscreen</button>
+                                </div>
+                            </div>
+                            <div id="terminal-content" class="terminal-content">
+                                <div class="terminal-line">
+                                    <span class="prompt">matrix@dlh:~$</span>
+                                    <span class="command">Welcome to DLH Terminal</span>
+                                </div>
+                                <div class="terminal-line">
+                                    <span class="output">Type 'help' for available commands</span>
+                                </div>
+                                <div class="terminal-line">
+                                    <span class="prompt">matrix@dlh:~$</span>
+                                    <input type="text" id="terminal-input" class="terminal-input" autofocus>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
-                <div class="stats-grid enhanced-stats">
-                    <div class="stat-item hover-lift">
-                        <div class="stat-number gradient-text counter" data-target="{{ user.level }}">0</div>
-                        <div class="stat-label">Niveau</div>
-                        <div class="stat-icon">⭐</div>
+                <!-- Statistiques -->
+                <div class="dashboard-card stats-card">
+                    <div class="card-header">
+                        <h3>📊 Vos Statistiques</h3>
                     </div>
-                    <div class="stat-item hover-lift">
-                        <div class="stat-number gradient-text counter" data-target="{{ user.xp_points }}">0</div>
-                        <div class="stat-label">Points XP</div>
-                        <div class="stat-icon">🔥</div>
-                    </div>
-                    <div class="stat-item hover-lift">
-                        <div class="stat-number gradient-text counter" data-target="{{ user.total_quizzes }}">0</div>
-                        <div class="stat-label">Quiz Complétés</div>
-                        <div class="stat-icon">✅</div>
-                    </div>
-                    <div class="stat-item hover-lift">
-                        <div class="stat-number gradient-text counter" data-target="{{ "%.1f"|format(user.completion_rate) }}">0</div>
-                        <div class="stat-label">Taux Réussite</div>
-                        <div class="stat-icon">🎯</div>
+                    <div class="card-content">
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <div class="stat-value">0</div>
+                                <div class="stat-label">Quiz Complétés</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">0%</div>
+                                <div class="stat-label">Score Moyen</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">0</div>
+                                <div class="stat-label">Codes Exécutés</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
-                <!-- Barre de progression niveau améliorée -->
-                <div class="level-progress enhanced-progress">
-                    <div class="progress-header">
-                        <span class="progress-label glow-text">Niveau {{ user.level }} → {{ user.level + 1 }}</span>
-                        <span class="progress-percent neon-text">{{ "%.0f"|format(level_progress) }}%</span>
+                <!-- Actions Rapides -->
+                <div class="dashboard-card actions-card">
+                    <div class="card-header">
+                        <h3>⚡ Actions Rapides</h3>
                     </div>
-                    <div class="progress-bar enhanced-bar">
-                        <div class="progress-fill animated-fill" data-width="{{ level_progress }}">
-                            <div class="progress-shine"></div>
-                        </div>
-                    </div>
-                    <div class="progress-info">
-                        <span class="glow-text">{{ xp_for_next - (user.xp_points - ((user.level - 1) ** 2 * 100)) }} XP pour le niveau suivant</span>
-                    </div>
-                </div>
-                
-                <!-- Légende des badges améliorée -->
-                <div class="badges-legend enhanced-legend">
-                    <h4 class="legend-title gradient-text">🏆 Niveaux de maîtrise C</h4>
-                    <div class="badges-grid enhanced-badges">
-                        <div class="badge-legend-item hover-lift">
-                            <span class="legend-badge beginner glow-badge">🐣 Débutant</span>
-                            <span class="legend-range">0-20%</span>
-                        </div>
-                        <div class="badge-legend-item hover-lift">
-                            <span class="legend-badge apprentice glow-badge">📚 Apprenti</span>
-                            <span class="legend-range">21-40%</span>
-                        </div>
-                        <div class="badge-legend-item hover-lift">
-                            <span class="legend-badge intermediate glow-badge">🔧 Intermédiaire</span>
-                            <span class="legend-range">41-60%</span>
-                        </div>
-                        <div class="badge-legend-item hover-lift">
-                            <span class="legend-badge advanced glow-badge">🚀 Avancé</span>
-                            <span class="legend-range">61-80%</span>
-                        </div>
-                        <div class="badge-legend-item hover-lift">
-                            <span class="legend-badge master glow-badge">👑 Maître C</span>
-                            <span class="legend-range">81-100%</span>
+                    <div class="card-content">
+                        <div class="actions-grid">
+                            <a href="/quiz" class="action-btn">
+                                <span class="action-icon">🧠</span>
+                                <span class="action-label">Faire un Quiz</span>
+                            </a>
+                            <a href="/python-tutor" class="action-btn">
+                                <span class="action-icon">🐍</span>
+                                <span class="action-label">DLH Tutor</span>
+                            </a>
+                            <a href="#" class="action-btn">
+                                <span class="action-icon">📚</span>
+                                <span class="action-label">Cours</span>
+                            </a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        
-        <!-- Achievements récents -->
-        {% if achievements %}
-        <div class="dashboard-card achievements-card">
-            <div class="card-header">
-                <h3 class="card-title">
-                    <span class="card-icon">🏆</span>
-                    Achievements Récents
-                </h3>
-            </div>
-            <div class="card-content">
-                <div class="achievements-list">
-                    {% for achievement in achievements %}
-                    <div class="achievement-item">
-                        <div class="achievement-icon">🏅</div>
-                        <div class="achievement-content">
-                            <div class="achievement-name">{{ achievement[0] }}</div>
-                            <div class="achievement-desc">{{ achievement[1] }}</div>
-                            <div class="achievement-date">{{ achievement[2].split(' ')[0] }}</div>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-        {% endif %}
-        
-        <!-- Meilleure catégorie -->
-        {% if user.best_category %}
-        <div class="dashboard-card best-category-card">
-            <div class="card-header">
-                <h3 class="card-title">
-                    <span class="card-icon">⭐</span>
-                    Votre Spécialité
-                </h3>
-            </div>
-            <div class="card-content">
-                <div class="best-category">
-                    <div class="category-name">{{ user.best_category }}</div>
-                    <div class="category-desc">Votre domaine de prédilection !</div>
-                </div>
-            </div>
-        </div>
-        {% endif %}
-        
-        <!-- Activité récente -->
-        <div class="dashboard-card activity-card">
-            <div class="card-header">
-                <h3 class="card-title">
-                    <span class="card-icon">🕒</span>
-                    Activité Récente
-                </h3>
-            </div>
-            <div class="card-content">
-                <div class="activity-list">
-                    <div class="activity-item">
-                        <div class="activity-icon">🔑</div>
-                        <div class="activity-content">
-                            <p class="activity-title">Connexion réussie</p>
-                            <p class="activity-time">
-                                {% if user.last_login %}
-                                    {{ user.last_login.split(' ')[0] }}
-                                {% else %}
-                                    Première connexion
-                                {% endif %}
-                            </p>
-                        </div>
-                    </div>
-                    <div class="activity-item">
-                        <div class="activity-icon">📝</div>
-                        <div class="activity-content">
-                            <p class="activity-title">Compte créé</p>
-                            <p class="activity-time">{{ user.created_at.split(' ')[0] }}</p>
-                        </div>
-                    </div>
-                    {% if recent_scores %}
-                        {% for score in recent_scores %}
-                        <div class="activity-item">
-                            <div class="activity-icon">🎯</div>
-                            <div class="activity-content">
-                                <p class="activity-title">Quiz {{ score.category }} complété</p>
-                                <p class="activity-time">{{ score.completed_at.split(' ')[0] }}</p>
-                            </div>
-                        </div>
-                        {% endfor %}
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-        
-        <!-- Console Easter Egg améliorée -->
-        <div class="dashboard-card console-card floating-card">
-            <div class="card-header gradient-header">
-                <h3 class="card-title">
-                    <span class="card-icon pulse">💻</span>
-                    Console Hacker
-                </h3>
-                <div class="console-controls enhanced-controls">
-                    <button class="console-btn hover-lift" onclick="clearTerminal()" title="Effacer">🗑️</button>
-                    <button class="console-btn hover-lift" onclick="showHelp()" title="Aide">❓</button>
-                    <button class="console-btn hover-lift" onclick="toggleFullscreen()" title="Plein écran">⛶</button>
-                    <button class="console-btn hover-lift" onclick="matrixRain()" title="Matrix Rain">🌧️</button>
-                </div>
-                <div class="header-decoration"></div>
-            </div>
-            <div class="card-content">
-                <div class="console-terminal enhanced-terminal" id="terminal">
-                    <div class="terminal-header glass-effect">
-                        <div class="terminal-controls">
-                            <div class="terminal-buttons">
-                                <span class="terminal-button close glow-button"></span>
-                                <span class="terminal-button minimize glow-button"></span>
-                                <span class="terminal-button maximize glow-button"></span>
-                            </div>
-                            <span class="terminal-title neon-text">matrix@hackaton: ~/dev</span>
-                            <div class="terminal-stats">
-                                <span class="cpu-usage">CPU: <span class="stat-value">45%</span></span>
-                                <span class="mem-usage">MEM: <span class="stat-value">67%</span></span>
-                            </div>
-                        </div>
-                        <div class="terminal-status-bar">
-                            <span class="terminal-info">TTY: /dev/pts/1</span>
-                            <span class="terminal-info">Shell: bash</span>
-                            <span class="terminal-info">User: {{ user.username }}</span>
-                            <span class="terminal-status">ONLINE</span>
-                        </div>
-                    </div>
-                    <div class="terminal-content" id="terminal-content">
-                        <div class="terminal-line system-info">
-                            <span class="terminal-text">Last login: {{ "Jul 18 17:20:15 2025" }} from 192.168.1.42</span>
-                        </div>
-                        <div class="terminal-line system-info">
-                            <span class="terminal-text">Matrix Development Environment v3.1.4 - Kernel 5.15.0-matrix</span>
-                        </div>
-                        <div class="terminal-line system-info">
-                            <span class="terminal-text">Welcome to the Matrix, {{ user.username }}. Your current access level: {% if user.is_admin %}ROOT{% else %}USER{% endif %}</span>
-                        </div>
-                        <div class="terminal-line">
-                            <span class="terminal-text">Type 'help' or 'man matrix' for available commands</span>
-                        </div>
-                        <div class="terminal-line current-line">
-                            <span class="terminal-prompt">{{ user.username }}@matrix:~/dev$</span>
-                            <div class="terminal-input-container">
-                                <span class="terminal-typed-text" id="terminal-typed-text"></span>
-                                <input type="text" class="terminal-input" id="terminal-input" placeholder="" autocomplete="off" spellcheck="false">
-                                <span class="terminal-cursor">█</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-{% endblock %}
+    </main>
 
-{% block scripts %}
-<script>
-// Données utilisateur pour les commandes (format JSON sécurisé)
-window.userData = {{ {
-    'username': user.username or 'guest',
-    'level': user.level or 1,
-    'xp': user.xp_points or 0,
-    'quizzes': user.total_quizzes or 0,
-    'completionRate': user.completion_rate or 0,
-    'isAdmin': user.is_admin or False,
-    'bestCategory': user.best_category or 'Aucune'
-} | tojson }};
-</script>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Animation d'entrée pour les cartes
-    const cards = document.querySelectorAll('.dashboard-card');
-    cards.forEach((card, index) => {
-        card.style.animationDelay = `${index * 0.1}s`;
-        card.classList.add('fade-in-up');
-    });
-    
-    // Animation des barres de progression niveau
-    setTimeout(() => {
-        const progressFills = document.querySelectorAll('.progress-fill[data-width]');
-        progressFills.forEach(fill => {
-            const width = fill.getAttribute('data-width');
-            fill.style.width = '0%';
-            fill.style.transition = 'width 2s ease-out';
+    <script src="/static/js/main.js"></script>
+    <script>
+        // Terminal simple pour FastAPI
+        let isFullscreen = false;
+        
+        function clearTerminal() {
+            const terminal = document.getElementById('terminal-content');
+            terminal.innerHTML = `
+                <div class="terminal-line">
+                    <span class="prompt">matrix@dlh:~$</span>
+                    <span class="command">Terminal cleared</span>
+                </div>
+                <div class="terminal-line">
+                    <span class="prompt">matrix@dlh:~$</span>
+                    <input type="text" id="terminal-input" class="terminal-input" autofocus>
+                </div>
+            `;
+        }
+        
+        function showHelp() {
+            const terminal = document.getElementById('terminal-content');
+            const helpText = `
+                <div class="terminal-line">
+                    <span class="output">Available commands:</span>
+                </div>
+                <div class="terminal-line">
+                    <span class="output">- clear: Clear terminal</span>
+                </div>
+                <div class="terminal-line">
+                    <span class="output">- help: Show this help</span>
+                </div>
+                <div class="terminal-line">
+                    <span class="output">- matrix: Matrix rain effect</span>
+                </div>
+                <div class="terminal-line">
+                    <span class="prompt">matrix@dlh:~$</span>
+                    <input type="text" id="terminal-input" class="terminal-input" autofocus>
+                </div>
+            `;
+            terminal.innerHTML += helpText;
+        }
+        
+        function matrixRain() {
+            const terminal = document.getElementById('terminal-content');
+            let rainActive = terminal.classList.contains('matrix-rain-active');
+            
+            if (rainActive) {
+                terminal.classList.remove('matrix-rain-active');
+                const rainElements = terminal.querySelectorAll('.matrix-rain-char');
+                rainElements.forEach(el => el.remove());
+                return;
+            }
+            
+            terminal.classList.add('matrix-rain-active');
+            
+            const matrixChars = '日ﾊﾐﾋｰｳｼﾅﾓﾆｻﾜﾂｵﾘｱﾎﾃﾏｹﾒｴｶｷﾑﾕﾗﾈﾄﾖﾀﾇｿﾍﾞﾌｺｴﾁ';
+            const numColumns = Math.floor(terminal.offsetWidth / 15);
+            
+            for (let i = 0; i < numColumns; i++) {
+                setTimeout(() => {
+                    createMatrixColumn(i * 15, matrixChars);
+                }, i * 100);
+            }
+            
             setTimeout(() => {
-                fill.style.width = width + '%';
-            }, 500);
-        });
-    }, 1000);
-    
-    // Animation des achievements
-    const achievements = document.querySelectorAll('.achievement-item');
-    achievements.forEach((achievement, index) => {
-        achievement.style.animationDelay = `${index * 0.2}s`;
-        achievement.classList.add('slide-in-left');
-    });
-    
-    // Animation du curseur terminal
-    const cursor = document.querySelector('.terminal-cursor');
-    if (cursor) {
-        setInterval(() => {
-            cursor.style.opacity = cursor.style.opacity === '0' ? '1' : '0';
-        }, 500);
-    }
-    
-    // Animation de la meilleure catégorie
-    const bestCategory = document.querySelector('.best-category');
-    if (bestCategory) {
-        setTimeout(() => {
-            bestCategory.classList.add('glow-effect');
-        }, 2000);
-    }
-    
-    // Initialiser la console interactive
-    initTerminal();
-});
-
-// Variables globales pour la console
-let commandHistory = [];
-let historyIndex = -1;
-let isFullscreen = false;
-
-// Récupération des données utilisateur
-const userData = window.userData;
-
-// Commandes disponibles - Terminal Unix-like complet
-const commands = {
-    // Commandes système de base
-    help: {
-        description: 'Affiche la liste des commandes disponibles',
-        usage: 'help [command]',
-        execute: (args) => {
-            if (args[0]) {
-                const cmd = commands[args[0]];
-                if (cmd) {
-                    return `<span class="cmd-help">MANUEL: ${args[0]}</span>
-<span class="man-section">DESCRIPTION:</span>
-${cmd.description}
-
-<span class="man-section">UTILISATION:</span>
-${cmd.usage || args[0]}
-
-<span class="man-section">EXEMPLES:</span>
-${cmd.examples || 'Aucun exemple disponible'}`;
+                if (terminal.classList.contains('matrix-rain-active')) {
+                    matrixRain();
                 }
-                return `<span class="error">help: commande '${args[0]}' non trouvée</span>`;
-            }
-            
-            return `<span class="cmd-help">COMMANDES SYSTÈME DISPONIBLES:</span>
-
-<span class="cmd-category">═══ NAVIGATION & FICHIERS ═══</span>
-• pwd         - Affiche le répertoire courant
-• ls [-la]    - Liste le contenu du répertoire
-• cd [dir]    - Change de répertoire
-• cat [file]  - Affiche le contenu d'un fichier
-• mkdir [dir] - Crée un répertoire
-• touch [file]- Crée un fichier vide
-• rm [file]   - Supprime un fichier
-• cp [src] [dest] - Copie un fichier
-• mv [src] [dest] - Déplace/renomme un fichier
-• find [path] [name] - Recherche de fichiers
-
-<span class="cmd-category">═══ SYSTÈME & INFORMATIONS ═══</span>
-• whoami      - Nom d'utilisateur actuel
-• id          - Informations utilisateur détaillées
-• uname [-a]  - Informations système
-• ps [aux]    - Liste des processus
-• top         - Moniteur de processus en temps réel
-• df [-h]     - Espace disque
-• free [-h]   - Utilisation mémoire
-• uptime      - Temps de fonctionnement système
-• date        - Date et heure actuelles
-• history     - Historique des commandes
-
-<span class="cmd-category">═══ RÉSEAU & SÉCURITÉ ═══</span>
-• ping [host] - Test de connectivité réseau
-• netstat     - Connexions réseau
-• sudo [cmd]  - Exécuter en tant que superutilisateur
-• ssh [user@host] - Connexion SSH
-• wget [url]  - Téléchargement de fichiers
-
-<span class="cmd-category">═══ DÉVELOPPEMENT ═══</span>
-• gcc [file]  - Compilateur C
-• make        - Outil de construction
-• git [cmd]   - Contrôle de version Git
-• vim [file]  - Éditeur de texte
-• nano [file] - Éditeur de texte simple
-
-<span class="cmd-category">═══ APPLICATIONS ═══</span>
-• quiz        - Système de quiz interactif
-• tutor       - DLH Tutor multi-langages
-• stats       - Statistiques utilisateur
-
-<span class="cmd-category">═══ UTILITAIRES ═══</span>
-• clear       - Effacer l'écran
-• man [cmd]   - Manuel d'une commande
-• which [cmd] - Localise une commande
-• echo [text] - Affiche du texte
-• grep [pattern] [file] - Recherche dans fichiers
-• wc [file]   - Compte lignes/mots/caractères
-• fortune     - Citations aléatoires
-• cowsay [text] - Vache qui parle
-
-<span class="help-tip">Tapez 'man [commande]' pour plus d'informations sur une commande spécifique</span>`;
-        }
-    },
-
-    man: {
-        description: 'Manuel des commandes',
-        usage: 'man [command]',
-        execute: (args) => commands.help.execute(args)
-    },
-
-    // Navigation et fichiers
-    pwd: {
-        description: 'Affiche le répertoire de travail actuel',
-        usage: 'pwd',
-        execute: () => '/home/' + userData.username + '/dev/matrix-project'
-    },
-
-    ls: {
-        description: 'Liste le contenu du répertoire',
-        usage: 'ls [-la] [directory]',
-        examples: 'ls -la\nls /home\nls *.c',
-        execute: (args) => {
-            const showHidden = args.includes('-a') || args.includes('-la');
-            const longFormat = args.includes('-l') || args.includes('-la');
-            
-            const files = [
-                { name: 'app.py', size: '2.4K', date: 'Jul 18 14:32', type: 'file', perms: '-rw-r--r--' },
-                { name: 'quiz_data.py', size: '15K', date: 'Jul 18 12:15', type: 'file', perms: '-rw-r--r--' },
-                { name: 'templates/', size: '4.0K', date: 'Jul 18 14:30', type: 'dir', perms: 'drwxr-xr-x' },
-                { name: 'static/', size: '4.0K', date: 'Jul 18 14:25', type: 'dir', perms: 'drwxr-xr-x' },
-                { name: 'database.db', size: '64K', date: 'Jul 18 14:35', type: 'file', perms: '-rw-------' },
-                { name: 'README.md', size: '1.2K', date: 'Jul 18 10:00', type: 'file', perms: '-rw-r--r--' },
-                { name: 'requirements.txt', size: '256B', date: 'Jul 18 10:05', type: 'file', perms: '-rw-r--r--' }
-            ];
-            
-            if (showHidden) {
-                files.unshift(
-                    { name: '.', size: '4.0K', date: 'Jul 18 14:35', type: 'dir', perms: 'drwxr-xr-x' },
-                    { name: '..', size: '4.0K', date: 'Jul 18 10:00', type: 'dir', perms: 'drwxr-xr-x' },
-                    { name: '.git/', size: '4.0K', date: 'Jul 18 10:00', type: 'dir', perms: 'drwxr-xr-x' },
-                    { name: '.env', size: '128B', date: 'Jul 18 10:05', type: 'file', perms: '-rw-------' }
-                );
-            }
-            
-            if (longFormat) {
-                let total = files.filter(f => f.name !== '.' && f.name !== '..').length;
-                let output = `total ${total}\n`;
-                files.forEach(file => {
-                    const color = file.type === 'dir' ? 'dir-color' : 
-                                 file.name.endsWith('.py') ? 'py-color' : 
-                                 file.name.startsWith('.') ? 'hidden-color' : 'file-color';
-                    output += `<span class="${color}">${file.perms} 1 ${userData.username} ${userData.username} ${file.size.padStart(6)} ${file.date} ${file.name}</span>\n`;
-                });
-                return output;
-            } else {
-                return files.map(file => {
-                    const color = file.type === 'dir' ? 'dir-color' : 
-                                 file.name.endsWith('.py') ? 'py-color' : 
-                                 file.name.startsWith('.') ? 'hidden-color' : 'file-color';
-                    return `<span class="${color}">${file.name}</span>`;
-                }).join('  ');
-            }
-        }
-    },
-
-    cd: {
-        description: 'Change le répertoire courant',
-        usage: 'cd [directory]',
-        examples: 'cd ..\ncd /home\ncd templates',
-        execute: (args) => {
-            const dir = args[0] || '~';
-            currentPath = dir === '~' ? '/home/' + userData.username : 
-                         dir === '..' ? '/home/' + userData.username :
-                         dir === '/' ? '/' :
-                         currentPath + '/' + dir;
-            updatePrompt();
-            return null;
-        }
-    },
-
-    cat: {
-        description: 'Affiche le contenu d\'un fichier',
-        usage: 'cat [file...]',
-        examples: 'cat README.md\ncat app.py | head',
-        execute: (args) => {
-            if (!args[0]) return '<span class="error">cat: argument manquant</span>';
-            
-            const files = {
-                'README.md': `<span class="file-content"># Matrix Development Hub
-
-## Description
-Application Flask avec système de quiz interactif en C
-Thème Matrix avec progression utilisateur et achievements
-
-## Installation
-\`\`\`bash
-pip install -r requirements.txt
-python app.py
-\`\`\`
-
-## Fonctionnalités
-- Authentification utilisateur
-- Quiz programmation C (100 questions)
-- Système de progression XP/Niveaux
-- Console Matrix interactive
-- Interface administrateur</span>`,
-
-                'app.py': `<span class="py-color">#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Matrix Development Hub - Application Flask principale
-Auteur: ${userData.username}
-Date: July 18, 2025
-"""
-
-from flask import Flask, render_template, request, redirect, url_for
-import sqlite3
-import hashlib
-from quiz_data import questions, answers, categories
-
-app = Flask(__name__)
-app.secret_key = 'matrix_secret_key_2025'
-
-# Configuration base de données
-DATABASE = 'database.db'
-...</span>`,
-
-                'requirements.txt': `<span class="file-content">Flask==2.3.3
-Werkzeug==2.3.7
-Jinja2==3.1.2
-sqlite3
-hashlib</span>`,
-
-                '.env': userData.isAdmin ? 
-                    `<span class="secret">FLASK_ENV=development
-DEBUG=True
-SECRET_KEY=matrix_ultimate_secret_2025
-ADMIN_TOKEN=${userData.username}_admin_access
-MATRIX_CODE=follow_the_white_rabbit</span>` :
-                    '<span class="error">cat: .env: Permission denied</span>',
-
-                'database.db': '<span class="error">cat: database.db: Impossible d\'afficher un fichier binaire</span>',
-
-                'profile.txt': `<span class="user-profile">═══ PROFIL SYSTÈME UTILISATEUR ═══
-Login:          ${userData.username}
-UID:            1001
-GID:            1001
-Home:           /home/${userData.username}
-Shell:          /bin/bash
-Groups:         ${userData.isAdmin ? 'sudo,admin,matrix' : 'users,matrix'}
-Level:          ${userData.level}
-XP:             ${userData.xp}
-Clearance:      ${userData.isAdmin ? 'TOP_SECRET' : 'RESTRICTED'}
-Last Login:     ${new Date().toISOString()}
-Terminal:       /dev/pts/1
-Access Status:  ACTIVE</span>`
-            };
-            
-            const file = args[0];
-            if (files[file]) {
-                return files[file];
-            } else {
-                return `<span class="error">cat: ${file}: Aucun fichier ou dossier de ce type</span>`;
-            }
-        }
-    },
-
-    // Commandes système
-    whoami: {
-        description: 'Affiche le nom d\'utilisateur actuel',
-        usage: 'whoami',
-        execute: () => userData.username
-    },
-
-    id: {
-        description: 'Affiche les informations d\'identification utilisateur',
-        usage: 'id [user]',
-        execute: (args) => {
-            const user = args[0] || userData.username;
-            if (user === userData.username) {
-                return `uid=1001(${userData.username}) gid=1001(${userData.username}) groups=1001(${userData.username}),27(sudo),1000(matrix)${userData.isAdmin ? ',0(root)' : ''}`;
-            }
-            return `id: ${user}: utilisateur inexistant`;
-        }
-    },
-
-    uname: {
-        description: 'Informations système',
-        usage: 'uname [-a]',
-        execute: (args) => {
-            if (args.includes('-a')) {
-                return 'Linux matrix 5.15.0-matrix #1 SMP PREEMPT Jul 18 2025 x86_64 x86_64 x86_64 GNU/Linux';
-            }
-            return 'Linux';
-        }
-    },
-
-    ps: {
-        description: 'Affiche les processus en cours',
-        usage: 'ps [aux]',
-        execute: (args) => {
-            const processes = [
-                'PID TTY          TIME CMD',
-                '  1 ?        00:00:01 systemd',
-                '  2 ?        00:00:00 kthreadd',
-                '  3 ?        00:00:00 rcu_gp',
-                `1001 pts/1   00:00:00 bash`,
-                `1042 pts/1   00:00:02 python3 app.py`,
-                `1055 pts/1   00:00:01 matrix-console`,
-                `1067 pts/1   00:00:00 ps`
-            ];
-            
-            if (args.includes('aux') || args.includes('ax')) {
-                return processes.map(p => `<span class="process-line">${p}</span>`).join('\n');
-            }
-            return processes.slice(3).map(p => `<span class="process-line">${p}</span>`).join('\n');
-        }
-    },
-
-    top: {
-        description: 'Moniteur de processus en temps réel',
-        usage: 'top',
-        execute: () => {
-            return `<span class="top-header">top - ${new Date().toLocaleTimeString()} up 2 days, 14:32, 1 user, load average: 0.15, 0.08, 0.05</span>
-<span class="top-header">Tasks: 156 total, 1 running, 155 sleeping, 0 stopped, 0 zombie</span>
-<span class="top-header">%Cpu(s): 2.3 us, 1.1 sy, 0.0 ni, 96.5 id, 0.1 wa, 0.0 hi, 0.0 si, 0.0 st</span>
-<span class="top-header">MiB Mem: 8192.0 total, 2048.5 free, 4096.2 used, 2047.3 buff/cache</span>
-
-  PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
- 1042 ${userData.username}   20   0  234512  45328  12544 S   1.3   0.6   0:02.15 python3
- 1055 ${userData.username}   20   0   18456   3584   2816 S   0.3   0.0   0:01.22 matrix-console
-    1 root      20   0  168656  13312   8448 S   0.0   0.2   0:01.45 systemd`;
-        }
-    }
-};
-
-// Commandes cat pour les fichiers
-commands.cat = {
-    description: 'Affiche le contenu d\'un fichier',
-    execute: (args) => {
-        const file = args[0];
-        const files = {
-            'profile.txt': `
-<span class="file-content">═══ PROFIL UTILISATEUR ═══</span>
-<span class="file-content">Nom: ${userData.username}</span>
-<span class="file-content">Niveau: ${userData.level}</span>
-<span class="file-content">XP: ${userData.xp}</span>`,
-            
-            'secret.txt': userData.isAdmin ? 
-                '<span class="secret">🔓 ACCÈS ADMIN: Les codes de la Matrix sont 1337, 42, et 0xFF</span>' :
-                '<span class="error">🔒 Accès refusé: Privilèges administrateur requis</span>'
-        };
-        
-        if (!file) {
-            return '<span class="error">Usage: cat [nom_fichier]</span>';
+            }, 10000);
         }
         
-        if (files[file]) {
-            return files[file];
-        } else {
-            return `<span class="error">cat: ${file}: Fichier introuvable</span>`;
-        }
-    }
-};
-
-// Variables globales pour terminal avancé
-let currentPath = '/home/' + userData.username + '/dev/matrix-project';
-let commandCount = 0;
-
-// Fonction pour mettre à jour le prompt
-function updatePrompt() {
-    const input = document.getElementById('terminal-input');
-    if (input && input.parentElement) {
-        const prompt = input.parentElement.querySelector('.terminal-prompt');
-        if (prompt) {
-            const shortPath = currentPath.replace('/home/' + userData.username, '~');
-            prompt.textContent = `${userData.username}@matrix:${shortPath}$`;
-        }
-    }
-}
-
-// Commandes système avancées
-Object.assign(commands, {
-    // Gestion fichiers
-    mkdir: { description: 'Crée un répertoire', usage: 'mkdir [dir]', execute: (args) => args[0] ? `<span class="success">mkdir: '${args[0]}' créé</span>` : '<span class="error">mkdir: argument manquant</span>' },
-    touch: { description: 'Crée un fichier', usage: 'touch [file]', execute: (args) => args[0] ? `<span class="success">touch: '${args[0]}' créé</span>` : '<span class="error">touch: argument manquant</span>' },
-    rm: { description: 'Supprime un fichier', usage: 'rm [file]', execute: (args) => args[0] && !args.includes('/') ? `<span class="warning">rm: '${args[0]}' supprimé</span>` : '<span class="error">rm: opération non autorisée</span>' },
-    
-    // Système
-    df: { description: 'Espace disque', execute: () => `<span class="df-line">/dev/sda1        15G  8.2G   6.2G  57% /</span><span class="df-line">/dev/sda2       100G   45G    55G  45% /home</span>` },
-    free: { description: 'Mémoire', execute: () => `<span class="free-line">Mem:           8.0G        4.0G        1.2G        512M        2.8G        3.5G</span>` },
-    uptime: { description: 'Temps de fonctionnement', execute: () => `<span class="uptime"> ${new Date().toTimeString().slice(0,8)} up 2 days, 14:32, 1 user, load average: 0.15, 0.08, 0.05</span>` },
-    
-    // Réseau
-    ping: { description: 'Test réseau', execute: (args) => { const host = args[0] || 'matrix.local'; return `<span class="ping-line">PING ${host}: 64 bytes from 192.168.1.42: time=0.234 ms</span><span class="ping-stats">1 packets transmitted, 1 received, 0% packet loss</span>`; }},
-    netstat: { description: 'Connexions réseau', execute: () => `<span class="netstat-line">tcp   127.0.0.1:5001   LISTEN</span><span class="netstat-line">tcp   0.0.0.0:22       LISTEN</span>` },
-    
-    // Développement
-    gcc: { description: 'Compilateur C', execute: (args) => args[0] && args[0].endsWith('.c') ? `<span class="success">gcc: compilation de ${args[0]} réussie</span>` : '<span class="error">gcc: fichier .c requis</span>' },
-    make: { description: 'Construction', execute: () => `<span class="make-output">make: construction terminée avec succès</span>` },
-    git: { description: 'Contrôle version', execute: (args) => { const cmd = args[0] || 'status'; const gitCmds = { status: 'On branch main\nnothing to commit', log: 'commit abc123\nAuthor: ' + userData.username }; return gitCmds[cmd] || 'git: commande inconnue'; }},
-    
-    // Applications
-    quiz: { description: 'Système de quiz interactif', execute: () => { window.open('/quiz', '_blank'); return '<span class="success">🎯 Ouverture du système de quiz...</span>'; }},
-    tutor: { description: 'DLH Tutor multi-langages', execute: () => { window.open('/python-tutor', '_blank'); return '<span class="success">🔮 Ouverture du DLH Tutor...</span>'; }},
-    stats: { description: 'Statistiques utilisateur', execute: () => `<span class="stats-header">📊 STATISTIQUES UTILISATEUR</span><span class="stats-line">Niveau: ${userData.level}</span><span class="stats-line">XP: ${userData.xp}</span><span class="stats-line">Quiz complétés: ${userData.quizzes}</span><span class="stats-line">Taux de réussite: ${userData.completionRate}%</span>` },
-    
-    // Utilitaires
-    echo: { description: 'Affiche texte', execute: (args) => args.join(' ') },
-    which: { description: 'Localise commande', execute: (args) => commands[args[0]] ? `/usr/bin/${args[0]}` : `which: ${args[0]} non trouvé` },
-    grep: { description: 'Recherche motifs', execute: (args) => args.length >= 2 ? `<span class="grep-match">Motif "${args[0]}" trouvé dans ${args[1]}</span>` : '<span class="error">grep: motif et fichier requis</span>' },
-    wc: { description: 'Compte mots', execute: (args) => `<span class="wc-output">   42  284 1642 ${args[0] || 'stdin'}</span>` },
-    
-    // Fun
-    fortune: { description: 'Citations', execute: () => { const quotes = ['"The Matrix is everywhere" - Morpheus', '"There is no spoon" - Spoon Boy', '"Code is poetry" - WordPress']; return `<span class="fortune">${quotes[Math.floor(Math.random() * quotes.length)]}</span>`; }},
-    cowsay: { description: 'Vache parlante', execute: (args) => { const text = args.join(' ') || 'Hello Matrix!'; return `<span class="cowsay"> ${'_'.repeat(text.length + 2)}\n< ${text} >\n ${'‾'.repeat(text.length + 2)}\n        \\   ^__^\n         \\  (oo)\\_______\n            (__)\\       )\\/\\\n                ||----w |\n                ||     ||</span>`; }},
-    
-    // Admin
-    sudo: { description: 'Superutilisateur', execute: (args) => { if (!userData.isAdmin) return `<span class="error">sudo: accès refusé pour ${userData.username}</span>`; if (!args[0]) return '<span class="error">sudo: commande requise</span>'; const cmd = commands[args[0]]; return cmd ? `<span class="sudo-header">[sudo] ${args.join(' ')}</span>\n${cmd.execute(args.slice(1))}` : `<span class="error">sudo: ${args[0]} non trouvée</span>`; }}
-});
-
-function initTerminal() {
-    const input = document.getElementById('terminal-input');
-    const content = document.getElementById('terminal-content');
-    const cursor = document.querySelector('.terminal-cursor');
-    const typedText = document.getElementById('terminal-typed-text');
-    
-    if (!input || !content) return;
-    
-    // Fonction pour mettre à jour le texte affiché et la position du curseur
-    function updateDisplay() {
-        if (cursor && input && typedText) {
-            const text = input.value;
-            typedText.textContent = text;
+        function createMatrixColumn(x, chars) {
+            const terminal = document.getElementById('terminal-content');
+            const column = document.createElement('div');
+            column.className = 'matrix-rain-char';
+            column.style.cssText = `
+                position: absolute;
+                left: ${x}px;
+                top: -20px;
+                color: #00ff41;
+                font-family: monospace;
+                font-size: 14px;
+                opacity: 0.7;
+                z-index: 1000;
+                pointer-events: none;
+                animation: matrix-fall 3s linear infinite;
+            `;
             
-            // Mesurer la largeur du texte pour positionner le curseur
-            const canvas = document.createElement('canvas');
-            const context = canvas.getContext('2d');
-            context.font = '0.9rem JetBrains Mono, monospace';
-            const textWidth = context.measureText(text).width;
-            cursor.style.left = textWidth + 'px';
-        }
-    }
-    
-    // Mettre à jour l'affichage lors de la saisie
-    input.addEventListener('input', updateDisplay);
-    input.addEventListener('keyup', updateDisplay);
-    
-    input.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') {
-            executeCommand(input.value.trim());
-            input.value = '';
-            updateDisplay();
-        } else if (e.key === 'ArrowUp') {
-            e.preventDefault();
-            if (historyIndex < commandHistory.length - 1) {
-                historyIndex++;
-                input.value = commandHistory[commandHistory.length - 1 - historyIndex] || '';
-                updateDisplay();
+            let charStr = '';
+            for (let i = 0; i < 20; i++) {
+                charStr += chars[Math.floor(Math.random() * chars.length)] + '<br>';
             }
-        } else if (e.key === 'ArrowDown') {
-            e.preventDefault();
-            if (historyIndex > 0) {
-                historyIndex--;
-                input.value = commandHistory[commandHistory.length - 1 - historyIndex] || '';
-            } else if (historyIndex === 0) {
-                historyIndex = -1;
-                input.value = '';
-            }
-            updateDisplay();
-        }
-    });
-    
-    // Focus automatique sur l'input
-    input.focus();
-    content.addEventListener('click', () => input.focus());
-}
-
-function executeCommand(commandLine) {
-    if (!commandLine) return;
-    
-    const content = document.getElementById('terminal-content');
-    const input = document.getElementById('terminal-input');
-    const typedText = document.getElementById('terminal-typed-text');
-    
-    // Ajouter la commande à l'historique
-    commandHistory.push(commandLine);
-    historyIndex = -1;
-    
-    // Afficher la commande tapée
-    const commandElement = document.createElement('div');
-    commandElement.className = 'terminal-line executed';
-    commandElement.innerHTML = `<span class="terminal-prompt">${userData.username}@matrix:~$</span> <span class="terminal-command">${commandLine}</span>`;
-    
-    const inputLine = input.parentElement;
-    content.insertBefore(commandElement, inputLine);
-    
-    // Parse commande et arguments
-    const parts = commandLine.split(' ');
-    const command = parts[0].toLowerCase();
-    const args = parts.slice(1);
-    
-    // Rechercher la commande
-    let result = null;
-    const fullCommand = parts.join(' ').toLowerCase();
-    
-    if (commands[fullCommand]) {
-        result = commands[fullCommand].execute(args);
-    } else if (commands[command]) {
-        result = commands[command].execute(args);
-    } else {
-        result = `<span class="error">Commande non trouvée: ${command}. Tapez 'help' pour voir les commandes disponibles.</span>`;
-    }
-    
-    // Afficher le résultat
-    if (result !== null) {
-        const resultElement = document.createElement('div');
-        resultElement.className = 'terminal-line result';
-        resultElement.innerHTML = result;
-        content.insertBefore(resultElement, inputLine);
-    }
-    
-    // Réinitialiser le texte affiché
-    if (typedText) {
-        typedText.textContent = '';
-    }
-    
-    // Scroll vers le bas
-    content.scrollTop = content.scrollHeight;
-}
-
-function clearTerminal() {
-    const content = document.getElementById('terminal-content');
-    const inputLine = document.getElementById('terminal-input').parentElement;
-    const typedText = document.getElementById('terminal-typed-text');
-    
-    content.innerHTML = `
-        <div class="terminal-line welcome">
-            <span class="terminal-text">Matrix Development Console - Logged in as ${userData.username}</span>
-        </div>
-        <div class="terminal-line">
-            <span class="terminal-text">Type 'help' for available commands</span>
-        </div>`;
-    
-    content.appendChild(inputLine);
-    document.getElementById('terminal-input').focus();
-    
-    // Réinitialiser le texte affiché
-    if (typedText) {
-        typedText.textContent = '';
-    }
-}
-
-function showHelp() {
-    executeCommand('help');
-}
-
-function toggleFullscreen() {
-    const terminal = document.getElementById('terminal');
-    isFullscreen = !isFullscreen;
-    
-    if (isFullscreen) {
-        terminal.classList.add('fullscreen');
-    } else {
-        terminal.classList.remove('fullscreen');
-    }
-}
-
-function matrixRain() {
-    const terminal = document.getElementById('terminal-content');
-    let rainActive = terminal.classList.contains('matrix-rain-active');
-    
-    if (rainActive) {
-        // Arrêter la pluie Matrix
-        terminal.classList.remove('matrix-rain-active');
-        const rainElements = terminal.querySelectorAll('.matrix-rain-char');
-        rainElements.forEach(el => el.remove());
-        return;
-    }
-    
-    // Démarrer la pluie Matrix
-    terminal.classList.add('matrix-rain-active');
-    
-    const matrixChars = '日ﾊﾐﾋｰｳｼﾅﾓﾆｻﾜﾂｵﾘｱﾎﾃﾏｹﾒｴｶｷﾑﾕﾗﾈﾄﾖﾀﾇｿﾍﾞﾌｺｴﾁ';
-    const numColumns = Math.floor(terminal.offsetWidth / 15); // Estimation du nombre de colonnes
-    
-    for (let i = 0; i < numColumns; i++) {
-        setTimeout(() => {
-            createMatrixColumn(i * 15, matrixChars);
-        }, i * 100);
-    }
-    
-    // Arrêter automatiquement après 10 secondes
-    setTimeout(() => {
-        if (terminal.classList.contains('matrix-rain-active')) {
-            matrixRain(); // Rappeler pour arrêter
-        }
-    }, 10000);
-}
-
-function createMatrixColumn(x, chars) {
-    const terminal = document.getElementById('terminal-content');
-    const column = document.createElement('div');
-    column.className = 'matrix-rain-char';
-    column.style.cssText = `
-        position: absolute;
-        left: ${x}px;
-        top: -20px;
-        color: #00ff41;
-        font-family: monospace;
-        font-size: 14px;
-        opacity: 0.7;
-        z-index: 1000;
-        pointer-events: none;
-        animation: matrix-fall 3s linear infinite;
-    `;
-    
-    // Ajouter des caractères aléatoires
-    let charStr = '';
-    for (let i = 0; i < 20; i++) {
-        charStr += chars[Math.floor(Math.random() * chars.length)] + '<br>';
-    }
-    column.innerHTML = charStr;
-    
-    terminal.appendChild(column);
-    
-    // Supprimer après l'animation
-    setTimeout(() => {
-        if (column.parentNode) {
-            column.remove();
-        }
-    }, 3000);
-}
-
-// Ajouter les styles CSS pour la pluie Matrix si ils n'existent pas
-if (!document.querySelector('#matrix-rain-styles')) {
-    const style = document.createElement('style');
-    style.id = 'matrix-rain-styles';
-    style.textContent = `
-        @keyframes matrix-fall {
-            0% { transform: translateY(-20px); opacity: 1; }
-            100% { transform: translateY(400px); opacity: 0; }
-        }
-        .matrix-rain-active {
-            position: relative;
-            overflow: hidden;
-        }
-    `;
-    document.head.appendChild(style);
-}
-
-// Raccourcis clavier
-document.addEventListener('keydown', function(e) {
-    if (e.ctrlKey && e.shiftKey) {
-        switch(e.key) {
-            case 'D':
-                e.preventDefault();
-                // Déjà sur le dashboard
-                break;
-            case 'A':
-                e.preventDefault();
-                if (userData.isAdmin) {
-                    window.location.href = "{{ url_for('admin') }}";
+            column.innerHTML = charStr;
+            
+            terminal.appendChild(column);
+            
+            setTimeout(() => {
+                if (column.parentNode) {
+                    column.remove();
                 }
-                break;
-            case 'L':
-                e.preventDefault();
-                window.location.href = "{{ url_for('logout') }}";
-                break;
-            case 'Q':
-                e.preventDefault();
-                window.location.href = "{{ url_for('quiz_home') }}";
-                break;
+            }, 3000);
         }
-    }
-    
-    if (e.key === 'Escape') {
-        // Fermer les éléments modaux s'ils existent
-        const modals = document.querySelectorAll('.modal, .dropdown');
-        modals.forEach(modal => modal.classList.remove('active'));
-    }
-});
-
-// Fonction pour mettre à jour le badge de progression
-function updateBadge(completionRate) {
-    const badgeElement = document.getElementById('progression-badge');
-    const badgeIcon = badgeElement.querySelector('.badge-icon');
-    const badgeText = badgeElement.querySelector('.badge-text');
-    
-    // Retirer toutes les classes de badge existantes
-    badgeElement.className = 'progression-badge';
-    
-    if (completionRate <= 20) {
-        badgeElement.classList.add('progression-badge-beginner');
-        badgeIcon.textContent = '🌱';
-        badgeText.textContent = 'Débutant C';
-    } else if (completionRate <= 40) {
-        badgeElement.classList.add('progression-badge-apprentice');
-        badgeIcon.textContent = '🔧';
-        badgeText.textContent = 'Apprenti C';
-    } else if (completionRate <= 60) {
-        badgeElement.classList.add('progression-badge-intermediate');
-        badgeIcon.textContent = '⚙️';
-        badgeText.textContent = 'Intermédiaire C';
-    } else if (completionRate <= 80) {
-        badgeElement.classList.add('progression-badge-advanced');
-        badgeIcon.textContent = '🛠️';
-        badgeText.textContent = 'Avancé C';
-    } else {
-        badgeElement.classList.add('progression-badge-master');
-        badgeIcon.textContent = '👑';
-        badgeText.textContent = 'Maître C';
-    }
-}
-
-// Initialiser le badge avec les données utilisateur
-document.addEventListener('DOMContentLoaded', function() {
-    // Calculer le taux de completion basé sur les données utilisateur
-    const totalQuestions = 100; // Total des questions disponibles
-    const userLevel = userData.level || 1;
-    const userXP = userData.xp || 0;
-    
-    // Calculer un taux de completion approximatif basé sur le niveau et l'XP
-    // Formule simple : niveau * 10 + (XP / 100) pour donner un pourcentage
-    let completionRate = Math.min((userLevel - 1) * 10 + (userXP / 100), 100);
-    
-    // Si l'utilisateur a des quiz_scores, utiliser cela pour un calcul plus précis
-    if (userData.quiz_scores && userData.quiz_scores.length > 0) {
-        const avgScore = userData.quiz_scores.reduce((sum, score) => sum + score, 0) / userData.quiz_scores.length;
-        const quizCompletion = (userData.quiz_scores.length / totalQuestions) * 100;
-        // Prendre en compte à la fois le score moyen et le nombre de quiz complétés
-        completionRate = Math.min((avgScore * 0.7) + (quizCompletion * 0.3), 100);
-    }
-    
-    // Mettre à jour le badge
-    updateBadge(Math.round(completionRate));
-});
-</script>
-{% endblock %}
+        
+        function toggleFullscreen() {
+            const terminal = document.getElementById('terminal');
+            isFullscreen = !isFullscreen;
+            
+            if (isFullscreen) {
+                terminal.classList.add('fullscreen');
+            } else {
+                terminal.classList.remove('fullscreen');
+            }
+        }
+        
+        // CSS pour la pluie Matrix
+        if (!document.querySelector('#matrix-rain-styles')) {
+            const style = document.createElement('style');
+            style.id = 'matrix-rain-styles';
+            style.textContent = `
+                @keyframes matrix-fall {
+                    0% { transform: translateY(-20px); opacity: 1; }
+                    100% { transform: translateY(400px); opacity: 0; }
+                }
+                .matrix-rain-active {
+                    position: relative;
+                    overflow: hidden;
+                }
+            `;
+            document.head.appendChild(style);
+        }
+    </script>
+</body>
+</html>

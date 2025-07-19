@@ -107,12 +107,12 @@ init_db()
 async def index(request: Request):
     """Page d'accueil"""
     user = get_current_user(request)
-    return templates.TemplateResponse("index_simple.html", {"request": request, "user": user})
+    return templates.TemplateResponse("index.html", {"request": request, "user": user})
 
 @app.get("/login", response_class=HTMLResponse)
 async def login_page(request: Request):
     """Page de connexion"""
-    return templates.TemplateResponse("login_simple.html", {"request": request})
+    return templates.TemplateResponse("login.html", {"request": request})
 
 @app.post("/login")
 async def login(request: Request, username: str = Form(...), password: str = Form(...)):
@@ -129,7 +129,7 @@ async def login(request: Request, username: str = Form(...), password: str = For
         response.set_cookie(key="session_id", value=session_id, httponly=True)
         return response
     else:
-        return templates.TemplateResponse("login_simple.html", {
+        return templates.TemplateResponse("login.html", {
             "request": request, 
             "error": "Nom d'utilisateur ou mot de passe incorrect"
         })
@@ -137,7 +137,7 @@ async def login(request: Request, username: str = Form(...), password: str = For
 @app.get("/register", response_class=HTMLResponse)
 async def register_page(request: Request):
     """Page d'inscription"""
-    return templates.TemplateResponse("register_simple.html", {"request": request})
+    return templates.TemplateResponse("register.html", {"request": request})
 
 @app.post("/register")
 async def register(request: Request, username: str = Form(...), email: str = Form(...), password: str = Form(...)):
@@ -151,7 +151,7 @@ async def register(request: Request, username: str = Form(...), email: str = For
     
     if existing_user:
         conn.close()
-        return templates.TemplateResponse("register_simple.html", {
+        return templates.TemplateResponse("register.html", {
             "request": request, 
             "error": "Nom d'utilisateur ou email déjà utilisé"
         })
@@ -188,7 +188,7 @@ async def logout(request: Request):
 @app.get("/dashboard", response_class=HTMLResponse)
 async def dashboard(request: Request, user: dict = Depends(require_auth)):
     """Tableau de bord utilisateur"""
-    return templates.TemplateResponse("dashboard_simple.html", {"request": request, "user": user})
+    return templates.TemplateResponse("dashboard.html", {"request": request, "user": user})
 
 @app.get("/python-tutor", response_class=HTMLResponse)
 async def python_tutor(request: Request, user: dict = Depends(require_auth)):

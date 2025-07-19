@@ -576,10 +576,50 @@ a:hover {
    Page d'accueil
    ========================================================================== */
 
-.hero-section {
+.hero-section,
+.hero {
     text-align: center;
     padding: var(--spacing-xxl) 0;
     background: radial-gradient(circle at center, rgba(0, 255, 65, 0.05) 0%, transparent 70%);
+    position: relative;
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero-content {
+    max-width: 800px;
+    margin: 0 auto;
+    z-index: 2;
+    position: relative;
+}
+
+.hero-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+}
+
+.title-line {
+    display: block;
+    line-height: 1.2;
+}
+
+.title-line.accent {
+    color: var(--primary-green);
+    text-shadow: 0 0 20px var(--primary-green);
+}
+
+.hero-actions {
+    display: flex;
+    gap: var(--spacing-md);
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: var(--spacing-xl);
 }
 
 .hero-title {

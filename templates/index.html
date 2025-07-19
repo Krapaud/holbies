@@ -1,299 +1,140 @@
-{% extends "base.html" %}
-
-{% block title %}Accueil - Dev Learning Hub{% endblock %}
-
-{% block content %}
-<div class="hero-section">
-    <div class="hero-content">
-        <h1 class="hero-title">
-            <span class="title-glitch" data-text="Dev Learning Hub">Dev Learning Hub</span>
-        </h1>
-        <p class="hero-subtitle">
-            Maîtrisez la programmation C dans l'univers Matrix - Plateforme d'apprentissage avancée
-        </p>
-        <div class="hero-stats">
-            <div class="stat-item">
-                <span class="stat-number dynamic-stat" data-base="125" data-variation="25">125</span>
-                <span class="stat-label">Questions C</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-number dynamic-stat" data-base="1200" data-variation="300">1,200</span>
-                <span class="stat-label">Utilisateurs</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-number dynamic-stat" data-base="80" data-variation="15">80+</span>
-                <span class="stat-label">Commandes</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-number dynamic-stat" data-base="8500" data-variation="1500">8,500</span>
-                <span class="stat-label">Codes exécutés</span>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="features-section">
-    <div class="container">
-        <h2 class="section-title">
-            <span class="section-icon">🚀</span>
-            Fonctionnalités
-        </h2>
-        
-        <div class="features-grid">
-            <div class="feature-card">
-                <div class="feature-icon">🧠</div>
-                <h3>Quiz Programmation C</h3>
-                <p>100 questions interactives couvrant tous les aspects du langage C</p>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dev Learning Hub - FastAPI Edition</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <a href="/">
+                    <span class="logo">DEV</span>
+                    <span class="logo-accent">LEARNING</span>
+                    <span class="logo">HUB</span>
+                </a>
             </div>
             
-            <div class="feature-card">
-                <div class="feature-icon">📊</div>
-                <h3>Système de Progression</h3>
-                <p>Niveaux XP, badges et suivi détaillé de votre apprentissage</p>
-            </div>
-            
-            <div class="feature-card">
-                <div class="feature-icon">💻</div>
-                <h3>Console Interactive</h3>
-                <p>Terminal Matrix avec 80+ commandes Unix pour une expérience immersive</p>
-            </div>
-            
-            <div class="feature-card">
-                <div class="feature-icon">🔮</div>
-                <h3>DLH Tutor</h3>
-                <p>Exécuteur de code multi-langages (Python, JavaScript, C) intégré</p>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="cta-section">
-    <div class="container">
-        <div class="cta-content">
-            <h2 class="cta-title">Prêt à maîtriser le langage C ?</h2>
-            <p class="cta-subtitle">Rejoignez la Matrix et développez vos compétences en programmation C</p>
-            <div class="cta-buttons">
-                {% if not session.user_id %}
-                    <a href="{{ url_for('register') }}" class="btn btn-primary">
-                        <span class="btn-icon">🚀</span>
-                        S'inscrire maintenant
+            <div class="nav-menu">
+                {% if user %}
+                <div class="nav-links">
+                    <a href="/dashboard" class="nav-link">
+                        <span class="nav-icon">🏠</span>
+                        Dashboard
                     </a>
-                    <a href="{{ url_for('login') }}" class="btn btn-secondary">
-                        <span class="btn-icon">🔑</span>
-                        Se connecter
+                    <a href="/quiz" class="nav-link">
+                        <span class="nav-icon">🧠</span>
+                        Quiz
                     </a>
+                    <a href="/python-tutor" class="nav-link">
+                        <span class="nav-icon">🐍</span>
+                        DLH Tutor
+                    </a>
+                </div>
+                
+                <div class="nav-user">
+                    <div class="user-info">
+                        <span class="user-name">{{ user.username }}</span>
+                        <a href="/logout" class="logout-btn">Déconnexion</a>
+                    </div>
+                </div>
                 {% else %}
-                    <a href="{{ url_for('dashboard') }}" class="btn btn-primary">
-                        <span class="btn-icon">📊</span>
-                        Accéder au Dashboard
+                <div class="nav-auth">
+                    <a href="/login" class="nav-link">
+                        <span class="nav-icon">🔑</span>
+                        Connexion
                     </a>
+                    <a href="/register" class="nav-link">
+                        <span class="nav-icon">📝</span>
+                        Inscription
+                    </a>
+                </div>
                 {% endif %}
             </div>
         </div>
-    </div>
-</div>
+    </nav>
 
-<div class="easter-egg-section">
-    <div class="container">
-        <div class="easter-egg-content">
-            <h3>🎮 Console Commands</h3>
-            <p>Ouvrez la console développeur (F12) et essayez :</p>
-            <div class="commands-list">
-                <code class="command-item">konami()</code>
-                <code class="command-item">matrix()</code>
-                <code class="command-item">glitch()</code>
-                <code class="command-item">hack()</code>
+    <main class="main-content">
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-background">
+                <div class="matrix-rain"></div>
             </div>
+            
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    <span class="title-line">BIENVENUE DANS LA</span>
+                    <span class="title-line accent">MATRICE DE L'APPRENTISSAGE</span>
+                </h1>
+                
+                <p class="hero-subtitle">
+                    Développez vos compétences en programmation dans un environnement futuriste
+                </p>
+                
+                {% if not user %}
+                <div class="hero-actions">
+                    <a href="/register" class="btn btn-primary">
+                        <span class="btn-icon">🚀</span>
+                        Commencer l'aventure
+                    </a>
+                    <a href="/login" class="btn btn-secondary">
+                        <span class="btn-icon">🔓</span>
+                        Se connecter
+                    </a>
+                </div>
+                {% else %}
+                <div class="hero-actions">
+                    <a href="/dashboard" class="btn btn-primary">
+                        <span class="btn-icon">🏠</span>
+                        Dashboard
+                    </a>
+                    <a href="/python-tutor" class="btn btn-secondary">
+                        <span class="btn-icon">🐍</span>
+                        DLH Tutor
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features">
+            <div class="container">
+                <h2 class="section-title">Fonctionnalités</h2>
+                
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🧠</div>
+                        <h3>Quiz Interactifs</h3>
+                        <p>Testez vos connaissances avec nos quiz adaptatifs</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">🐍</div>
+                        <h3>DLH Tutor</h3>
+                        <p>Visualisez l'exécution de votre code en temps réel</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">📊</div>
+                        <h3>Suivi des Progrès</h3>
+                        <p>Analysez votre progression avec des statistiques détaillées</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Dev Learning Hub - FastAPI Edition. Propulsé par la technologie Matrix.</p>
         </div>
-    </div>
-</div>
-{% endblock %}
+    </footer>
 
-{% block scripts %}
-<script>
-// Animation d'entrée pour les cartes
-document.addEventListener('DOMContentLoaded', function() {
-    const cards = document.querySelectorAll('.feature-card');
-    cards.forEach((card, index) => {
-        card.style.animationDelay = `${index * 0.2}s`;
-        card.classList.add('fade-in-up');
-    });
-    
-    // Initialisation des statistiques dynamiques
-    initDynamicStats();
-});
-
-function initDynamicStats() {
-    const dynamicStats = document.querySelectorAll('.dynamic-stat');
-    
-    // Animation initiale des nombres
-    dynamicStats.forEach((stat, index) => {
-        const baseValue = parseInt(stat.dataset.base);
-        const displayText = stat.textContent;
-        
-        // Animation d'entrée avec délai
-        setTimeout(() => {
-            if (displayText.includes('+')) {
-                animateNumberWithSuffix(stat, baseValue, '+');
-            } else if (displayText.includes(',')) {
-                animateFormattedNumber(stat, baseValue);
-            } else {
-                animateNumber(stat, baseValue);
-            }
-        }, index * 200);
-    });
-    
-    // Mise à jour périodique des statistiques
-    setInterval(updateRandomStats, 5000); // Toutes les 5 secondes
-    
-    // Mise à jour plus fréquente pour simuler l'activité en temps réel
-    setInterval(updateRealtimeStats, 2000); // Toutes les 2 secondes pour certaines stats
-}
-
-function updateRandomStats() {
-    const dynamicStats = document.querySelectorAll('.dynamic-stat');
-    
-    // Sélectionner 1-2 statistiques à mettre à jour
-    const statsToUpdate = Math.floor(Math.random() * 2) + 1;
-    const indices = [];
-    
-    while (indices.length < statsToUpdate) {
-        const randomIndex = Math.floor(Math.random() * dynamicStats.length);
-        if (!indices.includes(randomIndex)) {
-            indices.push(randomIndex);
-        }
-    }
-    
-    indices.forEach(index => {
-        const stat = dynamicStats[index];
-        updateSingleStat(stat);
-    });
-}
-
-function updateRealtimeStats() {
-    const dynamicStats = document.querySelectorAll('.dynamic-stat');
-    
-    // Mettre à jour spécifiquement les "Codes exécutés" (index 3) plus fréquemment
-    const codesExecutedStat = dynamicStats[3];
-    if (codesExecutedStat && Math.random() < 0.3) { // 30% de chance
-        updateSingleStat(codesExecutedStat, true);
-    }
-    
-    // Mettre à jour les utilisateurs (index 1) occasionnellement
-    const usersStat = dynamicStats[1];
-    if (usersStat && Math.random() < 0.1) { // 10% de chance
-        updateSingleStat(usersStat);
-    }
-}
-
-function updateSingleStat(stat, isRealtime = false) {
-    const baseValue = parseInt(stat.dataset.base);
-    const variation = parseInt(stat.dataset.variation);
-    const currentText = stat.textContent;
-    
-    // Calculer nouvelle valeur avec variation aléatoire
-    let variationRange = isRealtime ? variation * 0.3 : variation; // Variation plus petite en temps réel
-    const randomVariation = Math.floor(Math.random() * variationRange * 2) - variationRange;
-    let newValue = baseValue + randomVariation;
-    
-    // S'assurer que la valeur reste positive et réaliste
-    newValue = Math.max(newValue, Math.floor(baseValue * 0.8));
-    
-    // Mettre à jour selon le format
-    stat.classList.add('stat-updating');
-    
-    if (currentText.includes('+')) {
-        animateNumberWithSuffix(stat, newValue, '+');
-    } else if (currentText.includes(',')) {
-        animateFormattedNumber(stat, newValue);
-    } else {
-        animateNumber(stat, newValue);
-    }
-    
-    // Effet visuel de mise à jour
-    setTimeout(() => {
-        stat.classList.remove('stat-updating');
-    }, 800);
-}
-
-function animateNumber(element, target) {
-    let current = 0;
-    const increment = target / 30;
-    const timer = setInterval(() => {
-        current += increment;
-        if (current >= target) {
-            current = target;
-            clearInterval(timer);
-        }
-        element.textContent = Math.floor(current);
-    }, 25);
-}
-
-function animateNumberWithSuffix(element, target, suffix) {
-    let current = 0;
-    const increment = target / 30;
-    const timer = setInterval(() => {
-        current += increment;
-        if (current >= target) {
-            current = target;
-            clearInterval(timer);
-        }
-        element.textContent = Math.floor(current) + suffix;
-    }, 25);
-}
-
-function animateFormattedNumber(element, target) {
-    let current = 0;
-    const increment = target / 30;
-    const timer = setInterval(() => {
-        current += increment;
-        if (current >= target) {
-            current = target;
-            clearInterval(timer);
-        }
-        const formatted = Math.floor(current).toLocaleString('fr-FR');
-        element.textContent = formatted;
-    }, 25);
-}
-
-// Effet Matrix sur les statistiques
-document.addEventListener('DOMContentLoaded', function() {
-    const statItems = document.querySelectorAll('.stat-item');
-    
-    statItems.forEach(item => {
-        item.addEventListener('mouseenter', function() {
-            const statNumber = this.querySelector('.stat-number');
-            statNumber.style.textShadow = '0 0 10px var(--primary-green)';
-            statNumber.style.transform = 'scale(1.1)';
-        });
-        
-        item.addEventListener('mouseleave', function() {
-            const statNumber = this.querySelector('.stat-number');
-            statNumber.style.textShadow = '';
-            statNumber.style.transform = 'scale(1)';
-        });
-    });
-});
-
-// Simulation d'activité temps réel basée sur l'heure
-function getActivityMultiplier() {
-    const hour = new Date().getHours();
-    // Plus d'activité pendant les heures de travail et d'étude
-    if (hour >= 9 && hour <= 17) return 1.5; // Journée
-    if (hour >= 19 && hour <= 22) return 1.3; // Soirée
-    return 0.8; // Nuit/Matin
-}
-
-// Ajouter des événements simulés
-setInterval(() => {
-    const activityLevel = getActivityMultiplier();
-    if (Math.random() < 0.1 * activityLevel) { // Simulation d'une nouvelle exécution de code
-        const codesExecutedStat = document.querySelector('.dynamic-stat[data-base="8500"]');
-        if (codesExecutedStat) {
-            const currentBase = parseInt(codesExecutedStat.dataset.base);
-            codesExecutedStat.dataset.base = currentBase + Math.floor(Math.random() * 3) + 1;
-        }
-    }
-}, 3000);
-</script>
-{% endblock %}
+    <script src="/static/js/main.js"></script>
+</body>
+</html>
