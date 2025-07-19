@@ -56,11 +56,16 @@
     --secondary-green: #00cc33;
     --accent-orange: #ff6b35;
     --background-black: #0a0a0a;
+    --background-dark: #1a1a1a;
     --card-gray: #1e1e1e;
     --border-gray: #333333;
     --text-light: #ffffff;
     --text-muted: #cccccc;
     --text-darker: #999999;
+    
+    /* Typography */
+    --font-mono: 'JetBrains Mono', monospace;
+    --font-display: 'Orbitron', sans-serif;
     
     /* Espacements */
     --spacing-xs: 0.25rem;
