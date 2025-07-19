@@ -8,6 +8,7 @@ import bcrypt
 import hashlib
 from datetime import datetime, timedelta
 from typing import Optional, Annotated
+from pathlib import Path
 from fastapi import FastAPI, Request, Form, Depends, HTTPException, status
 from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
@@ -31,9 +32,10 @@ app = FastAPI(
     version="3.0.0"
 )
 
-# Configuration des templates et fichiers statiques
-templates = Jinja2Templates(directory="templates")
-app.mount("/static", StaticFiles(directory="static"), name="static")
+# Configuration des templates et fichiers statiques avec chemin absolu
+BASE_DIR = Path(__file__).resolve().parent
+templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
+app.mount("/static", StaticFiles(directory=str(BASE_DIR / "static")), name="static")
 
 # Initialiser le moteur de tuteur
 tutor_engine = TutorEngine()
@@ -239,6 +241,22 @@ async def quiz_home(request: Request, user: User = Depends(require_auth)):
         "request": request, 
         "user": user, 
         "categories": categories
+    })
+
+@app.get("/admin", response_class=HTMLResponse)
+async def admin_page(request: Request, user: User = Depends(require_admin)):
+    """Page d'administration"""
+    return templates.TemplateResponse("admin.html", {
+        "request": request, 
+        "user": user
+    })
+
+@app.get("/profile", response_class=HTMLResponse)
+async def profile_page(request: Request, user: User = Depends(require_auth)):
+    """Page de profil utilisateur"""
+    return templates.TemplateResponse("profile.html", {
+        "request": request, 
+        "user": user
     })
 
 # Route pour nettoyer les sessions expirées (tâche de maintenance)

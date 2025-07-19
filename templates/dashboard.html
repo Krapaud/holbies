@@ -156,20 +156,38 @@
                     <span class="output">Available commands:</span>
                 </div>
                 <div class="terminal-line">
-                    <span class="output">- clear: Clear terminal</span>
+                    <span class="output">  help - Show this help</span>
                 </div>
                 <div class="terminal-line">
-                    <span class="output">- help: Show this help</span>
+                    <span class="output">  clear - Clear terminal</span>
                 </div>
                 <div class="terminal-line">
-                    <span class="output">- matrix: Matrix rain effect</span>
+                    <span class="output">  whoami - Show current user</span>
                 </div>
                 <div class="terminal-line">
-                    <span class="prompt">matrix@dlh:~$</span>
-                    <input type="text" id="terminal-input" class="terminal-input" autofocus>
+                    <span class="output">  date - Show current date</span>
+                </div>
+                <div class="terminal-line">
+                    <span class="output">  matrix - Enable Matrix rain</span>
+                </div>
+                <div class="terminal-line">
+                    <span class="output">  neo - Enter the Matrix</span>
                 </div>
             `;
-            terminal.innerHTML += helpText;
+            terminal.insertAdjacentHTML('beforeend', helpText);
+            
+            // Add new input line
+            const newLine = document.createElement('div');
+            newLine.className = 'terminal-line';
+            newLine.innerHTML = `
+                <span class="prompt">matrix@dlh:~$</span>
+                <input type="text" id="terminal-input" class="terminal-input" autofocus>
+            `;
+            terminal.appendChild(newLine);
+            
+            // Focus on new input
+            document.getElementById('terminal-input').focus();
+            setupTerminalInput();
         }
         
         function matrixRain() {
@@ -233,6 +251,94 @@
             }, 3000);
         }
         
+        function setupTerminalInput() {
+            const input = document.getElementById('terminal-input');
+            if (input) {
+                input.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        const command = this.value.trim();
+                        processCommand(command);
+                        this.value = '';
+                    }
+                });
+            }
+        }
+        
+        function processCommand(command) {
+            const terminal = document.getElementById('terminal-content');
+            const currentInput = document.getElementById('terminal-input');
+            
+            // Show the command that was typed
+            if (currentInput && currentInput.parentElement) {
+                currentInput.parentElement.innerHTML = `
+                    <span class="prompt">matrix@dlh:~$</span>
+                    <span class="command">${command}</span>
+                `;
+            }
+            
+            let response = '';
+            switch(command.toLowerCase()) {
+                case 'help':
+                    showHelp();
+                    return;
+                case 'clear':
+                    clearTerminal();
+                    return;
+                case 'whoami':
+                    response = '{{ user.username if user else "anonymous" }}';
+                    break;
+                case 'date':
+                    response = new Date().toLocaleString();
+                    break;
+                case 'matrix':
+                    response = 'Entering the Matrix...';
+                    setTimeout(() => matrixRain(), 1000);
+                    break;
+                case 'neo':
+                    response = 'Wake up, Neo... The Matrix has you...';
+                    break;
+                case 'red pill':
+                    response = 'Welcome to the real world.';
+                    break;
+                case 'blue pill':
+                    response = 'The story ends, you wake up in your bed and believe whatever you want to believe.';
+                    break;
+                case '':
+                    response = '';
+                    break;
+                default:
+                    response = `Command not found: ${command}. Type 'help' for available commands.`;
+            }
+            
+            // Add response
+            if (response) {
+                const responseLine = document.createElement('div');
+                responseLine.className = 'terminal-line';
+                responseLine.innerHTML = `<span class="output">${response}</span>`;
+                terminal.appendChild(responseLine);
+            }
+            
+            // Add new input line
+            const newLine = document.createElement('div');
+            newLine.className = 'terminal-line';
+            newLine.innerHTML = `
+                <span class="prompt">matrix@dlh:~$</span>
+                <input type="text" id="terminal-input" class="terminal-input" autofocus>
+            `;
+            terminal.appendChild(newLine);
+            
+            // Setup event listener for new input
+            setupTerminalInput();
+            
+            // Scroll to bottom
+            terminal.scrollTop = terminal.scrollHeight;
+        }
+        
+        // Initialize terminal when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            setupTerminalInput();
+        });
+
         function toggleFullscreen() {
             const terminal = document.getElementById('terminal');
             isFullscreen = !isFullscreen;

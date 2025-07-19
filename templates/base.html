@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Dev Learning Hub - Matrix Edition{% endblock %}</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    {% block head %}{% endblock %}
+</head>
+<body>
+    
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <a href="/">
+                    <span class="logo">DEV</span>
+                    <span class="logo-accent">LEARNING</span>
+                    <span class="logo">HUB</span>
+                </a>
+            </div>
+            
+            <div class="nav-menu">
+                {% if user %}
+                <div class="nav-links">
+                    <a href="/dashboard" class="nav-link">
+                        <span class="nav-icon">🏠</span>
+                        Dashboard
+                    </a>
+                    <a href="/quiz" class="nav-link">
+                        <span class="nav-icon">🧠</span>
+                        Quiz
+                    </a>
+                    <a href="/python-tutor" class="nav-link">
+                        <span class="nav-icon">🐍</span>
+                        DLH Tutor
+                    </a>
+                    {% if user.is_admin %}
+                    <a href="/admin" class="nav-link admin-link">
+                        <span class="nav-icon">⚙️</span>
+                        Admin
+                    </a>
+                    {% endif %}
+                </div>
+                
+                <div class="nav-user">
+                    <div class="user-info">
+                        <span class="user-name">{{ user.username }}</span>
+                        <a href="/logout" class="logout-btn">Déconnexion</a>
+                    </div>
+                </div>
+                {% else %}
+                <div class="nav-auth">
+                    <a href="/login" class="nav-link">
+                        <span class="nav-icon">🔑</span>
+                        Connexion
+                    </a>
+                    <a href="/register" class="nav-link">
+                        <span class="nav-icon">📝</span>
+                        Inscription
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2025 Dev Learning Hub - PostgreSQL Edition. Propulsé par la technologie Matrix.</p>
+        </div>
+    </footer>
+
+    <script src="/static/js/main.js"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

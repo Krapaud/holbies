@@ -26,7 +26,7 @@
             <p class="question-text">{{ question }}</p>
         </div>
         
-        <form method="POST" action="{{ url_for('quiz_answer') }}" class="answer-form">
+        <form method="POST" action="/quiz/answer" class="answer-form">
             <div class="form-group">
                 <label for="answer" class="form-label">
                     <span class="label-icon">✍️</span>
@@ -60,7 +60,7 @@
     </div>
     
     <div class="quiz-navigation">
-        <a href="{{ url_for('quiz_home') }}" class="btn btn-secondary">
+        <a href="/quiz" class="btn btn-secondary">
             <span class="btn-icon">🏠</span>
             Retour aux Quiz
         </a>

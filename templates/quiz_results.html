@@ -165,17 +165,17 @@
     </div>
     
     <div class="results-actions">
-        <a href="{{ url_for('quiz_home') }}" class="btn btn-primary">
+        <a href="/quiz" class="btn btn-primary">
             <span class="btn-icon">🎯</span>
             Faire un autre Quiz
         </a>
         
-        <a href="{{ url_for('quiz_category', category=results.category) }}" class="btn btn-secondary">
+        <a href="/quiz/category/{{ results.category }}" class="btn btn-secondary">
             <span class="btn-icon">🔄</span>
             Refaire ce Quiz
         </a>
         
-        <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
+        <a href="/dashboard" class="btn btn-secondary">
             <span class="btn-icon">📊</span>
             Voir mes Statistiques
         </a>
