@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Form
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 from typing import List
@@ -97,16 +97,14 @@ async def start_quiz_session(
 
 @router.post("/submit-answer")
 async def submit_answer(
-    session_id: int = Form(),
-    question_id: int = Form(), 
-    user_answer: str = Form(),
+    answer_data: QuizAnswerSubmission,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user)
 ):
     """Soumet une réponse pour une question"""
     # Vérifier que la session appartient à l'utilisateur
     session = db.query(QuizSession).filter(
-        QuizSession.id == session_id,
+        QuizSession.id == answer_data.session_id,
         QuizSession.user_id == current_user.id,
         QuizSession.completed == False
     ).first()
@@ -118,7 +116,7 @@ async def submit_answer(
         )
     
     # Récupérer la question
-    question = db.query(Question).filter(Question.id == question_id).first()
+    question = db.query(Question).filter(Question.id == answer_data.question_id).first()
     if not question:
         raise HTTPException(
             status_code=404,
@@ -127,8 +125,8 @@ async def submit_answer(
     
     # Vérifier si la réponse existe déjà
     existing_answer = db.query(QuizAnswer).filter(
-        QuizAnswer.session_id == session_id,
-        QuizAnswer.question_id == question_id
+        QuizAnswer.session_id == answer_data.session_id,
+        QuizAnswer.question_id == answer_data.question_id
     ).first()
     
     if existing_answer:
@@ -138,13 +136,13 @@ async def submit_answer(
         )
     
     # Vérifier si la réponse est correcte
-    is_correct = user_answer.lower() == question.correct_answer.lower()
+    is_correct = answer_data.user_answer.lower() == question.correct_answer.lower()
     
     # Enregistrer la réponse
     quiz_answer = QuizAnswer(
-        session_id=session_id,
-        question_id=question_id,
-        user_answer=user_answer,
+        session_id=answer_data.session_id,
+        question_id=answer_data.question_id,
+        user_answer=answer_data.user_answer,
         is_correct=is_correct
     )
     db.add(quiz_answer)

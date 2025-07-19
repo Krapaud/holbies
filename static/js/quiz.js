@@ -186,17 +186,26 @@ class QuizManager {
         try {
             const question = this.questions[this.currentQuestionIndex];
             
+            console.log('Submitting answer:', {
+                session_id: this.currentSession.id,
+                question_id: question.id,
+                user_answer: this.selectedAnswer
+            });
+            console.log('Token available:', !!window.holbiesApp.token);
+            
             const response = await window.holbiesApp.apiRequest('/api/quiz/submit-answer', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Content-Type': 'application/json',
                 },
-                body: new URLSearchParams({
+                body: JSON.stringify({
                     session_id: this.currentSession.id,
                     question_id: question.id,
                     user_answer: this.selectedAnswer
                 })
             });
+
+            console.log('Submit response:', response);
 
             // Store answer
             this.userAnswers.push({
