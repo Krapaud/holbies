@@ -20,10 +20,25 @@
             background: rgba(0, 255, 65, 0.1);
         }
         
+        /* Style pour le lien logo */
+        .logo-link {
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        
+        .logo-link:hover {
+            transform: scale(1.05);
+        }
+        
+        .logo-link:hover .logo-text {
+            text-shadow: 0 0 20px rgba(0, 255, 65, 0.8);
+        }
+        
         @media (max-width: 768px) {
-            .nav-user {
-                display: none;
-            }
         }
     </style>
     {% block extra_css %}{% endblock %}
@@ -34,20 +49,16 @@
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-logo">
-                <span class="logo-text">HOLBIES</span>
-                <span class="logo-subtext">Learning Hub</span>
+                <a href="/" class="logo-link">
+                    <span class="logo-text">HOLBIES</span>
+                    <span class="logo-subtext">Learning Hub</span>
+                </a>
             </div>
             <div class="nav-menu" id="nav-menu">
-                <a href="/" class="nav-link">Accueil</a>
                 <a href="/learning" class="nav-link">Learning Hub</a>
                 <a href="/tutor" class="nav-link">HLH Tutor</a>
                 <a href="/dashboard" class="nav-link">Dashboard</a>
-                {% if is_authenticated %}
-                    <span class="nav-user">👋 {{ username }}</span>
-                    <a href="/logout" class="nav-link" id="auth-link">Déconnexion</a>
-                {% else %}
-                    <a href="/auth/login-demo" class="nav-link" id="auth-link">Connexion (Demo)</a>
-                {% endif %}
+                <a href="/login" class="nav-link" id="auth-link">Connexion</a>
             </div>
             <div class="hamburger" id="hamburger">
                 <span></span>
@@ -71,6 +82,7 @@
     <script src="/static/js/main.js"></script>
     <script src="/static/js/video-modal.js"></script>
     <script src="/static/js/welcome-video-generator.js"></script>
+    
     {% block scripts %}{% endblock %}
     {% block extra_js %}{% endblock %}
 </body>
