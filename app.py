@@ -2,13 +2,16 @@ import os
 import sqlite3
 import hashlib
 import random
-import requests
 from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from quiz_data import questions, answers, categories
+from tutor_engine import TutorEngine
 
 app = Flask(__name__)
 app.secret_key = 'votre_cle_secrete_super_securisee'  # À changer en production !
+
+# Initialiser le moteur de tuteur
+tutor_engine = TutorEngine()
 DATABASE = 'users.db'
 
 def get_db_connection():
@@ -514,26 +517,28 @@ def python_tutor():
 
 @app.route('/api/tutor/run', methods=['POST'])
 def tutor_run():
-    """Proxy API pour le serveur DLH Tutor"""
+    """API intégrée pour le DLH Tutor"""
     if 'user_id' not in session:
         return jsonify({'error': 'Non autorisé'}), 401
     
     try:
         data = request.get_json()
+        code = data.get('code', '')
+        language = data.get('language', 'python')
         
-        # Faire la requête au serveur DLH Tutor
-        response = requests.post('http://localhost:8002/run', 
-                               json=data,
-                               headers={'Content-Type': 'application/json'},
-                               timeout=10)
+        # Exécuter avec le moteur intégré
+        result = tutor_engine.execute_code(code, language)
         
-        if response.status_code == 200:
-            return jsonify(response.json())
+        if result['success']:
+            return jsonify({
+                'trace': result['trace'],
+                'output': result.get('final_output', result.get('output', ''))
+            })
         else:
-            return jsonify({'error': f'Erreur serveur tutor: {response.status_code}'}), 500
+            return jsonify({'error': result['error']}), 400
             
     except Exception as e:
-        return jsonify({'error': f'Erreur de connexion au serveur tutor: {str(e)}'}), 500
+        return jsonify({'error': f'Erreur interne: {str(e)}'}), 500
 
 @app.route('/quiz')
 def quiz_home():
