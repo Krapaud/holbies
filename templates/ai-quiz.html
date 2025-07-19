@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz IA - Holbies Learning Hub</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Source+Code+Pro:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+    <style>
+        .ai-quiz-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .ai-question-header {
+            background: linear-gradient(135deg, rgba(0, 255, 65, 0.1), rgba(0, 255, 65, 0.05));
+            border: 1px solid rgba(0, 255, 65, 0.3);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .ai-answer-area {
+            margin: 2rem 0;
+        }
+        
+        .ai-answer-textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(0, 255, 65, 0.3);
+            border-radius: 8px;
+            color: #00ff41;
+            font-family: 'Source Code Pro', monospace;
+            font-size: 14px;
+            resize: vertical;
+            line-height: 1.6;
+        }
+        
+        .ai-answer-textarea:focus {
+            outline: none;
+            border-color: #00ff41;
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.3);
+        }
+        
+        .technical-terms-hint {
+            background: rgba(0, 255, 65, 0.1);
+            border-left: 4px solid #00ff41;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 4px;
+        }
+        
+        .ai-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .ai-modal-content {
+            background: linear-gradient(135deg, rgba(0, 20, 0, 0.95), rgba(0, 40, 0, 0.95));
+            border: 1px solid rgba(0, 255, 65, 0.3);
+            border-radius: 15px;
+            padding: 2rem;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+        
+        .ai-feedback-score {
+            text-align: center;
+            padding: 1rem;
+            background: rgba(0, 255, 65, 0.1);
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+        
+        .ai-feedback-score h3 {
+            color: #00ff41;
+            margin: 0;
+            font-size: 1.5rem;
+        }
+        
+        .ai-feedback-section {
+            margin: 1rem 0;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+        }
+        
+        .ai-result-item {
+            border: 1px solid rgba(0, 255, 65, 0.2);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            background: rgba(0, 0, 0, 0.3);
+        }
+        
+        .ai-performance-message {
+            text-align: center;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 10px;
+            background: rgba(0, 255, 65, 0.1);
+        }
+        
+        .progress-container {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 20px;
+            height: 20px;
+            margin: 1rem 0;
+            overflow: hidden;
+            border: 1px solid rgba(0, 255, 65, 0.3);
+        }
+        
+        .progress-fill {
+            background: linear-gradient(90deg, #00ff41, #00cc33);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 20px;
+        }
+        
+        .question-counter {
+            text-align: center;
+            margin: 1rem 0;
+            font-family: 'Orbitron', monospace;
+            color: #00ff41;
+        }
+        
+        .ai-start-info {
+            background: rgba(0, 255, 65, 0.1);
+            border: 1px solid rgba(0, 255, 65, 0.3);
+            border-radius: 10px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .ai-start-info h3 {
+            color: #00ff41;
+            margin-bottom: 1rem;
+        }
+        
+        .ai-start-info ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .ai-start-info li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(0, 255, 65, 0.1);
+        }
+        
+        .ai-start-info li:before {
+            content: "🤖 ";
+            margin-right: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="matrix-bg"></div>
+    
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <span class="logo-text">HOLBIES</span>
+                <span class="logo-subtext">AI Quiz</span>
+            </div>
+            <div class="nav-menu" id="nav-menu">
+                <a href="/" class="nav-link">Accueil</a>
+                <a href="/quiz" class="nav-link">Quiz Classique</a>
+                <a href="/ai-quiz" class="nav-link active">Quiz IA</a>
+                <a href="/tutor" class="nav-link">HLH Tutor</a>
+                <a href="/dashboard" class="nav-link">Dashboard</a>
+                <a href="/login" class="nav-link" id="auth-link">Connexion</a>
+            </div>
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="ai-quiz-container">
+            
+            <!-- Écran de démarrage -->
+            <section id="ai-quiz-start" class="quiz-section">
+                <div class="quiz-header">
+                    <h1 class="glitch" data-text="QUIZ IA">QUIZ IA</h1>
+                    <p class="quiz-subtitle">Réponses textuelles corrigées par Intelligence Artificielle</p>
+                </div>
+                
+                <div class="ai-start-info">
+                    <h3>🧠 Comment fonctionne le Quiz IA ?</h3>
+                    <ul>
+                        <li><strong>Réponses libres :</strong> Répondez avec vos propres mots en texte libre</li>
+                        <li><strong>Correction automatique :</strong> L'IA analyse votre réponse et la compare à la réponse attendue</li>
+                        <li><strong>Scoring intelligent :</strong> 70% pour la similarité, 30% pour l'usage de termes techniques</li>
+                        <li><strong>Bonus technique :</strong> +5 points par terme technique utilisé correctement</li>
+                        <li><strong>Feedback détaillé :</strong> Explication personnalisée de votre performance</li>
+                    </ul>
+                </div>
+                
+                <div class="quiz-stats">
+                    <div class="stat-item">
+                        <div class="stat-number" id="ai-total-questions">5</div>
+                        <div class="stat-label">Questions</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">100</div>
+                        <div class="stat-label">Points/Question</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">∞</div>
+                        <div class="stat-label">Apprentissage</div>
+                    </div>
+                </div>
+                
+                <div class="quiz-actions">
+                    <button id="start-ai-quiz-btn" class="btn btn-primary btn-large">
+                        <span>🚀 Commencer le Quiz IA</span>
+                        <div class="btn-loading"></div>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Écran de question -->
+            <section id="ai-quiz-question" class="quiz-section hidden">
+                <div class="progress-container">
+                    <div id="ai-progress-fill" class="progress-fill"></div>
+                </div>
+                
+                <div class="question-counter">
+                    Question <span id="ai-current-question">1</span> sur <span id="ai-total-questions">5</span>
+                </div>
+                
+                <div class="ai-question-header">
+                    <div class="question-difficulty">
+                        Difficulté: <span id="ai-question-difficulty">MEDIUM</span> 
+                        | Score max: <span id="ai-question-score">100</span> points
+                    </div>
+                    <h2 id="ai-question-text">Question apparaîtra ici...</h2>
+                </div>
+                
+                <div class="technical-terms-hint">
+                    <strong>💡 Conseil :</strong> <span id="technical-terms-hint">Utilisez des termes techniques précis...</span>
+                </div>
+                
+                <div class="ai-answer-area">
+                    <label for="ai-user-answer">Votre réponse détaillée :</label>
+                    <textarea 
+                        id="ai-user-answer" 
+                        class="ai-answer-textarea"
+                        placeholder="Rédigez votre réponse en utilisant des termes techniques appropriés. Plus votre réponse est précise et technique, plus votre score sera élevé..."
+                    ></textarea>
+                </div>
+                
+                <div class="quiz-actions">
+                    <button id="submit-ai-answer-btn" class="btn btn-primary">
+                        <span>🤖 Soumettre pour Correction IA</span>
+                        <div class="btn-loading"></div>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Écran de résultats -->
+            <section id="ai-quiz-results" class="quiz-section hidden">
+                <div class="quiz-header">
+                    <h1>🎯 Résultats du Quiz IA</h1>
+                </div>
+                
+                <div class="results-summary">
+                    <div class="score-display">
+                        <div class="score-main">
+                            <span id="ai-final-score">0/500</span> points
+                        </div>
+                        <div class="score-percentage">
+                            <span id="ai-final-percentage">0%</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="ai-results-details" class="results-details">
+                    <!-- Détails générés dynamiquement -->
+                </div>
+                
+                <div class="quiz-actions">
+                    <button id="retake-ai-quiz-btn" class="btn btn-secondary">
+                        <span>🔄 Refaire le Quiz</span>
+                    </button>
+                    <a href="/quiz" class="btn btn-primary">
+                        <span>📝 Quiz Classique</span>
+                    </a>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Modal de feedback -->
+    <div id="ai-answer-modal" class="ai-modal hidden">
+        <div class="ai-modal-content">
+            <h2 id="ai-modal-title">Résultat de la correction</h2>
+            <div id="ai-answer-feedback">
+                <!-- Contenu généré dynamiquement -->
+            </div>
+            <div class="modal-actions">
+                <button id="next-ai-question-btn" class="btn btn-primary">
+                    <span>Question Suivante</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2025 Holbies Learning Hub. Quiz IA avec correction automatique.</p>
+            <p>Système d'évaluation basé sur l'intelligence artificielle</p>
+        </div>
+    </footer>
+
+    <script src="/static/js/main.js"></script>
+    <script src="/static/js/ai-quiz.js"></script>
+</body>
+</html>
