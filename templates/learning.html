@@ -51,6 +51,24 @@
             margin-bottom: 3rem;
         }
         
+        /* Style pour l'utilisateur connecté */
+        .nav-user {
+            color: #00ff41;
+            font-family: 'Source Code Pro', monospace;
+            font-size: 0.9rem;
+            margin-right: 1rem;
+            padding: 0.5rem;
+            border: 1px solid rgba(0, 255, 65, 0.3);
+            border-radius: 4px;
+            background: rgba(0, 255, 65, 0.1);
+        }
+        
+        @media (max-width: 768px) {
+            .nav-user {
+                display: none;
+            }
+        }
+        
         .mode-card {
             background: linear-gradient(135deg, rgba(0, 255, 65, 0.15), rgba(0, 255, 65, 0.05));
             border: 3px solid rgba(0, 255, 65, 0.3);
@@ -362,7 +380,12 @@
                 <a href="/learning" class="nav-link active">Learning Hub</a>
                 <a href="/tutor" class="nav-link">HLH Tutor</a>
                 <a href="/dashboard" class="nav-link">Dashboard</a>
-                <a href="/login" class="nav-link" id="auth-link">Connexion</a>
+                {% if is_authenticated %}
+                    <span class="nav-user">👋 {{ username }}</span>
+                    <a href="/logout" class="nav-link" id="auth-link">Déconnexion</a>
+                {% else %}
+                    <a href="/auth/login-demo" class="nav-link" id="auth-link">Connexion (Demo)</a>
+                {% endif %}
             </div>
             <div class="hamburger" id="hamburger">
                 <span></span>
