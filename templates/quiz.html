@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="quiz-section">
+    <div class="quiz-container">
+        <div class="quiz-header">
+            <h1 class="quiz-title">Quiz Technique</h1>
+            <div class="quiz-info">
+                <span class="quiz-question-counter">Question <span id="current-question">1</span> sur <span id="total-questions">10</span></span>
+                <span class="quiz-timer" id="timer">00:00</span>
+            </div>
+        </div>
+        
+        <div class="quiz-progress">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+        
+        <div class="quiz-content" id="quiz-content">
+            <!-- Quiz Start Screen -->
+            <div class="quiz-start" id="quiz-start">
+                <div class="start-info">
+                    <h2>Prêt à tester vos connaissances ?</h2>
+                    <div class="quiz-rules">
+                        <h3>Règles du quiz :</h3>
+                        <ul>
+                            <li>10 questions à choix multiples</li>
+                            <li>Une seule réponse correcte par question</li>
+                            <li>Pas de limite de temps</li>
+                            <li>Correction instantanée avec explications</li>
+                        </ul>
+                    </div>
+                    <button class="btn btn-primary" id="start-quiz-btn">Commencer le Quiz</button>
+                </div>
+            </div>
+            
+            <!-- Quiz Question -->
+            <div class="quiz-question hidden" id="quiz-question">
+                <div class="question-content">
+                    <h2 class="question-text" id="question-text"></h2>
+                    <div class="question-options" id="question-options">
+                        <!-- Options will be inserted here -->
+                    </div>
+                    <button class="btn btn-primary" id="submit-answer-btn" disabled>Valider</button>
+                </div>
+            </div>
+            
+            <!-- Quiz Results -->
+            <div class="quiz-results hidden" id="quiz-results">
+                <div class="results-content">
+                    <h2>Résultats du Quiz</h2>
+                    <div class="score-display">
+                        <div class="score-circle">
+                            <span class="score-value" id="score-value">0</span>
+                            <span class="score-total">/ 10</span>
+                        </div>
+                        <div class="score-percentage" id="score-percentage">0%</div>
+                    </div>
+                    <div class="results-details" id="results-details">
+                        <!-- Results details will be inserted here -->
+                    </div>
+                    <div class="results-actions">
+                        <button class="btn btn-primary" id="retake-quiz-btn">Refaire le Quiz</button>
+                        <a href="/dashboard" class="btn btn-secondary">Voir le Dashboard</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Answer Feedback Modal -->
+<div class="modal hidden" id="answer-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="modal-title">Résultat</h3>
+            <button class="modal-close" id="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="answer-feedback" id="answer-feedback">
+                <!-- Feedback content will be inserted here -->
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" id="next-question-btn">Question Suivante</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/quiz.js"></script>
+{% endblock %}

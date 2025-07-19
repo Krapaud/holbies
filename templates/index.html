@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-content">
+        <h1 class="hero-title">
+            <span class="glitch" data-text="HOLBIES">HOLBIES</span>
+            <span class="hero-subtitle">Learning Hub</span>
+        </h1>
+        <p class="hero-description">
+            Système de quiz interactif pour développeurs.<br>
+            Testez vos connaissances avec plus de 100 questions techniques.
+        </p>
+        <div class="hero-buttons">
+            <a href="/quiz" class="btn btn-primary">Commencer le Quiz</a>
+            <a href="/register" class="btn btn-secondary">S'inscrire</a>
+        </div>
+    </div>
+    <div class="hero-visual">
+        <div class="code-rain">
+            <div class="code-line">def holbies_quiz():</div>
+            <div class="code-line">    return "Matrix Style Learning"</div>
+            <div class="code-line">if __name__ == "__main__":</div>
+            <div class="code-line">    holbies_quiz()</div>
+        </div>
+    </div>
+</section>
+
+<section class="features">
+    <div class="container">
+        <h2 class="section-title">Fonctionnalités</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">💻</div>
+                <h3>Quiz Technique</h3>
+                <p>Plus de 100 questions couvrant différents domaines de la programmation</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔐</div>
+                <h3>Authentification Sécurisée</h3>
+                <p>Système d'authentification JWT pour protéger vos données</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>Suivi des Progrès</h3>
+                <p>Dashboard personnel pour suivre vos résultats et performances</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>Correcteur Automatique</h3>
+                <p>Correction instantanée avec explications détaillées</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="stats">
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-number">100+</div>
+                <div class="stat-label">Questions</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">5+</div>
+                <div class="stat-label">Catégories</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">∞</div>
+                <div class="stat-label">Apprentissage</div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/home.js"></script>
+{% endblock %}

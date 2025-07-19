@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="auth-section">
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <h1 class="auth-title">Connexion</h1>
+                <p class="auth-subtitle">Accédez à votre espace d'apprentissage</p>
+            </div>
+            
+            <form class="auth-form" id="login-form">
+                <div class="form-group">
+                    <label for="username">Nom d'utilisateur</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Mot de passe</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-full">
+                    <span>Se connecter</span>
+                    <div class="btn-loading"></div>
+                </button>
+            </form>
+            
+            <div class="auth-footer">
+                <p>Pas encore de compte ? <a href="/register">S'inscrire</a></p>
+            </div>
+            
+            <div class="auth-message" id="auth-message"></div>
+        </div>
+        
+        <div class="auth-visual">
+            <div class="matrix-code">
+                <div class="code-stream">
+                    <span>01001000</span>
+                    <span>01001111</span>
+                    <span>01001100</span>
+                    <span>01000010</span>
+                    <span>01001001</span>
+                    <span>01000101</span>
+                    <span>01010011</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/auth.js"></script>
+{% endblock %}
