@@ -100,6 +100,7 @@ class HolbiesApp {
 
     setupMatrixBackground() {
         this.createMatrixRain();
+        this.createAsciiArt();
     }
 
     createMatrixRain() {
@@ -147,6 +148,11 @@ class HolbiesApp {
             `;
             document.head.appendChild(style);
         }
+    }
+
+    createAsciiArt() {
+        // ASCII art is now handled purely through CSS ::after pseudo-element
+        // No additional dynamic elements needed
     }
 
     // Utility methods
