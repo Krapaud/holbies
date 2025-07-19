@@ -85,19 +85,19 @@ body {
 @keyframes asciiFloat {
     0%, 100% { 
         transform: translate(-50%, -50%) scale(1) rotate(0deg);
-        opacity: 0.35;
+        opacity: 0.15;
     }
     25% { 
         transform: translate(-45%, -55%) scale(1.1) rotate(0.5deg);
-        opacity: 0.5;
+        opacity: 0.3;
     }
     50% { 
         transform: translate(-55%, -45%) scale(1.05) rotate(-0.5deg);
-        opacity: 0.45;
+        opacity: 0.25;
     }
     75% { 
         transform: translate(-48%, -52%) scale(1.08) rotate(0.3deg);
-        opacity: 0.4;
+        opacity: 0.2;
     }
 }
 
