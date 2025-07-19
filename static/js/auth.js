@@ -60,17 +60,18 @@ async function handleLogin(e) {
                 window.holbiesApp.token = data.access_token;
             }
             
-            console.log('Token stored, redirecting...');
+            console.log('Token stored, showing welcome video...');
             
             // Show success message
             if (window.holbiesApp && window.holbiesApp.showMessage) {
-                window.holbiesApp.showMessage('Connexion réussie! Redirection...', 'success');
+                window.holbiesApp.showMessage('Connexion réussie!', 'success');
             }
             
-            // Redirect after delay
-            setTimeout(() => {
+            // Show welcome video before redirect
+            showWelcomeVideo(() => {
+                // Redirect after video
                 window.location.href = '/dashboard';
-            }, 1500);
+            });
         } else {
             throw new Error(data.detail || 'Erreur de connexion');
         }
@@ -324,6 +325,80 @@ function calculatePasswordStrength(password) {
         text: feedback,
         color: color
     };
+}
+
+// Function to show welcome video after successful login
+function showWelcomeVideo(callback) {
+    // Wait for video modal to be ready
+    const waitForVideoModal = () => {
+        if (window.videoModal) {
+            // Multiple video sources for better compatibility
+            const videoSources = [
+                { url: '/static/video/welcome.mp4', type: 'video/mp4' },
+                { url: '/static/video/welcome.webm', type: 'video/webm' },
+                { url: '/static/video/welcome.ogv', type: 'video/ogg' }
+            ];
+            
+            // Try to find an available video source
+            let foundVideo = false;
+            let checkedSources = 0;
+            
+            const checkSource = (source) => {
+                const testVideo = document.createElement('video');
+                testVideo.onloadstart = () => {
+                    if (!foundVideo) {
+                        foundVideo = true;
+                        // Video exists, show it
+                        window.videoModal.show(source.url);
+                        
+                        // Listen for video end to trigger callback
+                        const modal = document.getElementById('video-modal');
+                        if (modal) {
+                            const originalClose = window.videoModal.close.bind(window.videoModal);
+                            window.videoModal.close = function() {
+                                originalClose();
+                                if (callback) {
+                                    setTimeout(callback, 500); // Small delay for smooth transition
+                                }
+                                // Restore original close function
+                                window.videoModal.close = originalClose;
+                            };
+                        }
+                    }
+                };
+                testVideo.onerror = () => {
+                    checkedSources++;
+                    if (checkedSources >= videoSources.length && !foundVideo) {
+                        // No video found, try test video if available
+                        if (window.showTestWelcomeVideo) {
+                            console.log('Aucune vidéo trouvée, utilisation de la vidéo de test');
+                            foundVideo = true;
+                            window.showTestWelcomeVideo().then(() => {
+                                if (callback) {
+                                    setTimeout(callback, 500);
+                                }
+                            });
+                        } else {
+                            console.warn('Aucune vidéo de bienvenue trouvée, redirection vers le dashboard');
+                            if (callback) {
+                                callback();
+                            }
+                        }
+                    }
+                };
+                testVideo.src = source.url;
+            };
+            
+            // Check each source
+            videoSources.forEach(checkSource);
+            
+        } else {
+            // Video modal not ready, wait a bit more
+            setTimeout(waitForVideoModal, 100);
+        }
+    };
+    
+    waitForVideoModal();
 }
 
 // Initialize password strength indicator
