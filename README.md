@@ -1,20 +1,42 @@
 # 🧠 Holbies Learning Hub
 
-Un système de quiz interactif avec un thème Matrix pour l'apprentissage technique, développé avec FastAPI, PostgreSQL et un design geek sombre inspiré de Matrix.
+Un système de quiz interactif avec un thème Matrix pour l'apprentissage technique, développé avec FastAPI, PostgreSQL et un design geek sombre inspiré de Matrix. Le projet inclut maintenant un **système de corr2. **🔧 API REST**
+   - Documentation interactive avec Swagger
+   - Endpoints sécurisés avec JWT
+   - Validation automatique des données
+   - Gestion d'erreurs complète
+   - **API AI Quiz** pour sessions PLD
+
+3. **🗄️ Base de Données**
+   - Modèles SQLAlchemy bien structurés
+   - **Tables AI Quiz** : sessions, réponses, scores
+   - Migrations avec Alembic
+   - Relations optimisées
+   - Index pour les performancesvancé** pour les questions à réponse libre de type PLD (Peer Learning Day).
 
 ![Matrix Theme](https://img.shields.io/badge/Theme-Matrix-00ff41)
 ![Python](https://img.shields.io/badge/Python-3.8+-blue)
 ![FastAPI](https://img.shields.io/badge/FastAPI-Latest-green)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-12+-blue)
+![AI Powered](https://img.shields.io/badge/AI-Powered-ff6b35)
 
 ## ✨ Fonctionnalités
 
-### 🎯 Système de Quiz
+### 🎯 Système de Quiz Classique
 - **50+ questions** style PLD Holberton School
 - **Correcteur automatique** avec explications détaillées
 - **Catégories variées** : Algorithmes, Python, C, JavaScript, Web, SQL, Linux, Git
 - **Suivi des performances** et statistiques personnelles
 - **Sessions sauvegardées** avec historique complet
+
+### 🤖 AI Quiz (PLD) - NOUVEAU !
+- **Questions à réponse libre** corrigées par Intelligence Artificielle
+- **Scoring intelligent** : 70% similarité + 30% usage de termes techniques
+- **Bonus technique** : +5 points par terme technique utilisé correctement
+- **Feedback détaillé** avec explications personnalisées
+- **Analyse sémantique** avancée des réponses
+- **Recommandations d'amélioration** basées sur les performances
+- **Sessions persistantes** avec historique complet et métriques détaillées
 
 ### 🎨 Interface Matrix
 - **Thème sombre** avec couleurs néon vertes (#00ff41)
@@ -40,10 +62,12 @@ Un système de quiz interactif avec un thème Matrix pour l'apprentissage techni
 - **Effets visuels Matrix** avec bordures animées
 
 ### 📊 Dashboard Interactif
-- **Statistiques détaillées** : score moyen, meilleur score, séries
-- **Graphiques de performance** avec Chart.js
-- **Historique complet** des sessions de quiz
-- **Indicateurs de progression** visuels
+- **Statistiques combinées** : scores des quiz classiques ET des sessions AI Quiz (PLD)
+- **Graphiques de performance** avec Chart.js intégrant tous types de sessions
+- **Historique unifié** des sessions avec distinction visuelle (📝 Quiz / 🤖 PLD)
+- **Métriques détaillées** : pourcentages, scores bruts, séries de réussite
+- **Indicateurs de progression** visuels avec animations
+- **Comparaison des performances** entre quiz classiques et PLD
 
 ## 🚀 Installation Rapide
 
@@ -90,7 +114,9 @@ Une fois démarré, l'application est accessible à :
 - **🏠 Accueil** : http://localhost:8000
 - **🔐 Connexion** : http://localhost:8000/login
 - **📝 Inscription** : http://localhost:8000/register
-- **🧠 Quiz** : http://localhost:8000/quiz
+- **🧠 Quiz Classique** : http://localhost:8000/quiz
+- **🤖 AI Quiz (PLD)** : http://localhost:8000/ai-quiz
+- **📚 Learning Hub** : http://localhost:8000/learning
 - **📊 Dashboard** : http://localhost:8000/dashboard
 - **📚 API Docs** : http://localhost:8000/docs
 
@@ -103,6 +129,7 @@ Une fois démarré, l'application est accessible à :
 - **Alembic** - Migrations de base de données
 - **python-jose** - JWT pour l'authentification
 - **passlib** - Hachage sécurisé des mots de passe
+- **AI Corrector** - Système de correction automatique intelligent
 
 ### Frontend
 - **HTML5/CSS3** - Structure et styles modernes
@@ -110,6 +137,12 @@ Une fois démarré, l'application est accessible à :
 - **CSS Variables** - Thématisation avancée
 - **Chart.js** - Graphiques de performance
 - **Animations CSS** - Effets Matrix immersifs
+
+### Intelligence Artificielle
+- **Analyse sémantique** - Comparaison intelligente de textes
+- **Scoring adaptatif** - Évaluation basée sur la similarité et les termes techniques
+- **Feedback personnalisé** - Recommandations ciblées selon les performances
+- **Sessions persistantes** - Suivi complet des sessions AI Quiz
 
 ### Sécurité
 - **JWT Authentication** - Tokens sécurisés
@@ -125,23 +158,33 @@ holbies-learning-hub/
 │   ├── app/
 │   │   ├── auth.py          # Authentification JWT
 │   │   ├── database.py      # Configuration DB
-│   │   ├── models.py        # Modèles SQLAlchemy
+│   │   ├── models.py        # Modèles SQLAlchemy (+ AI Quiz)
 │   │   ├── schemas.py       # Schémas Pydantic
 │   │   └── routers/         # Routes API
+│   │       ├── quiz.py      # Quiz classique
+│   │       ├── ai_quiz.py   # AI Quiz (PLD) - NOUVEAU !
+│   │       └── users.py     # Gestion utilisateurs
 │   ├── main.py              # Point d'entrée FastAPI
+│   ├── ai_quiz_corrector.py # Correcteur IA intelligent - NOUVEAU !
 │   └── requirements.txt     # Dépendances
 ├── 🌐 Frontend
 │   ├── static/
 │   │   ├── css/style.css    # Styles Matrix
 │   │   ├── js/              # JavaScript modules
+│   │   │   ├── ai-quiz.js   # Gestion AI Quiz - NOUVEAU !
+│   │   │   ├── quiz.js      # Quiz classique
+│   │   │   ├── dashboard.js # Dashboard unifié
 │   │   │   ├── video-modal.js          # Système vidéo de bienvenue
 │   │   │   ├── welcome-video-generator.js # Animation de fallback
 │   │   │   └── auth.js      # Authentification avec vidéo
 │   │   └── video/           # Vidéos de bienvenue
 │   └── templates/           # Templates Jinja2
+│       ├── ai-quiz.html     # Interface AI Quiz - NOUVEAU !
+│       ├── learning.html    # Hub d'apprentissage
+│       └── dashboard.html   # Dashboard unifié
 ├── 🗄️ Base de données
 │   ├── alembic/             # Migrations
-│   ├── populate_db.py       # Questions de quiz
+│   ├── populate_db_balanced.py # Questions équilibrées - MIS À JOUR !
 │   └── alembic.ini          # Configuration
 ├── 🛠️ Scripts utilitaires
 │   ├── start.sh             # Démarrage automatique
@@ -183,16 +226,23 @@ Ce script teste :
    - Session persistante
    - Redirection automatique vers le dashboard
 
-3. **🧠 Quiz**
+3. **🧠 Quiz Classique**
    - Questions à choix multiples
    - Feedback instantané avec explications
    - Progression visuelle
    - Scores en temps réel
 
-4. **📊 Dashboard**
-   - Statistiques personnelles
-   - Graphique de performance
-   - Historique des sessions
+4. **🤖 AI Quiz (PLD)**
+   - Questions à réponse libre
+   - Correction intelligente par IA
+   - Feedback détaillé et personnalisé
+   - Scoring basé sur similarité et termes techniques
+   - Recommandations d'amélioration
+
+5. **📊 Dashboard**
+   - Statistiques combinées (Quiz + PLD)
+   - Graphique de performance unifié
+   - Historique des sessions avec distinction visuelle
    - Actions rapides
 
 ### Pour les Développeurs
@@ -239,6 +289,20 @@ Le thème Matrix est entièrement personnalisable via les variables CSS :
 - **🔐 Security** : Vulnérabilités, authentification
 - **🏗️ OOP** : Héritage, polymorphisme, encapsulation
 
+### Types de Quiz
+
+#### 📝 Quiz Classique (QCM)
+- **Questions à choix multiples** avec 4 options
+- **Correction automatique** instantanée
+- **Explications détaillées** pour chaque réponse
+- **Score basé** sur le nombre de bonnes réponses
+
+#### 🤖 AI Quiz (PLD - Peer Learning Day)
+- **Questions à réponse libre** nécessitant des explications
+- **Correction par Intelligence Artificielle** avec analyse sémantique
+- **Scoring intelligent** : 70% similarité + 30% termes techniques
+- **Feedback personnalisé** avec recommandations d'amélioration
+
 ### Niveaux de Difficulté
 
 - **🟢 Easy** : Concepts de base, syntaxe simple
@@ -266,10 +330,9 @@ PORT=8000
 
 ### Ajout de Questions
 
-Pour ajouter vos propres questions :
+#### Questions Quiz Classique (QCM)
 
-1. Modifier `populate_db.py`
-2. Ajouter dans `QUIZ_QUESTIONS` :
+Pour ajouter des questions QCM dans `populate_db_balanced.py` :
 
 ```python
 {
@@ -285,7 +348,24 @@ Pour ajouter vos propres questions :
 }
 ```
 
-3. Relancer : `python3 populate_db.py`
+#### Questions AI Quiz (PLD)
+
+Pour ajouter des questions PLD dans `app/routers/ai_quiz.py` :
+
+```python
+{
+    "id": "unique-id",
+    "question_text": "Expliquez en détail le concept...",
+    "expected_answer": "Réponse attendue complète",
+    "technical_terms": ["terme1", "terme2", "terme3"],
+    "explanation": "Explication du concept",
+    "difficulty": "medium",
+    "category": "c-programming",
+    "max_score": 100  # Score maximum pour cette question
+}
+```
+
+Puis relancer : `python3 populate_db_balanced.py`
 
 ## 🎬 Configuration de la Vidéo de Bienvenue
 
@@ -324,6 +404,92 @@ ffmpeg -i input.mp4 -c:v libx264 -crf 28 -preset fast -c:a aac -b:a 128k -movfla
 - ✅ **Animation de fallback** si pas de vidéo
 - ✅ **Contrôles utilisateur** (Escape, clic, bouton X)
 
+## 🤖 Système AI Quiz (PLD) - Guide Complet
+
+### 🎯 Fonctionnement de l'IA
+
+Le système de correction IA analyse les réponses textuelles selon plusieurs critères :
+
+#### 🔍 **Analyse Sémantique**
+- **Similarité textuelle** : Comparaison avec la réponse attendue (70% du score)
+- **Correspondance des concepts** : Vérification de la compréhension
+- **Structure logique** : Cohérence de l'argumentation
+
+#### 🔧 **Analyse Technique**
+- **Détection de termes techniques** : Identification automatique (30% du score)
+- **Bonus technique** : +5 points par terme correctly utilisé
+- **Validation contextuelle** : Utilisation appropriée des termes
+
+#### 📊 **Scoring Intelligent**
+```python
+Score Final = (Similarité × 0.7) + (Termes Techniques × 0.3) + Bonus
+```
+
+### 📝 **Types de Questions PLD**
+
+#### Difficultés Disponibles
+- **🟢 EASY** (100 pts) : Concepts de base, définitions simples
+- **🟡 MEDIUM** (100 pts) : Applications pratiques, explications détaillées  
+- **🔴 HARD** (100 pts) : Optimisation, algorithmes complexes, analyses poussées
+
+#### Catégories Actuelles
+- **⚙️ C Programming** : Compilation, pointeurs, gestion mémoire
+- **🐍 Python** : Structures de données, paradigmes, optimisation
+- **🔢 Algorithms** : Complexité, tri, recherche, graphes
+- **🌐 Web Development** : Architectures, protocoles, sécurité
+
+### 🎯 **Exemple de Session PLD**
+
+#### Question Exemple (C Programming - HARD)
+```
+Expliquez en détail le processus de compilation en C, 
+en décrivant chaque étape et son rôle.
+```
+
+#### Réponse Attendue
+```
+La compilation C se fait en plusieurs étapes : 
+préprocesseur (macros, includes), compilateur 
+(code source vers assembleur), assembleur 
+(assembleur vers code objet), et éditeur de liens 
+(liaison des modules pour créer l'exécutable).
+```
+
+#### Termes Techniques Détectés
+- préprocesseur, compilateur, assembleur
+- éditeur de liens, linker, code objet
+- exécutable, macros, bibliothèques
+
+#### Exemple de Scoring
+- **Réponse utilisateur** : "La compilation transforme le code C en exécutable via le préprocesseur puis le compilateur"
+- **Similarité** : 65% (concepts présents mais incomplets)
+- **Termes techniques** : 3 détectés → +15 points
+- **Score final** : (65 × 0.7) + (100 × 0.3) + 15 = **90.5/100**
+
+### 📈 **Dashboard Intégré**
+
+Le dashboard combine maintenant les performances des deux types de quiz :
+
+#### Statistiques Unifiées
+- **Total des quiz** : Quiz classiques + Sessions PLD
+- **Score moyen** : Moyenne pondérée des pourcentages
+- **Meilleur score** : Maximum atteint (tous types confondus)
+- **Série actuelle** : Réussites consécutives (≥60%)
+
+#### Graphique de Performance
+- **Ligne temporelle** : Évolution chronologique
+- **Distinction visuelle** : 📝 Quiz / 🤖 PLD
+- **Métriques détaillées** : Scores et pourcentages
+
+#### Historique des Sessions
+```
+🤖 PLD - 19/07/2025
+425/500 pts (85%)
+
+📝 Quiz - 19/07/2025  
+8/10 questions (80%)
+```
+
 ## 🚀 Déploiement en Production
 
 ### Avec Gunicorn
@@ -359,9 +525,17 @@ DATABASE_URL=postgresql://prod_user:prod_pass@prod_host/prod_db
 
 Ce projet est sous licence MIT. Voir `LICENSE` pour plus de détails.
 
-## 🎯 Roadmap
+## 🚀 Roadmap
 
-### Version 2.0
+### Version 2.0 ✅ **TERMINÉ**
+- [x] 🤖 **Système AI Quiz (PLD)** - Questions à réponse libre avec correction IA
+- [x] 📊 **Dashboard unifié** - Statistiques combinées Quiz + PLD
+- [x] 🔄 **Sessions persistantes** - Sauvegarde complète des sessions AI Quiz
+- [x] 📈 **Graphiques de performance** - Intégration des données PLD
+- [x] 🎯 **Scoring intelligent** - Analyse sémantique + termes techniques
+- [x] 💾 **Modèles de données** - Tables AIQuizSession et AIQuizAnswer
+
+### Version 2.1
 - [ ] 🏆 Système de badges et récompenses
 - [ ] ⏱️ Quiz chronométrés avec mode challenge
 - [ ] 💻 Questions de code avec syntax highlighting
@@ -369,7 +543,7 @@ Ce projet est sous licence MIT. Voir `LICENSE` pour plus de détails.
 - [ ] 👥 Mode multijoueur en temps réel
 - [ ] 📱 Application mobile Progressive Web App
 
-### Version 2.1
+### Version 2.2
 - [ ] 📁 Import/Export de questions (JSON, CSV)
 - [ ] 🎨 Thèmes personnalisables (Cyberpunk, Retro, etc.)
 - [ ] 🔊 Effets sonores et musique d'ambiance
@@ -377,6 +551,7 @@ Ce projet est sous licence MIT. Voir `LICENSE` pour plus de détails.
 - [ ] 📈 Analytics avancées et rapports
 - [ ] 🌍 Support multilingue (EN, FR, ES)
 - [ ] ☁️ Sauvegarde cloud et synchronisation
+- [ ] 🧠 **IA améliorée** - Correction plus précise et feedback enrichi
 
 ---
 
