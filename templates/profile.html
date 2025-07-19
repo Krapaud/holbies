@@ -54,7 +54,7 @@
                         <span class="label-icon">📅</span>
                         Membre depuis
                     </label>
-                    <div class="detail-value">{{ user.created_at.split(' ')[0] }}</div>
+                    <div class="detail-value">{{ user.created_at.strftime('%Y-%m-%d') if user.created_at else 'Date inconnue' }}</div>
                 </div>
                 
                 <div class="detail-group">
@@ -218,51 +218,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Animation d'entrée
-    const profileCard = document.querySelector('.profile-card');
-    profileCard.classList.add('slide-in');
-    
-    // Animation des badges
-    const badges = document.querySelectorAll('.badge-item');
-    badges.forEach((badge, index) => {
-        badge.style.animationDelay = `${index * 0.1}s`;
-        badge.classList.add('fade-in-up');
-    });
-});
-
-function editProfile() {
-    document.getElementById('editModal').classList.add('active');
-}
-
-function changePassword() {
-    document.getElementById('passwordModal').classList.add('active');
-}
-
-function closeModal() {
-    document.querySelectorAll('.modal').forEach(modal => {
-        modal.classList.remove('active');
-    });
-}
-
-// Fermer les modals en cliquant à l'extérieur
-document.addEventListener('click', function(e) {
-    if (e.target.classList.contains('modal')) {
-        closeModal();
-    }
-});
-
-// Fermer les modals avec les boutons de fermeture
-document.querySelectorAll('.modal-close').forEach(btn => {
-    btn.addEventListener('click', closeModal);
-});
-
-// Fermer avec Échap
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        closeModal();
-    }
-});
-</script>
+<script src="/static/js/profile.js"></script>
 {% endblock %}

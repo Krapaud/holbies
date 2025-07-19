@@ -36,16 +36,51 @@
                         DLH Tutor
                     </a>
                     {% if user.is_admin %}
-                    <a href="/admin" class="nav-link admin-link">
-                        <span class="nav-icon">⚙️</span>
-                        Admin
-                    </a>
+                    <div class="admin-dropdown">
+                        <a href="#" class="nav-link admin-link dropdown-toggle" onclick="toggleAdminMenu(event)">
+                            <span class="nav-icon">⚙️</span>
+                            Admin
+                            <span class="dropdown-arrow">▼</span>
+                        </a>
+                        <div class="admin-dropdown-menu" id="adminDropdown">
+                            <a href="/admin" class="dropdown-item">
+                                <span class="dropdown-icon">🎛️</span>
+                                Dashboard Admin
+                            </a>
+                            <a href="/admin/users" class="dropdown-item">
+                                <span class="dropdown-icon">👥</span>
+                                Gestion Utilisateurs
+                            </a>
+                            <a href="/admin/quiz" class="dropdown-item">
+                                <span class="dropdown-icon">🧠</span>
+                                Gestion Quiz
+                            </a>
+                            <a href="/admin/logs" class="dropdown-item">
+                                <span class="dropdown-icon">📋</span>
+                                Logs Système
+                            </a>
+                            <a href="/admin/settings" class="dropdown-item">
+                                <span class="dropdown-icon">⚙️</span>
+                                Paramètres
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a href="/admin/console" class="dropdown-item matrix-item">
+                                <span class="dropdown-icon">💻</span>
+                                Console Matrix
+                            </a>
+                        </div>
+                    </div>
                     {% endif %}
                 </div>
                 
                 <div class="nav-user">
                     <div class="user-info">
-                        <span class="user-name">{{ user.username }}</span>
+                        <span class="user-name">
+                            {{ user.username }}
+                            {% if user.is_admin %}
+                                <span class="admin-badge">ROOT</span>
+                            {% endif %}
+                        </span>
                         <a href="/logout" class="logout-btn">Déconnexion</a>
                     </div>
                 </div>

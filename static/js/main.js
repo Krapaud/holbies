@@ -24,6 +24,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize progress bars animation
     initProgressBars();
     
+    // Initialize admin dropdown
+    initAdminDropdown();
+    
     // Déclencher l'effet glitch au chargement
     setTimeout(() => {
         if (typeof glitch === 'function') {
@@ -751,3 +754,44 @@ document.addEventListener('DOMContentLoaded', function() {
         document.body.insertBefore(matrixBg, document.body.firstChild);
     }
 });
+
+// =============================================================================
+// Admin Dropdown Menu Functions
+// =============================================================================
+
+function initAdminDropdown() {
+    // Fermer le menu quand on clique ailleurs
+    document.addEventListener('click', function(event) {
+        const dropdown = document.getElementById('adminDropdown');
+        const toggle = document.querySelector('.dropdown-toggle');
+        
+        if (dropdown && !dropdown.contains(event.target) && !toggle.contains(event.target)) {
+            dropdown.classList.remove('show');
+            toggle.classList.remove('active');
+        }
+    });
+}
+
+function toggleAdminMenu(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    const dropdown = document.getElementById('adminDropdown');
+    const toggle = event.currentTarget;
+    
+    if (dropdown) {
+        dropdown.classList.toggle('show');
+        toggle.classList.toggle('active');
+        
+        // Animation d'entrée pour les items
+        if (dropdown.classList.contains('show')) {
+            const items = dropdown.querySelectorAll('.dropdown-item');
+            items.forEach((item, index) => {
+                item.style.animationDelay = `${index * 0.05}s`;
+            });
+        }
+    }
+}
+
+// Fonction globale pour être accessible depuis le HTML
+window.toggleAdminMenu = toggleAdminMenu;

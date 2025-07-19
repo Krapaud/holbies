@@ -1,0 +1,533 @@
+{% extends "base.html" %}
+
+{% block title %}Administration - Dev Learning Hub{% endblock %}
+
+{% block head %}
+<style>
+/* Améliorations visuelles pour la page admin */
+.admin-header {
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a4a3a 50%, #0a0a0a 100%);
+    border: 1px solid #00ff41;
+    border-radius: 10px;
+    padding: 30px;
+    margin-bottom: 30px;
+    position: relative;
+    overflow: hidden;
+}
+
+.admin-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 255, 65, 0.1), transparent);
+    animation: scan 3s infinite;
+}
+
+@keyframes scan {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+.title-icon.pulsing {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.matrix-code {
+    font-family: 'JetBrains Mono', monospace;
+    color: #00ff41;
+    font-size: 0.8em;
+    opacity: 0.7;
+    letter-spacing: 2px;
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+    padding: 5px 15px;
+    background: rgba(0, 255, 65, 0.1);
+    border: 1px solid #00ff41;
+    border-radius: 20px;
+    font-size: 0.8em;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    background: #00ff41;
+    border-radius: 50%;
+    animation: blink 1.5s infinite;
+}
+
+@keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0.3; }
+}
+
+.highlight-card { border-color: #00ff41; box-shadow: 0 0 20px rgba(0, 255, 65, 0.3); }
+.success-card { border-color: #4CAF50; box-shadow: 0 0 20px rgba(76, 175, 80, 0.3); }
+.info-card { border-color: #2196F3; box-shadow: 0 0 20px rgba(33, 150, 243, 0.3); }
+.warning-card { border-color: #FF9800; box-shadow: 0 0 20px rgba(255, 152, 0, 0.3); }
+
+.stat-trend {
+    font-size: 0.8em;
+    color: #00ff41;
+    margin-top: 5px;
+    opacity: 0.8;
+}
+
+.log-item {
+    transition: all 0.3s ease;
+    border-left: 3px solid transparent;
+    padding-left: 15px;
+}
+
+.success-log { border-left-color: #4CAF50; }
+.info-log { border-left-color: #2196F3; }
+.security-log { border-left-color: #FF9800; }
+.warning-log { border-left-color: #FFC107; }
+.matrix-log { border-left-color: #00ff41; }
+
+.log-status {
+    margin-left: auto;
+    padding: 2px 8px;
+    background: rgba(0, 255, 65, 0.1);
+    border: 1px solid #00ff41;
+    border-radius: 10px;
+    font-size: 0.7em;
+    letter-spacing: 1px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+                <div class="stat-number">5</div>
+                <div class="stat-label">Connexions récentes</div>
+                <div class="stat-trend">📈 +2 aujourd'hui</div>
+            </div>
+        </div>e %}Administration - Dev Learning Hub{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+    <div class="admin-header">
+        <div class="header-content">
+            <h1 class="admin-title">
+                <span class="title-icon pulsing">⚙️</span>
+                Panel d'Administration
+                <span class="matrix-code">01010011</span>
+            </h1>
+            <p class="admin-subtitle">
+                <span class="subtitle-icon">🛡️</span>
+                Gestion complète du système Matrix
+                <span class="status-indicator online">
+                    <span class="status-dot"></span>
+                    SYSTÈME OPÉRATIONNEL
+                </span>
+            </p>
+        </div>
+        <div class="header-stats">
+            <div class="quick-stat">
+                <span class="quick-stat-icon">🔋</span>
+                <span class="quick-stat-text">100%</span>
+            </div>
+            <div class="quick-stat">
+                <span class="quick-stat-icon">🌐</span>
+                <span class="quick-stat-text">CONNECTÉ</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Statistiques globales -->
+        <!-- Statistiques globales -->
+    <div class="admin-stats">
+        <div class="stat-card highlight-card">
+            <div class="stat-icon">👥</div>
+            <div class="stat-content">
+                <div class="stat-number">2</div>
+                <div class="stat-label">Utilisateurs totaux</div>
+                <div class="stat-trend">↗️ +0 ce mois</div>
+            </div>
+        </div>
+        
+        <div class="stat-card success-card">
+            <div class="stat-icon">⚙️</div>
+            <div class="stat-content">
+                <div class="stat-number">1</div>
+                <div class="stat-label">Administrateurs</div>
+                <div class="stat-trend">✅ Actif</div>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">�</div>
+            <div class="stat-content">
+                <div class="stat-number">5</div>
+                <div class="stat-label">Connexions récentes</div>
+            </div>
+        </div>
+        
+        <div class="stat-card warning-card">
+            <div class="stat-icon">👤</div>
+            <div class="stat-content">
+                <div class="stat-number">1</div>
+                <div class="stat-label">Utilisateurs standards</div>
+                <div class="stat-trend">👁️ En ligne</div>
+            </div>
+        </div>
+    
+    <!-- Gestion des utilisateurs -->
+    <div class="admin-section">
+        <div class="section-header">
+            <h2 class="section-title">
+                <span class="section-icon">👥</span>
+                Gestion des Utilisateurs
+            </h2>
+            <div class="section-actions">
+                <button class="btn btn-primary" onclick="refreshUserList()">
+                    <span class="btn-icon">🔄</span>
+                    Actualiser
+                </button>
+            </div>
+        </div>
+        
+        <div class="users-table-container">
+            <table class="users-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Utilisateur</th>
+                        <th>Email</th>
+                        <th>Rôle</th>
+                        <th>Date de création</th>
+                        <th>Dernière connexion</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr class="user-row" data-user-id="{{ user.id }}">
+                        <td class="user-id">{{ user.id }}</td>
+                        <td class="user-username">
+                            <div class="user-info">
+                                <div class="user-avatar">{{ user.username[0].upper() }}</div>
+                                <span class="username">{{ user.username }}</span>
+                            </div>
+                        </td>
+                        <td class="user-email">{{ user.email }}</td>
+                        <td class="user-role">
+                            {% if user.is_admin %}
+                                <span class="role-badge admin">🔰 Admin</span>
+                            {% else %}
+                                <span class="role-badge user">👤 User</span>
+                            {% endif %}
+                        </td>
+                        <td class="user-created">{{ user.created_at.split(' ')[0] }}</td>
+                        <td class="user-login">
+                            {% if user.last_login %}
+                                {{ user.last_login.split(' ')[0] }}
+                            {% else %}
+                                <span class="no-login">Jamais</span>
+                            {% endif %}
+                        </td>
+                        <td class="user-actions">
+                            <div class="action-buttons">
+                                {% if user.username != session.username %}
+                                    <button class="btn-icon-small" onclick="toggleAdmin({{ user.id }})" title="Toggle Admin">
+                                        {% if user.is_admin %}
+                                            <span class="action-icon demote">👤</span>
+                                        {% else %}
+                                            <span class="action-icon promote">🔰</span>
+                                        {% endif %}
+                                    </button>
+                                    <button class="btn-icon-small delete-btn" onclick="deleteUser({{ user.id }}, '{{ user.username }}')" title="Supprimer">
+                                        <span class="action-icon delete">🗑️</span>
+                                    </button>
+                                {% else %}
+                                    <span class="current-user">Vous</span>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Logs et activité -->
+    <div class="admin-section">
+        <div class="section-header">
+            <h2 class="section-title">
+                <span class="section-icon">📝</span>
+                Activité Système
+            </h2>
+        </div>
+        
+        <div class="activity-logs">
+            <div class="log-item success-log">
+                <div class="log-time">12:34</div>
+                <div class="log-content">
+                    <span class="log-icon success">🔑</span>
+                    <span class="log-text">Connexion administrateur : {{ user.username }}</span>
+                    <span class="log-status">SUCCÈS</span>
+                </div>
+            </div>
+            
+            <div class="log-item info-log">
+                <div class="log-time">12:35</div>
+                <div class="log-content">
+                    <span class="log-icon info">👥</span>
+                    <span class="log-text">Utilisateurs actifs sur la plateforme</span>
+                    <span class="log-status">INFO</span>
+                </div>
+            </div>
+            
+            <div class="log-item security-log">
+                <div class="log-time">12:36</div>
+                <div class="log-content">
+                    <span class="log-icon security">🛡️</span>
+                    <span class="log-text">Système de sécurité opérationnel</span>
+                    <span class="log-status">SÉCURITÉ</span>
+                </div>
+            </div>
+            
+            <div class="log-item warning-log">
+                <div class="log-time">12:37</div>
+                <div class="log-content">
+                    <span class="log-icon warning">💾</span>
+                    <span class="log-text">Base de données synchronisée</span>
+                    <span class="log-status">MAINTENANCE</span>
+                </div>
+            </div>
+            
+            <div class="log-item matrix-log">
+                <div class="log-time">12:38</div>
+                <div class="log-content">
+                    <span class="log-icon matrix">🔧</span>
+                    <span class="log-text">Routine de surveillance Matrix activée</span>
+                    <span class="log-status">MATRIX</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Console d'administration -->
+    <div class="admin-section">
+        <div class="section-header">
+            <h2 class="section-title">
+                <span class="section-icon">💻</span>
+                Console Admin
+            </h2>
+        </div>
+        
+        <div class="admin-console">
+            <div class="console-header">
+                <span class="console-title">admin@matrix-system:~$</span>
+                <div class="console-controls">
+                    <button class="console-btn" onclick="clearConsole()">Clear</button>
+                    <button class="console-btn" onclick="runSystemCheck()">System Check</button>
+                </div>
+            </div>
+            <div class="console-content" id="adminConsole">
+                <div class="console-line">
+                    <span class="console-prompt">admin@matrix-system:~$</span>
+                    <span class="console-text">system status</span>
+                </div>
+                <div class="console-line">✅ Database: Connected</div>
+                <div class="console-line">✅ Security: Active</div>
+                <div class="console-line">✅ Matrix Effects: Operational</div>
+                <div class="console-line">✅ Users: 2 registered</div>
+                <div class="console-line">
+                    <span class="console-prompt">admin@matrix-system:~$</span>
+                    <span class="console-cursor">|</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de confirmation de suppression -->
+<div id="deleteModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Confirmer la suppression</h3>
+            <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p class="modal-warning">
+                <span class="warning-icon">⚠️</span>
+                Êtes-vous sûr de vouloir supprimer l'utilisateur <strong id="deleteUsername"></strong> ?
+            </p>
+            <p>Cette action est irréversible.</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal()">Annuler</button>
+            <button class="btn btn-danger" id="confirmDelete">Supprimer</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let currentDeleteUserId = null;
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Animation d'entrée
+    const adminContainer = document.querySelector('.admin-container');
+    adminContainer.classList.add('fade-in');
+    
+    // Animation du curseur console
+    const cursor = document.querySelector('.console-cursor');
+    setInterval(() => {
+        cursor.style.opacity = cursor.style.opacity === '0' ? '1' : '0';
+    }, 500);
+    
+    // Animation des cartes statistiques
+    const statCards = document.querySelectorAll('.stat-card');
+    statCards.forEach((card, index) => {
+        card.style.animationDelay = `${index * 0.1}s`;
+        card.classList.add('slide-in');
+    });
+});
+
+function toggleAdmin(userId) {
+    fetch(`/admin/toggle_admin/${userId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Erreur: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+            alert('Erreur lors de la modification du rôle');
+        });
+}
+
+function deleteUser(userId, username) {
+    currentDeleteUserId = userId;
+    document.getElementById('deleteUsername').textContent = username;
+    document.getElementById('deleteModal').classList.add('active');
+}
+
+function confirmDeleteUser() {
+    if (currentDeleteUserId) {
+        fetch(`/admin/delete_user/${currentDeleteUserId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Erreur: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                alert('Erreur lors de la suppression');
+            });
+    }
+    closeModal();
+}
+
+function closeModal() {
+    document.querySelectorAll('.modal').forEach(modal => {
+        modal.classList.remove('active');
+    });
+    currentDeleteUserId = null;
+}
+
+function refreshUserList() {
+    location.reload();
+}
+
+function clearConsole() {
+    const console = document.getElementById('adminConsole');
+    console.innerHTML = `
+        <div class="console-line">
+            <span class="console-prompt">admin@matrix-system:~$</span>
+            <span class="console-text">clear</span>
+        </div>
+        <div class="console-line">
+            <span class="console-prompt">admin@matrix-system:~$</span>
+            <span class="console-cursor">|</span>
+        </div>
+    `;
+}
+
+function runSystemCheck() {
+    const console = document.getElementById('adminConsole');
+    const lines = [
+        'Exécution du diagnostic système...',
+        '🔍 Vérification de la base de données...',
+        '✅ Base de données: OK',
+        '🔍 Vérification de la sécurité...',
+        '✅ Sécurité: OK',
+        '🔍 Vérification des utilisateurs...',
+        '✅ Utilisateurs: 2 actifs',
+        '🔍 Vérification des effets Matrix...',
+        '✅ Effets Matrix: Opérationnels',
+        '🎯 Diagnostic terminé - Tous les systèmes sont opérationnels'
+    ];
+    
+    console.innerHTML = `
+        <div class="console-line">
+            <span class="console-prompt">admin@matrix-system:~$</span>
+            <span class="console-text">system_check --full</span>
+        </div>
+    `;
+    
+    lines.forEach((line, index) => {
+        setTimeout(() => {
+            const lineDiv = document.createElement('div');
+            lineDiv.className = 'console-line';
+            lineDiv.textContent = line;
+            console.appendChild(lineDiv);
+            
+            if (index === lines.length - 1) {
+                setTimeout(() => {
+                    const promptDiv = document.createElement('div');
+                    promptDiv.className = 'console-line';
+                    promptDiv.innerHTML = `
+                        <span class="console-prompt">admin@matrix-system:~$</span>
+                        <span class="console-cursor">|</span>
+                    `;
+                    console.appendChild(promptDiv);
+                }, 500);
+            }
+        }, index * 300);
+    });
+}
+
+// Event listeners pour les modals
+document.getElementById('confirmDelete').addEventListener('click', confirmDeleteUser);
+
+document.querySelectorAll('.modal-close').forEach(btn => {
+    btn.addEventListener('click', closeModal);
+});
+
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('modal')) {
+        closeModal();
+    }
+});
+
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeModal();
+    }
+});
+</script>
+{% endblock %}

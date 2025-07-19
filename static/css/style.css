@@ -197,6 +197,156 @@ a:hover {
     color: var(--accent-orange);
 }
 
+/* =============================================================================
+   Admin Dropdown Menu Styles
+   ============================================================================= */
+
+.admin-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-toggle {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    cursor: pointer;
+    transition: all var(--transition);
+    position: relative;
+}
+
+.dropdown-toggle:hover {
+    transform: translateY(-2px);
+}
+
+.dropdown-toggle.active {
+    color: var(--primary-green) !important;
+    background: rgba(0, 255, 65, 0.1);
+    border-radius: var(--border-radius);
+}
+
+.dropdown-toggle.active .dropdown-arrow {
+    transform: rotate(180deg);
+    color: var(--primary-green);
+}
+
+.dropdown-arrow {
+    font-size: 0.7em;
+    transition: transform var(--transition);
+    margin-left: var(--spacing-xs);
+}
+
+.admin-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    min-width: 250px;
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+    border: 1px solid var(--primary-green);
+    border-radius: var(--border-radius-lg);
+    box-shadow: 
+        0 10px 30px rgba(0, 0, 0, 0.8),
+        0 0 20px rgba(0, 255, 65, 0.2);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1000;
+    backdrop-filter: blur(10px);
+    overflow: hidden;
+}
+
+.admin-dropdown-menu::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    right: 20px;
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 8px solid var(--primary-green);
+}
+
+.admin-dropdown-menu.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+    color: var(--text-light);
+    text-decoration: none;
+    transition: all var(--transition);
+    font-size: 0.9rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    animation: slideInRight 0.3s ease-out both;
+}
+
+.dropdown-item:hover {
+    background: linear-gradient(90deg, rgba(0, 255, 65, 0.1), rgba(0, 255, 65, 0.05));
+    color: var(--primary-green);
+    transform: translateX(5px);
+    border-left: 3px solid var(--primary-green);
+    padding-left: calc(var(--spacing-md) - 3px);
+}
+
+.dropdown-item.matrix-item {
+    border-top: 1px solid var(--primary-green);
+    background: rgba(0, 255, 65, 0.05);
+    font-weight: 600;
+}
+
+.dropdown-item.matrix-item:hover {
+    background: rgba(0, 255, 65, 0.15);
+    box-shadow: inset 0 0 10px rgba(0, 255, 65, 0.2);
+}
+
+.dropdown-icon {
+    font-size: 1.1em;
+    width: 20px;
+    text-align: center;
+}
+
+.dropdown-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--primary-green), transparent);
+    margin: var(--spacing-xs) 0;
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Animation de glow sur le menu admin */
+.admin-dropdown:hover .dropdown-toggle {
+    text-shadow: 0 0 10px var(--accent-orange);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .admin-dropdown-menu {
+        right: -10px;
+        left: -10px;
+        min-width: auto;
+    }
+    
+    .admin-dropdown-menu::before {
+        right: 30px;
+    }
+}
+
 .nav-link.logout-link {
     color: #ff4444;
 }
@@ -217,6 +367,31 @@ a:hover {
     font-weight: 600;
     font-size: 0.9rem;
     margin-right: var(--spacing-sm);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.admin-badge {
+    background: linear-gradient(45deg, var(--accent-orange), #ff8c42);
+    color: #000;
+    font-size: 0.6rem;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 3px;
+    letter-spacing: 0.5px;
+    text-shadow: none;
+    animation: adminGlow 2s ease-in-out infinite alternate;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+@keyframes adminGlow {
+    from {
+        box-shadow: 0 0 5px var(--accent-orange);
+    }
+    to {
+        box-shadow: 0 0 15px var(--accent-orange), 0 0 25px rgba(255, 107, 53, 0.5);
+    }
 }
 
 .logout-btn {
