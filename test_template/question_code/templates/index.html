@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Langage C</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .question {
+            background-color: #f8f9fa;
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 4px solid #007bff;
+            border-radius: 5px;
+        }
+        .question-id {
+            font-weight: bold;
+            color: #007bff;
+        }
+        .question-text {
+            margin: 5px 0;
+        }
+        .loading {
+            text-align: center;
+            color: #666;
+        }
+        .error {
+            color: #dc3545;
+            text-align: center;
+            padding: 20px;
+        }
+        .code-section {
+            margin: 30px 0;
+            border-top: 2px solid #dee2e6;
+            padding-top: 30px;
+        }
+        .code-editor {
+            margin: 20px 0;
+        }
+        .code-editor textarea {
+            width: 100%;
+            height: 300px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            padding: 15px;
+            border: 2px solid #dee2e6;
+            border-radius: 5px;
+            resize: vertical;
+        }
+        .execute-btn {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 0;
+        }
+        .execute-btn:hover {
+            background-color: #218838;
+        }
+        .execute-btn:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+        .output-section {
+            margin: 20px 0;
+        }
+        .output-box {
+            background-color: #f8f9fa;
+            border: 2px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .output-success {
+            border-color: #28a745;
+            background-color: #d4edda;
+        }
+        .output-error {
+            border-color: #dc3545;
+            background-color: #f8d7da;
+        }
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        .tab {
+            padding: 10px 20px;
+            background-color: #e9ecef;
+            border: 1px solid #dee2e6;
+            cursor: pointer;
+            margin-right: 5px;
+            border-radius: 5px 5px 0 0;
+        }
+        .tab.active {
+            background-color: #007bff;
+            color: white;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Quiz Langage C - 100 Questions</h1>
+        
+        <div class="tabs">
+            <div class="tab active" onclick="showTab('questions')">📚 Questions</div>
+            <div class="tab" onclick="showTab('editor')">💻 Éditeur de Code</div>
+        </div>
+
+        <div id="questions-tab" class="tab-content active">
+            <div id="content">
+                <div class="loading">Chargement des questions...</div>
+            </div>
+        </div>
+
+        <div id="editor-tab" class="tab-content">
+            <div class="code-section">
+                <h2>🔧 Testez votre code C</h2>
+                <p>Écrivez votre code C ci-dessous et cliquez sur "Exécuter" pour le tester :</p>
+                
+                <div class="code-editor">
+                    <textarea id="code-input" placeholder="Écrivez votre code C ici...">
+#include <stdio.h>
+
+int main() {
+    printf("Hello, World!\n");
+    return 0;
+}</textarea>
+                </div>
+                
+                <button id="execute-btn" class="execute-btn" onclick="executeCode()">
+                    🚀 Exécuter le Code
+                </button>
+                
+                <div class="output-section">
+                    <h3>📤 Résultat :</h3>
+                    <div id="output" class="output-box">
+                        Cliquez sur "Exécuter le Code" pour voir le résultat...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showTab(tabName) {
+            // Cacher tous les onglets
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Afficher l'onglet sélectionné
+            document.getElementById(tabName + '-tab').classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        async function loadQuestions() {
+            try {
+                const response = await fetch('/questions');
+                if (!response.ok) {
+                    throw new Error('Erreur lors du chargement des questions');
+                }
+                const questions = await response.json();
+                displayQuestions(questions);
+            } catch (error) {
+                document.getElementById('content').innerHTML = 
+                    `<div class="error">Erreur: ${error.message}</div>`;
+            }
+        }
+
+        function displayQuestions(questions) {
+            const content = document.getElementById('content');
+            let html = '';
+            
+            questions.forEach(question => {
+                html += `
+                    <div class="question">
+                        <div class="question-id">Question ${question.id}</div>
+                        <div class="question-text">${question.question}</div>
+                    </div>
+                `;
+            });
+            
+            content.innerHTML = html;
+        }
+
+        async function executeCode() {
+            const codeInput = document.getElementById('code-input');
+            const outputDiv = document.getElementById('output');
+            const executeBtn = document.getElementById('execute-btn');
+            
+            const code = codeInput.value.trim();
+            
+            if (!code) {
+                outputDiv.textContent = 'Veuillez entrer du code C à exécuter.';
+                outputDiv.className = 'output-box output-error';
+                return;
+            }
+            
+            // Désactiver le bouton et afficher le chargement
+            executeBtn.disabled = true;
+            executeBtn.textContent = '⏳ Exécution en cours...';
+            outputDiv.textContent = 'Compilation et exécution du code...';
+            outputDiv.className = 'output-box';
+            
+            try {
+                const response = await fetch('/execute', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ code: code })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    let output = '';
+                    if (result.output) {
+                        output += `📤 Sortie:\n${result.output}`;
+                    }
+                    if (result.error_output) {
+                        output += `${output ? '\n\n' : ''}⚠️ Erreurs/Avertissements:\n${result.error_output}`;
+                    }
+                    if (!result.output && !result.error_output) {
+                        output = '✅ Le programme s\'est exécuté sans produire de sortie.';
+                    }
+                    
+                    outputDiv.textContent = output;
+                    outputDiv.className = 'output-box output-success';
+                } else {
+                    let errorMsg = `❌ ${result.error}`;
+                    if (result.details) {
+                        errorMsg += `\n\nDétails:\n${result.details}`;
+                    }
+                    outputDiv.textContent = errorMsg;
+                    outputDiv.className = 'output-box output-error';
+                }
+                
+            } catch (error) {
+                outputDiv.textContent = `❌ Erreur de communication: ${error.message}`;
+                outputDiv.className = 'output-box output-error';
+            } finally {
+                // Réactiver le bouton
+                executeBtn.disabled = false;
+                executeBtn.textContent = '🚀 Exécuter le Code';
+            }
+        }
+
+        // Permettre l'exécution avec Ctrl+Enter
+        document.getElementById('code-input').addEventListener('keydown', function(event) {
+            if (event.ctrlKey && event.key === 'Enter') {
+                executeCode();
+            }
+        });
+
+        // Charger les questions au chargement de la page
+        window.addEventListener('DOMContentLoaded', loadQuestions);
+    </script>
+</body>
+</html>
