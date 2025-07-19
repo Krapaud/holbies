@@ -55,6 +55,11 @@ class QuizAnswer(BaseModel):
     question_id: int
     user_answer: str
 
+class QuizAnswerSubmission(BaseModel):
+    session_id: int
+    question_id: int
+    user_answer: str
+
 class QuizSessionCreate(BaseModel):
     pass
 

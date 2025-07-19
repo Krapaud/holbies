@@ -63,10 +63,29 @@ class QuizManager {
 
     async startQuiz() {
         try {
-            // Start quiz session
-            const sessionResponse = await window.holbiesApp.apiRequest('/api/quiz/start', {
-                method: 'POST'
-            });
+            // Check if there's an active session first
+            let sessionResponse;
+            try {
+                sessionResponse = await window.holbiesApp.apiRequest('/api/quiz/sessions/active');
+                console.log('Found existing active session:', sessionResponse);
+                
+                // Ask user if they want to continue or start fresh
+                const continueSession = confirm('Vous avez déjà une session de quiz en cours. Voulez-vous la continuer ? (Annuler pour recommencer)');
+                
+                if (!continueSession) {
+                    // Start a new session, forcing completion of the old one
+                    sessionResponse = await window.holbiesApp.apiRequest('/api/quiz/start?force_new=true', {
+                        method: 'POST'
+                    });
+                }
+                
+            } catch (error) {
+                // No active session found, start a new one
+                console.log('No active session found, starting new one');
+                sessionResponse = await window.holbiesApp.apiRequest('/api/quiz/start', {
+                    method: 'POST'
+                });
+            }
 
             this.currentSession = sessionResponse;
 

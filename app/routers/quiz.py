@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Form
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 from typing import List
@@ -12,7 +12,8 @@ from app.schemas import (
     QuestionCreate, 
     QuizAnswer as QuizAnswerSchema,
     QuizSession as QuizSessionSchema,
-    QuizResult
+    QuizResult,
+    QuizAnswerSubmission
 )
 from app.auth import get_current_active_user
 
@@ -33,8 +34,39 @@ async def get_quiz_questions(
     questions = db.query(Question).order_by(func.random()).limit(limit).all()
     return questions
 
+@router.get("/sessions", response_model=List[QuizSessionSchema])
+async def get_user_quiz_sessions(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
+    """Récupère toutes les sessions de quiz de l'utilisateur"""
+    sessions = db.query(QuizSession).filter(
+        QuizSession.user_id == current_user.id
+    ).order_by(QuizSession.created_at.desc()).all()
+    return sessions
+
+@router.get("/sessions/active", response_model=QuizSessionSchema)
+async def get_active_quiz_session(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
+    """Récupère la session de quiz active de l'utilisateur"""
+    active_session = db.query(QuizSession).filter(
+        QuizSession.user_id == current_user.id,
+        QuizSession.completed == False
+    ).first()
+    
+    if not active_session:
+        raise HTTPException(
+            status_code=404,
+            detail="No active quiz session found"
+        )
+    
+    return active_session
+
 @router.post("/start", response_model=QuizSessionSchema)
 async def start_quiz_session(
+    force_new: bool = False,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user)
 ):
@@ -45,11 +77,13 @@ async def start_quiz_session(
         QuizSession.completed == False
     ).first()
     
-    if active_session:
-        raise HTTPException(
-            status_code=400,
-            detail="You already have an active quiz session"
-        )
+    if active_session and not force_new:
+        # Retourner la session existante
+        return active_session
+    elif active_session and force_new:
+        # Marquer l'ancienne session comme complétée
+        active_session.completed = True
+        db.commit()
     
     # Créer une nouvelle session
     quiz_session = QuizSession(
@@ -63,9 +97,9 @@ async def start_quiz_session(
 
 @router.post("/submit-answer")
 async def submit_answer(
-    session_id: int,
-    question_id: int,
-    user_answer: str,
+    session_id: int = Form(),
+    question_id: int = Form(), 
+    user_answer: str = Form(),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user)
 ):
