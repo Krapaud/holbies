@@ -28,6 +28,16 @@ Un système de quiz interactif avec un thème Matrix pour l'apprentissage techni
 - **Hachage bcrypt** des mots de passe
 - **Validation avancée** côté client et serveur
 - **Sessions persistantes** et sécurisées
+- **🎬 Vidéo de bienvenue** automatique après connexion avec fermeture auto
+
+### 🎥 Système de Vidéo de Bienvenue
+- **Lecture automatique** après connexion réussie
+- **Modal plein écran** avec design Matrix intégré
+- **Support multi-formats** (MP4, WebM, OGV)
+- **Fermeture automatique** à la fin de la vidéo
+- **Contrôles manuels** (Escape, clic extérieur, bouton X)
+- **Animation de fallback** si aucune vidéo n'est présente
+- **Effets visuels Matrix** avec bordures animées
 
 ### 📊 Dashboard Interactif
 - **Statistiques détaillées** : score moyen, meilleur score, séries
@@ -123,7 +133,11 @@ holbies-learning-hub/
 ├── 🌐 Frontend
 │   ├── static/
 │   │   ├── css/style.css    # Styles Matrix
-│   │   └── js/              # JavaScript modules
+│   │   ├── js/              # JavaScript modules
+│   │   │   ├── video-modal.js          # Système vidéo de bienvenue
+│   │   │   ├── welcome-video-generator.js # Animation de fallback
+│   │   │   └── auth.js      # Authentification avec vidéo
+│   │   └── video/           # Vidéos de bienvenue
 │   └── templates/           # Templates Jinja2
 ├── 🗄️ Base de données
 │   ├── alembic/             # Migrations
@@ -165,8 +179,9 @@ Ce script teste :
 
 2. **🔐 Connexion**
    - Authentification sécurisée avec JWT
+   - **🎬 Vidéo de bienvenue automatique** après connexion
    - Session persistante
-   - Redirection automatique
+   - Redirection automatique vers le dashboard
 
 3. **🧠 Quiz**
    - Questions à choix multiples
@@ -272,6 +287,43 @@ Pour ajouter vos propres questions :
 
 3. Relancer : `python3 populate_db.py`
 
+## 🎬 Configuration de la Vidéo de Bienvenue
+
+### Ajouter une Vidéo Personnalisée
+
+1. **Placer votre vidéo** dans le dossier `/static/video/`
+2. **Nommer le fichier** `welcome.mp4` (ou `.webm`, `.ogv`)
+3. **Redémarrer le serveur** pour appliquer les changements
+
+```bash
+# Exemple d'ajout de vidéo
+cp votre-video.mp4 static/video/welcome.mp4
+python main.py
+```
+
+### Format Vidéo Recommandé
+
+- **Format** : MP4 (H.264) pour une compatibilité maximale
+- **Résolution** : 1280x720 ou 1920x1080
+- **Durée** : 3-8 secondes pour une expérience optimale
+- **Taille** : Maximum 10-15MB
+- **Audio** : AAC, volume modéré
+
+### Optimisation avec FFmpeg
+
+```bash
+# Optimiser une vidéo pour le web
+ffmpeg -i input.mp4 -c:v libx264 -crf 28 -preset fast -c:a aac -b:a 128k -movflags +faststart static/video/welcome.mp4
+```
+
+### Fonctionnement
+
+- ✅ **Détection automatique** de la présence de vidéo
+- ✅ **Lecture avec son** après connexion réussie
+- ✅ **Fermeture automatique** à la fin
+- ✅ **Animation de fallback** si pas de vidéo
+- ✅ **Contrôles utilisateur** (Escape, clic, bouton X)
+
 ## 🚀 Déploiement en Production
 
 ### Avec Gunicorn
@@ -321,6 +373,7 @@ Ce projet est sous licence MIT. Voir `LICENSE` pour plus de détails.
 - [ ] 📁 Import/Export de questions (JSON, CSV)
 - [ ] 🎨 Thèmes personnalisables (Cyberpunk, Retro, etc.)
 - [ ] 🔊 Effets sonores et musique d'ambiance
+- [ ] 🎬 Vidéos de bienvenue personnalisées par utilisateur
 - [ ] 📈 Analytics avancées et rapports
 - [ ] 🌍 Support multilingue (EN, FR, ES)
 - [ ] ☁️ Sauvegarde cloud et synchronisation
