@@ -2691,8 +2691,24 @@ a:hover {
 .footer {
     background: var(--card-gray);
     border-top: 1px solid var(--border-gray);
-    padding: var(--spacing-lg) 0;
-    margin-top: var(--spacing-xxl);
+    padding: var(--spacing-md) 0;
+    margin-top: var(--spacing-md);
+    text-align: center;
+    min-height: auto;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-lg);
+    text-align: center;
+}
+
+.footer p {
+    margin: 0;
+    color: var(--text-darker);
+    font-size: 0.9rem;
+    line-height: 1.4;
 }
 
 .footer-content {
