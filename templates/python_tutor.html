@@ -18,7 +18,7 @@
 
         <div class="tutor-container">
             <div class="toolbar">
-                <div class="languag            const response = await fetch('http://localhost:8002/run', {-selector">
+                <div class="language-selector">
                     <label for="language-select">🔧 Langage:</label>
                     <select id="language-select" class="language-dropdown">
                         <option value="python">🐍 Python</option>
@@ -686,13 +686,12 @@ class MatrixPythonTutor {
     }
     
     async simulateExecution(code) {
-        // Appel réel au serveur DLH Tutor
+        // Appel réel au serveur DLH Tutor via l'API proxy Flask
         try {
-            const response = await fetch("http://localhost:8002/run", {
+            const response = await fetch("/api/tutor/run", {
                 method: "POST",
                 headers: { 
-                    "Content-Type": "application/json",
-                    "Access-Control-Allow-Origin": "*"
+                    "Content-Type": "application/json"
                 },
                 body: JSON.stringify({ 
                     code: code,

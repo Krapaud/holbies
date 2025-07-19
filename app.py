@@ -2,6 +2,7 @@ import os
 import sqlite3
 import hashlib
 import random
+import requests
 from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from quiz_data import questions, answers, categories
@@ -510,6 +511,29 @@ def python_tutor():
     conn.close()
     
     return render_template('python_tutor.html', user=user)
+
+@app.route('/api/tutor/run', methods=['POST'])
+def tutor_run():
+    """Proxy API pour le serveur DLH Tutor"""
+    if 'user_id' not in session:
+        return jsonify({'error': 'Non autorisé'}), 401
+    
+    try:
+        data = request.get_json()
+        
+        # Faire la requête au serveur DLH Tutor
+        response = requests.post('http://localhost:8002/run', 
+                               json=data,
+                               headers={'Content-Type': 'application/json'},
+                               timeout=10)
+        
+        if response.status_code == 200:
+            return jsonify(response.json())
+        else:
+            return jsonify({'error': f'Erreur serveur tutor: {response.status_code}'}), 500
+            
+    except Exception as e:
+        return jsonify({'error': f'Erreur de connexion au serveur tutor: {str(e)}'}), 500
 
 @app.route('/quiz')
 def quiz_home():
