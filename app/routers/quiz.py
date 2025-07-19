@@ -201,14 +201,3 @@ async def complete_quiz(
         correct_answers=correct_answers,
         incorrect_answers=incorrect_answers
     )
-
-@router.get("/sessions", response_model=List[QuizSessionSchema])
-async def get_user_quiz_sessions(
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_active_user)
-):
-    """Récupère l'historique des sessions de quiz de l'utilisateur"""
-    sessions = db.query(QuizSession).filter(
-        QuizSession.user_id == current_user.id
-    ).order_by(QuizSession.started_at.desc()).all()
-    return sessions
