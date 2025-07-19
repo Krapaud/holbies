@@ -8,6 +8,24 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Source+Code+Pro:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
     <style>
+        /* Style pour l'utilisateur connecté */
+        .nav-user {
+            color: #00ff41;
+            font-family: 'Source Code Pro', monospace;
+            font-size: 0.9rem;
+            margin-right: 1rem;
+            padding: 0.5rem;
+            border: 1px solid rgba(0, 255, 65, 0.3);
+            border-radius: 4px;
+            background: rgba(0, 255, 65, 0.1);
+        }
+        
+        @media (max-width: 768px) {
+            .nav-user {
+                display: none;
+            }
+        }
+        
         .ai-quiz-container {
             max-width: 1200px;
             margin: 0 auto;
@@ -848,11 +866,15 @@
             </div>
             <div class="nav-menu" id="nav-menu">
                 <a href="/" class="nav-link">Accueil</a>
-                <a href="/quiz" class="nav-link">Quiz</a>
-                <a href="/ai-quiz" class="nav-link active">PLD</a>
+                <a href="/learning" class="nav-link">Learning Hub</a>
                 <a href="/tutor" class="nav-link">HLH Tutor</a>
                 <a href="/dashboard" class="nav-link">Dashboard</a>
-                <a href="/login" class="nav-link" id="auth-link">Connexion</a>
+                {% if is_authenticated %}
+                    <span class="nav-user">👋 {{ username }}</span>
+                    <a href="/logout" class="nav-link" id="auth-link">Déconnexion</a>
+                {% else %}
+                    <a href="/auth/login-demo" class="nav-link" id="auth-link">Connexion (Demo)</a>
+                {% endif %}
             </div>
             <div class="hamburger" id="hamburger">
                 <span></span>
