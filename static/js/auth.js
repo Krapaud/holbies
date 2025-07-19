@@ -103,12 +103,21 @@ async function handleRegister(e) {
     const confirmPassword = formData.get('confirm-password');
     
     if (password !== confirmPassword) {
-        window.holbiesApp.showMessage('Les mots de passe ne correspondent pas', 'error');
+        if (window.holbiesApp && window.holbiesApp.showMessage) {
+            window.holbiesApp.showMessage('Les mots de passe ne correspondent pas', 'error');
+        } else {
+            alert('Les mots de passe ne correspondent pas');
+        }
         return;
     }
 
     // Show loading
-    window.holbiesApp.showLoading(submitBtn);
+    if (window.holbiesApp && window.holbiesApp.showLoading) {
+        window.holbiesApp.showLoading(submitBtn);
+    } else {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Inscription...';
+    }
 
     try {
         const userData = {
@@ -128,7 +137,11 @@ async function handleRegister(e) {
         const data = await response.json();
 
         if (response.ok) {
-            window.holbiesApp.showMessage('Inscription réussie! Vous pouvez maintenant vous connecter.', 'success');
+            if (window.holbiesApp && window.holbiesApp.showMessage) {
+                window.holbiesApp.showMessage('Inscription réussie! Vous pouvez maintenant vous connecter.', 'success');
+            } else {
+                alert('Inscription réussie! Vous pouvez maintenant vous connecter.');
+            }
             
             // Redirect to login after delay
             setTimeout(() => {
@@ -138,9 +151,18 @@ async function handleRegister(e) {
             throw new Error(data.detail || 'Erreur d\'inscription');
         }
     } catch (error) {
-        window.holbiesApp.showMessage(error.message, 'error');
+        if (window.holbiesApp && window.holbiesApp.showMessage) {
+            window.holbiesApp.showMessage(error.message, 'error');
+        } else {
+            alert('Erreur: ' + error.message);
+        }
     } finally {
-        window.holbiesApp.hideLoading(submitBtn);
+        if (window.holbiesApp && window.holbiesApp.hideLoading) {
+            window.holbiesApp.hideLoading(submitBtn);
+        } else {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'S\'inscrire';
+        }
     }
 }
 

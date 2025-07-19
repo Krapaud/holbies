@@ -11,6 +11,20 @@ class HolbiesApp {
         console.log('App initialized. Token from localStorage:', this.token);
         this.checkAuth();
         this.setupEventListeners();
+        this.setupNavigation();
+        this.setupMatrixBackground();
+    }
+
+    checkAuth() {
+        if (this.token) {
+            this.checkAuthentication();
+        }
+        this.updateAuthLink();
+    }
+
+    setupEventListeners() {
+        // Setup global event listeners here
+        console.log('Setting up event listeners');
     }
 
     setupNavigation() {
