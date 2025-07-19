@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 
 from app.database import engine, get_db
 from app.models import Base
-from app.routers import auth, quiz, users
+from app.routers import auth, quiz, users, tutor
 from app.auth import get_current_user
 
 # Charger les variables d'environnement
@@ -34,6 +34,7 @@ templates = Jinja2Templates(directory="templates")
 app.include_router(auth.router, prefix="/api/auth", tags=["authentication"])
 app.include_router(quiz.router, prefix="/api/quiz", tags=["quiz"])
 app.include_router(users.router, prefix="/api/users", tags=["users"])
+app.include_router(tutor.router, prefix="/api/tutor", tags=["tutor"])
 
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
@@ -54,6 +55,10 @@ async def quiz_page(request: Request):
 @app.get("/dashboard", response_class=HTMLResponse)
 async def dashboard_page(request: Request):
     return templates.TemplateResponse("dashboard.html", {"request": request})
+
+@app.get("/tutor", response_class=HTMLResponse)
+async def tutor_page(request: Request):
+    return templates.TemplateResponse("tutor.html", {"request": request})
 
 if __name__ == "__main__":
     uvicorn.run(

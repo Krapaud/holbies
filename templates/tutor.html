@@ -1,0 +1,575 @@
+{% extends "base.html" %}
+
+{% block title %}HLH Tutor - Code Executor{% endblock %}
+
+{% block extra_css %}
+<style>
+    .tutor-container {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 12px;
+        padding: 2rem;
+        margin-top: 2rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+    
+    .tutor-header {
+        text-align: center;
+        color: #2d3748;
+        margin-bottom: 2rem;
+    }
+    
+    .toolbar {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        margin-bottom: 1rem;
+        padding: 1rem;
+        background: #f7fafc;
+        border-radius: 8px;
+        flex-wrap: wrap;
+    }
+    
+    .language-selector {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .language-selector select {
+        padding: 0.5rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 6px;
+        background: white;
+        min-width: 150px;
+    }
+    
+    .run-btn, .clear-btn {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .run-btn {
+        background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+        color: white;
+    }
+    
+    .clear-btn {
+        background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+        color: white;
+    }
+    
+    .run-btn:hover, .clear-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    .run-btn:disabled {
+        background: #a0aec0;
+        transform: none;
+        cursor: not-allowed;
+    }
+    
+    .code-area {
+        margin-bottom: 1rem;
+    }
+    
+    .code-input {
+        width: 100%;
+        min-height: 300px;
+        padding: 1rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+        font-size: 14px;
+        resize: vertical;
+        background: #f8f9fa;
+        box-sizing: border-box;
+    }
+    
+    .code-input:focus {
+        outline: none;
+        border-color: #667eea;
+        background: white;
+    }
+    
+    .error-message {
+        background: #fed7d7;
+        color: #c53030;
+        padding: 1rem;
+        border-radius: 8px;
+        margin: 1rem 0;
+        border-left: 4px solid #e53e3e;
+        display: none;
+    }
+    
+    .loading {
+        text-align: center;
+        padding: 2rem;
+        color: #4a5568;
+        font-size: 1.1rem;
+    }
+    
+    .trace-step {
+        background: #f7fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        margin: 1rem 0;
+        padding: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .trace-step:hover {
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .output-pre {
+        background: #2d3748;
+        color: #e2e8f0;
+        padding: 1rem;
+        border-radius: 6px;
+        overflow-x: auto;
+        margin: 0.5rem 0;
+        white-space: pre-wrap;
+    }
+    
+    .success-output {
+        background: #f0fff4 !important;
+        color: #2f855a !important;
+    }
+    
+    .error-output {
+        background: #fed7d7 !important;
+        color: #c53030 !important;
+    }
+    
+    .examples {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+    
+    .example-card {
+        background: #f7fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .example-card:hover {
+        background: #edf2f7;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    .example-title {
+        font-weight: 600;
+        color: #2d3748;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .example-desc {
+        color: #4a5568;
+        font-size: 0.9rem;
+    }
+
+    @media (max-width: 768px) {
+        .toolbar {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        
+        .language-selector {
+            justify-content: center;
+        }
+        
+        .run-btn, .clear-btn {
+            justify-content: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="tutor-container">
+        <div class="tutor-header">
+            <h1>🚀 HLH Tutor - Exécuteur de Code Multi-Langage</h1>
+            <p style="color: #4a5568; margin-bottom: 0;">
+                Exécutez du code Python, JavaScript ou C avec visualisation des résultats en temps réel
+                <small style="opacity: 0.7;">v2.2 - Multi-langage complet</small>
+            </p>
+        </div>
+        
+        <div id="code-executor-container">
+            <div class="toolbar">
+                <div class="language-selector">
+                    <label for="language-select" style="font-weight: 600;">🔧 Langage:</label>
+                    <select id="language-select">
+                        <option value="python">🐍 Python</option>
+                        <option value="javascript">📜 JavaScript</option>
+                        <option value="c">⚙️ C</option>
+                    </select>
+                </div>
+                <button id="run-button" class="run-btn">
+                    <span>▶️</span> Exécuter
+                </button>
+                <button id="clear-button" class="clear-btn">
+                    <span>🗑️</span> Effacer
+                </button>
+            </div>
+            
+            <div class="code-area">
+                <textarea id="code-input" class="code-input" placeholder="Entrez votre code ici..."></textarea>
+            </div>
+            
+            <div id="error-output" class="error-message"></div>
+            <div id="trace-output" class="trace-visualization"></div>
+        </div>
+        
+        <div class="examples">
+            <div class="example-card" onclick="loadPythonExample()">
+                <div class="example-title">
+                    <span>🐍</span> Python - Variables et fonctions
+                </div>
+                <div class="example-desc">Variables, boucles, listes et récursion</div>
+            </div>
+            
+            <div class="example-card" onclick="loadJavaScriptExample()">
+                <div class="example-title">
+                    <span>📜</span> JavaScript - Arrays et fonctions
+                </div>
+                <div class="example-desc">Variables, boucles, arrays et récursion</div>
+            </div>
+            
+            <div class="example-card" onclick="loadCExample()">
+                <div class="example-title">
+                    <span>⚙️</span> C - Structures de contrôle
+                </div>
+                <div class="example-desc">Variables, boucles, tableaux et pointeurs</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+class HLHTutor {
+    constructor() {
+        this.currentLanguage = 'python';
+        this.initializeUI();
+    }
+    
+    initializeUI() {
+        this.attachEvents();
+        this.updatePlaceholder();
+    }
+    
+    attachEvents() {
+        const runButton = document.getElementById('run-button');
+        const clearButton = document.getElementById('clear-button');
+        const languageSelect = document.getElementById('language-select');
+        
+        runButton.addEventListener('click', () => this.runCode());
+        clearButton.addEventListener('click', () => this.clearCode());
+        languageSelect.addEventListener('change', (e) => {
+            this.currentLanguage = e.target.value;
+            this.updatePlaceholder();
+        });
+    }
+    
+    updatePlaceholder() {
+        const codeInput = document.getElementById('code-input');
+        const placeholders = {
+            python: `# Code Python
+x = 5
+y = 10
+result = x + y
+print(f"La somme de {x} et {y} est {result}")
+
+# Boucle simple
+for i in range(3):
+    print(f"Iteration {i}")`,
+            javascript: `// Code JavaScript
+let x = 5;
+let y = 10;
+let result = x + y;
+console.log(\`La somme de \${x} et \${y} est \${result}\`);
+
+// Boucle simple
+for(let i = 0; i < 3; i++) {
+    console.log(\`Iteration \${i}\`);
+}`,
+            c: `// Code C
+#include <stdio.h>
+
+int main() {
+    int x = 5;
+    int y = 10;
+    int result = x + y;
+    printf("La somme de %d et %d est %d\\n", x, y, result);
+    
+    // Boucle simple
+    for(int i = 0; i < 3; i++) {
+        printf("Iteration %d\\n", i);
+    }
+    
+    return 0;
+}`
+        };
+        codeInput.placeholder = placeholders[this.currentLanguage];
+        if (!codeInput.value.trim()) {
+            codeInput.value = placeholders[this.currentLanguage];
+        }
+    }
+    
+    clearCode() {
+        document.getElementById('code-input').value = '';
+        document.getElementById('trace-output').innerHTML = '';
+        document.getElementById('error-output').style.display = 'none';
+    }
+    
+    async runCode() {
+        const codeInput = document.getElementById('code-input');
+        const runButton = document.getElementById('run-button');
+        const outputDiv = document.getElementById('trace-output');
+        const errorDiv = document.getElementById('error-output');
+        
+        const code = codeInput.value.trim();
+        if (!code) {
+            this.showError('Veuillez entrer du code à exécuter');
+            return;
+        }
+        
+        runButton.disabled = true;
+        runButton.innerHTML = '<span>⏳</span> Exécution...';
+        errorDiv.style.display = 'none';
+        outputDiv.innerHTML = '<div class="loading">🔄 Exécution en cours...</div>';
+        
+        try {
+            // Vérifier que holbiesApp est disponible
+            if (!window.holbiesApp || !window.holbiesApp.token) {
+                throw new Error('Vous devez être connecté pour utiliser le tuteur');
+            }
+            
+            const response = await fetch('/api/tutor/execute', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${window.holbiesApp.token}`
+                },
+                body: JSON.stringify({ 
+                    code: code, 
+                    language: this.currentLanguage 
+                })
+            });
+            
+            if (!response.ok) {
+                if (response.status === 401) {
+                    throw new Error('Session expirée. Veuillez vous reconnecter.');
+                }
+                const errorData = await response.json().catch(() => ({ detail: 'Erreur réseau' }));
+                throw new Error(errorData.detail || 'Erreur lors de l\'exécution');
+            }
+            
+            const result = await response.json();
+            
+            if (result.error) {
+                throw new Error(result.error);
+            }
+            
+            this.displayResults(result);
+            
+        } catch (err) {
+            console.error('Erreur détaillée:', err);
+            this.showError(err.message);
+        } finally {
+            runButton.disabled = false;
+            runButton.innerHTML = '<span>▶️</span> Exécuter';
+        }
+    }
+    
+    showError(message) {
+        const errorDiv = document.getElementById('error-output');
+        errorDiv.innerHTML = `❌ <strong>Erreur:</strong> ${message}`;
+        errorDiv.style.display = 'block';
+    }
+    
+    displayResults(result) {
+        const outputDiv = document.getElementById('trace-output');
+        
+        let html = `<h3>📊 Résultats d'exécution (${this.currentLanguage.toUpperCase()})</h3>`;
+        
+        if (result.output) {
+            html += `
+                <div class="trace-step">
+                    <h4>📤 Sortie du programme</h4>
+                    <pre class="output-pre success-output">${result.output}</pre>
+                </div>
+            `;
+        }
+        
+        if (result.error) {
+            html += `
+                <div class="trace-step">
+                    <h4>❌ Erreur d'exécution</h4>
+                    <pre class="output-pre error-output">${result.error}</pre>
+                </div>
+            `;
+        }
+        
+        if (result.trace && result.trace.length > 0) {
+            html += `
+                <div class="trace-step">
+                    <h4>🔍 Trace d'exécution</h4>
+                    <div style="max-height: 300px; overflow-y: auto;">
+            `;
+            result.trace.forEach((step, index) => {
+                html += `
+                    <div style="border: 1px solid #e2e8f0; margin: 0.5rem 0; padding: 0.5rem; border-radius: 4px;">
+                        <strong>Étape ${index + 1}:</strong>
+                        <pre class="output-pre" style="margin: 0.25rem 0; font-size: 0.9rem;">${JSON.stringify(step, null, 2)}</pre>
+                    </div>
+                `;
+            });
+            html += `
+                    </div>
+                </div>
+            `;
+        }
+        
+        if (!result.output && !result.error && (!result.trace || result.trace.length === 0)) {
+            html += '<div class="loading">🤔 Aucun résultat disponible</div>';
+        }
+        
+        outputDiv.innerHTML = html;
+    }
+    
+    setLanguage(language) {
+        this.currentLanguage = language;
+        document.getElementById('language-select').value = language;
+        this.updatePlaceholder();
+    }
+    
+    setCode(code) {
+        document.getElementById('code-input').value = code;
+    }
+}
+
+// Exemples de code
+function loadPythonExample() {
+    const code = `# Exemple Python - Calculs et structures de données
+x = 5
+y = 10
+z = x + y
+print(f'La somme est: {z}')
+
+# Boucle avec liste
+numbers = [1, 2, 3, 4, 5]
+total = 0
+for num in numbers:
+    total += num
+    print(f'Ajout de {num}, total: {total}')
+
+print(f'Somme totale: {total}')
+
+# Fonction récursive
+def fibonacci(n):
+    if n <= 1:
+        return n
+    return fibonacci(n-1) + fibonacci(n-2)
+
+result = fibonacci(6)
+print(f'Fibonacci(6) = {result}')`;
+    
+    window.hlhTutor.setLanguage('python');
+    window.hlhTutor.setCode(code);
+}
+
+function loadJavaScriptExample() {
+    const code = `// Exemple JavaScript - Manipulation de tableaux
+let x = 5;
+let y = 10;
+let z = x + y;
+console.log(\`La somme est: \${z}\`);
+
+// Boucle avec tableau
+const numbers = [1, 2, 3, 4, 5];
+let total = 0;
+for(let i = 0; i < numbers.length; i++) {
+    total += numbers[i];
+    console.log(\`Ajout de \${numbers[i]}, total: \${total}\`);
+}
+
+console.log(\`Somme totale: \${total}\`);
+
+// Fonction récursive
+function fibonacci(n) {
+    if (n <= 1) return n;
+    return fibonacci(n-1) + fibonacci(n-2);
+}
+
+const result = fibonacci(6);
+console.log(\`Fibonacci(6) = \${result}\`);`;
+    
+    window.hlhTutor.setLanguage('javascript');
+    window.hlhTutor.setCode(code);
+}
+
+function loadCExample() {
+    const code = `// Exemple C - Structures de contrôle et tableaux
+#include <stdio.h>
+
+int fibonacci(int n) {
+    if (n <= 1) return n;
+    return fibonacci(n-1) + fibonacci(n-2);
+}
+
+int main() {
+    int x = 5;
+    int y = 10;
+    int z = x + y;
+    printf("La somme est: %d\\n", z);
+    
+    // Tableau et boucle
+    int numbers[] = {1, 2, 3, 4, 5};
+    int total = 0;
+    int size = sizeof(numbers) / sizeof(numbers[0]);
+    
+    for(int i = 0; i < size; i++) {
+        total += numbers[i];
+        printf("Ajout de %d, total: %d\\n", numbers[i], total);
+    }
+    
+    printf("Somme totale: %d\\n", total);
+    
+    // Fonction récursive
+    int result = fibonacci(6);
+    printf("Fibonacci(6) = %d\\n", result);
+    
+    return 0;
+}`;
+    
+    window.hlhTutor.setLanguage('c');
+    window.hlhTutor.setCode(code);
+}
+
+// Initialiser le tuteur
+document.addEventListener('DOMContentLoaded', () => {
+    window.hlhTutor = new HLHTutor();
+});
+</script>
+{% endblock %}
