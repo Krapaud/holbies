@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription - Dev Learning Hub</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <h2 class="auth-title">
+                    <span class="auth-icon">📝</span>
+                    Inscription
+                </h2>
+                <p class="auth-subtitle">Rejoignez la matrice</p>
+            </div>
+            
+            {% if error %}
+            <div class="error-message">
+                {{ error }}
+            </div>
+            {% endif %}
+            
+            <form class="auth-form" method="POST">
+                <div class="form-group">
+                    <label for="username" class="form-label">
+                        <span class="label-icon">👤</span>
+                        Nom d'utilisateur
+                    </label>
+                    <input type="text" id="username" name="username" class="form-input" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email" class="form-label">
+                        <span class="label-icon">📧</span>
+                        Email
+                    </label>
+                    <input type="email" id="email" name="email" class="form-input" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password" class="form-label">
+                        <span class="label-icon">🔒</span>
+                        Mot de passe
+                    </label>
+                    <input type="password" id="password" name="password" class="form-input" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary full-width">
+                    <span class="btn-icon">🚀</span>
+                    S'inscrire
+                </button>
+            </form>
+            
+            <div class="auth-footer">
+                <p>Déjà un compte ? <a href="/login" class="auth-link">Se connecter</a></p>
+                <p><a href="/" class="auth-link">← Retour à l'accueil</a></p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

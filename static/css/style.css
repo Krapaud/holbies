@@ -1,4 +1,52 @@
 /* ==========================================================================
+   Styles de compatibilité FastAPI
+   ========================================================================== */
+
+/* Navigation simplifiée */
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.nav-auth {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+/* Messages de statut */
+.success-message {
+    background: rgba(0, 255, 65, 0.1);
+    border: 1px solid var(--primary-green);
+    color: var(--primary-green);
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius);
+    margin-bottom: var(--spacing-lg);
+    font-size: 0.9rem;
+    text-align: center;
+    animation: successPulse 0.5s ease-out;
+}
+
+@keyframes successPulse {
+    0% {
+        transform: scale(0.95);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Formulaires améliorés */
+.form-input:focus {
+    border-color: var(--primary-green);
+    box-shadow: 0 0 0 2px rgba(0, 255, 65, 0.2);
+    outline: none;
+}
+
+/* ==========================================================================
    Dev Learning Hub - Matrix Theme CSS
    ========================================================================== */
 
@@ -138,6 +186,13 @@ a:hover {
     transform: translateY(-2px);
 }
 
+.nav-link.active {
+    background: rgba(0, 255, 65, 0.2);
+    color: var(--primary-green);
+    box-shadow: 0 0 15px rgba(0, 255, 65, 0.3);
+    border: 1px solid rgba(0, 255, 65, 0.5);
+}
+
 .nav-link.admin-link {
     color: var(--accent-orange);
 }
@@ -154,6 +209,31 @@ a:hover {
     background: rgba(0, 255, 65, 0.1);
     border-radius: var(--border-radius);
     font-weight: 600;
+}
+
+/* Styles pour les templates FastAPI simplifiés */
+.user-name {
+    color: var(--primary-green);
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-right: var(--spacing-sm);
+}
+
+.logout-btn {
+    background: rgba(255, 107, 53, 0.1);
+    border: 1px solid var(--accent-orange);
+    color: var(--accent-orange);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--border-radius);
+    text-decoration: none;
+    font-size: 0.8rem;
+    transition: all var(--transition);
+}
+
+.logout-btn:hover {
+    background: rgba(255, 107, 53, 0.2);
+    box-shadow: 0 0 10px rgba(255, 107, 53, 0.3);
+    transform: translateY(-1px);
 }
 
 .user-indicator {
@@ -834,6 +914,11 @@ a:hover {
     padding: var(--spacing-xxl) 0;
 }
 
+/* Alias pour compatibilité FastAPI */
+.features {
+    padding: var(--spacing-xxl) 0;
+}
+
 .section-title {
     text-align: center;
     margin-bottom: var(--spacing-xxl);
@@ -961,6 +1046,12 @@ a:hover {
     justify-content: center;
 }
 
+/* Alias pour compatibilité FastAPI */
+.full-width {
+    width: 100%;
+    justify-content: center;
+}
+
 .btn-small {
     padding: var(--spacing-sm) var(--spacing-md);
     font-size: 0.9rem;
@@ -1011,6 +1102,30 @@ a:hover {
     }
     100% {
         transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Styles pour les messages d'erreur FastAPI */
+.error-message {
+    background: rgba(255, 107, 53, 0.1);
+    border: 1px solid var(--accent-orange);
+    color: var(--accent-orange);
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius);
+    margin-bottom: var(--spacing-lg);
+    font-size: 0.9rem;
+    text-align: center;
+    animation: errorPulse 0.5s ease-out;
+}
+
+@keyframes errorPulse {
+    0% {
+        transform: scale(0.95);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
         opacity: 1;
     }
 }
