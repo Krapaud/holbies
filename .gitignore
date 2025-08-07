@@ -99,6 +99,11 @@ yarn-error.log*
 *.temp
 .cache/
 
+# Ignore all test files and folders
+test*
+*/test*
+*test*/
+
 # OS generated files
 Thumbs.db
 .DS_Store
