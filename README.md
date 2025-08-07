@@ -73,9 +73,9 @@ Un système de quiz interactif avec un thème Matrix pour l'apprentissage techni
 
 ### Méthode 1 : Script Automatique
 ```bash
-git clone https://github.com/votre-repo/holbies-learning-hub.git
-cd holbies-learning-hub
-./start.sh
+git clone https://github.com/Krapaud/project-holbies.git
+cd project-holbies
+./scripts/start.sh
 ```
 
 ### Méthode 2 : Manuel
