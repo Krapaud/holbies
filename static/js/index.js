@@ -10,9 +10,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // Affichage direct du titre sans animation typewriter
     if (heroTitleElement) {
         heroTitleElement.textContent = originalTitleText;
-        if (heroSubtitleElement) {
-            heroSubtitleElement.textContent = originalSubtitleText;
-        }
+    }
+
+    // Typewriter effect for hero subtitle only
+    if (heroSubtitleElement) {
+        heroSubtitleElement.textContent = ''; // Clear content
+        typeWriter(heroSubtitleElement, originalSubtitleText, null, true); // With blinking cursor
     }
 
     // Smooth scroll for "Découvrir les fonctionnalités" button

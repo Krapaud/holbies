@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Request
 from pydantic import BaseModel
 from typing import Optional, List, Any
 import subprocess
@@ -9,12 +9,14 @@ import traceback
 import json
 from app.auth import get_current_user
 from app.models import User
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
+templates = Jinja2Templates(directory="templates")
 
 router = APIRouter()
 
 class CodeExecutionRequest(BaseModel):
     code: str
-    language: str
 
 class CodeExecutionResponse(BaseModel):
     output: Optional[str] = None
@@ -24,195 +26,194 @@ class CodeExecutionResponse(BaseModel):
 class CodeExecutor:
     @staticmethod
     def execute_python(code: str) -> CodeExecutionResponse:
-        """Exécute du code Python de manière sécurisée"""
-        try:
-            # Créer un environnement sécurisé
-            import io
-            from contextlib import redirect_stdout, redirect_stderr
-            
-            # Capturer la sortie
-            stdout_capture = io.StringIO()
-            stderr_capture = io.StringIO()
-            
-            # Variables globales limitées pour la sécurité
-            safe_globals = {
-                '__builtins__': {
-                    'print': print,
-                    'len': len,
-                    'range': range,
-                    'int': int,
-                    'float': float,
-                    'str': str,
-                    'bool': bool,
-                    'list': list,
-                    'dict': dict,
-                    'tuple': tuple,
-                    'set': set,
-                    'sum': sum,
-                    'max': max,
-                    'min': min,
-                    'abs': abs,
-                    'round': round,
-                    'sorted': sorted,
-                    'reversed': reversed,
-                    'enumerate': enumerate,
-                    'zip': zip,
-                }
+        """Exécute du code Python de manière sécurisée et trace chaque étape (façon Python Tutor, avec heap et références)"""
+        import io
+        import sys
+        import linecache
+        from contextlib import redirect_stdout, redirect_stderr
+        import builtins
+        trace_steps = []
+        output_progress = []
+        
+        def get_obj_id(obj):
+            try:
+                return f"id{str(id(obj))}"
+            except Exception:
+                return None
+        
+        def extract_heap(vars_dict, _seen_ids=None):
+            if _seen_ids is None:
+                _seen_ids = set()
+            heap = {}
+            refs = {}
+
+            def _extract_obj(obj):
+                obj_id = get_obj_id(obj)
+                if obj_id is None or obj_id in _seen_ids:
+                    return obj_id
+
+                _seen_ids.add(obj_id)
+                obj_type = type(obj).__name__
+                value = None
+                obj_refs = []
+
+                if isinstance(obj, (int, float, bool, type(None), str)):
+                    value = obj
+                elif isinstance(obj, (list, tuple, set)):
+                    value = []
+                    for item in obj:
+                        item_id = _extract_obj(item)
+                        if item_id:
+                            value.append({'ref': item_id})
+                            obj_refs.append(item_id)
+                        else:
+                            value.append(item)
+                elif isinstance(obj, dict):
+                    value = {}
+                    for k, v in obj.items():
+                        v_id = _extract_obj(v)
+                        if v_id:
+                            value[k] = {'ref': v_id}
+                            obj_refs.append(v_id)
+                        else:
+                            value[k] = v
+                else:
+                    # Custom objects
+                    try:
+                        if hasattr(obj, '__dict__'):
+                            value = {}
+                            for k, v in obj.__dict__.items():
+                                v_id = _extract_obj(v)
+                                if v_id:
+                                    value[k] = {'ref': v_id}
+                                    obj_refs.append(v_id)
+                                else:
+                                    value[k] = v
+                        else:
+                            value = repr(obj) # Fallback for objects without __dict__
+                    except Exception:
+                        value = repr(obj) # Fallback for objects that fail repr
+
+                heap[obj_id] = {'type': obj_type, 'value': value, 'refs': obj_refs}
+                return obj_id
+
+            for name, var in vars_dict.items():
+                var_id = _extract_obj(var)
+                if var_id:
+                    refs[name] = var_id
+                else:
+                    # For simple types that don't go into heap, store directly
+                    refs[name] = var
+
+            return heap, refs
+        
+        def tracer(frame, event, arg):
+            if event == 'line':
+                lineno = frame.f_lineno
+                filename = frame.f_code.co_filename
+                line = linecache.getline(filename, lineno).rstrip()
+                local_vars = dict(frame.f_locals)
+                global_vars = dict(frame.f_globals)
+                stack = []
+                f = frame
+                while f:
+                    stack.append({
+                        'function': f.f_code.co_name,
+                        'lineno': f.f_lineno,
+                        'locals': dict(f.f_locals)
+                    })
+                    f = f.f_back
+                stack.reverse()
+                # Heap extraction
+                heap, refs = extract_heap(local_vars)
+                gheap, grefs = extract_heap(global_vars)
+                trace_steps.append({
+                    'event': event,
+                    'lineno': lineno,
+                    'line': line,
+                    'locals': local_vars,
+                    'globals': global_vars,
+                    'stack': stack,
+                    'output': ''.join(output_progress),
+                    'heap': {**heap, **gheap},
+                    'refs': {**refs, **grefs}
+                })
+            return tracer
+        
+        # Variables globales limitées pour la sécurité
+        safe_globals = {
+            '__builtins__': {
+                'print': print,
+                'len': len,
+                'range': range,
+                'int': int,
+                'float': float,
+                'str': str,
+                'bool': bool,
+                'list': list,
+                'dict': dict,
+                'tuple': tuple,
+                'set': set,
+                'sum': sum,
+                'max': max,
+                'min': min,
+                'abs': abs,
+                'round': round,
+                'sorted': sorted,
+                'reversed': reversed,
+                'enumerate': enumerate,
+                'zip': zip,
             }
-            
+        }
+        
+        # Redéfinir print pour capturer la sortie à chaque étape
+        def traced_print(*args, **kwargs):
+            s = ' '.join(str(a) for a in args)
+            output_progress.append(s + '\n')
+            return s
+        safe_globals['__builtins__']['print'] = traced_print
+        
+        stdout_capture = io.StringIO()
+        stderr_capture = io.StringIO()
+        try:
+            sys.settrace(tracer)
             with redirect_stdout(stdout_capture), redirect_stderr(stderr_capture):
                 exec(code, safe_globals)
-            
-            output = stdout_capture.getvalue()
-            error = stderr_capture.getvalue()
-            
+            sys.settrace(None)
+        except Exception as e:
+            sys.settrace(None)
             return CodeExecutionResponse(
-                output=output if output else None,
-                error=error if error else None
+                error=f"Erreur d'exécution: {str(e)}",
+                trace=trace_steps
             )
-            
-        except Exception as e:
-            return CodeExecutionResponse(
-                error=f"Erreur d'exécution: {str(e)}"
-            )
+        output = stdout_capture.getvalue()
+        error = stderr_capture.getvalue()
+        return CodeExecutionResponse(
+            output=output if output else None,
+            error=error if error else None,
+            trace=trace_steps
+        )
 
-    @staticmethod
-    def execute_javascript(code: str) -> CodeExecutionResponse:
-        """Exécute du code JavaScript avec Node.js"""
-        try:
-            # Wrapper pour capturer console.log
-            js_wrapper = f"""
-const originalLog = console.log;
-const outputs = [];
-console.log = (...args) => {{
-    outputs.push(args.map(arg => 
-        typeof arg === 'object' ? JSON.stringify(arg) : String(arg)
-    ).join(' '));
-}};
+    
 
-try {{
-    {code}
-    console.log = originalLog;
-    console.log(outputs.join('\\n'));
-}} catch (error) {{
-    console.log = originalLog;
-    console.error('Erreur:', error.message);
-}}
-"""
-            
-            # Créer un fichier temporaire
-            with tempfile.NamedTemporaryFile(mode='w', suffix='.js', delete=False) as f:
-                f.write(js_wrapper)
-                temp_file = f.name
-            
-            try:
-                # Exécuter avec Node.js
-                result = subprocess.run(
-                    ['node', temp_file],
-                    capture_output=True,
-                    text=True,
-                    timeout=10
-                )
-                
-                if result.returncode == 0:
-                    return CodeExecutionResponse(output=result.stdout.strip())
-                else:
-                    return CodeExecutionResponse(error=result.stderr.strip())
-                    
-            finally:
-                # Nettoyer le fichier temporaire
-                os.unlink(temp_file)
-                
-        except subprocess.TimeoutExpired:
-            return CodeExecutionResponse(error="Timeout: L'exécution a pris trop de temps")
-        except FileNotFoundError:
-            return CodeExecutionResponse(error="Node.js n'est pas installé sur le serveur")
-        except Exception as e:
-            return CodeExecutionResponse(error=f"Erreur d'exécution JavaScript: {str(e)}")
+@router.get("/visualizer", response_class=HTMLResponse)
+async def get_code_visualizer(request: Request):
+    return templates.TemplateResponse("code_visualizer.html", {"request": request})
 
-    @staticmethod
-    def execute_c(code: str) -> CodeExecutionResponse:
-        """Compile et exécute du code C avec GCC"""
-        try:
-            # Créer les fichiers temporaires
-            with tempfile.NamedTemporaryFile(mode='w', suffix='.c', delete=False) as source_file:
-                source_file.write(code)
-                source_path = source_file.name
-            
-            # Nom du fichier exécutable
-            executable_path = source_path.replace('.c', '')
-            
-            try:
-                # Compilation
-                compile_result = subprocess.run(
-                    ['gcc', '-o', executable_path, source_path],
-                    capture_output=True,
-                    text=True,
-                    timeout=10
-                )
-                
-                if compile_result.returncode != 0:
-                    return CodeExecutionResponse(error=f"Erreur de compilation:\\n{compile_result.stderr}")
-                
-                # Exécution
-                run_result = subprocess.run(
-                    [executable_path],
-                    capture_output=True,
-                    text=True,
-                    timeout=10
-                )
-                
-                if run_result.returncode == 0:
-                    return CodeExecutionResponse(output=run_result.stdout.strip())
-                else:
-                    return CodeExecutionResponse(error=f"Erreur d'exécution:\\n{run_result.stderr}")
-                    
-            finally:
-                # Nettoyer les fichiers temporaires
-                if os.path.exists(source_path):
-                    os.unlink(source_path)
-                if os.path.exists(executable_path):
-                    os.unlink(executable_path)
-                    
-        except subprocess.TimeoutExpired:
-            return CodeExecutionResponse(error="Timeout: L'exécution a pris trop de temps")
-        except FileNotFoundError:
-            return CodeExecutionResponse(error="GCC n'est pas installé sur le serveur")
-        except Exception as e:
-            return CodeExecutionResponse(error=f"Erreur d'exécution C: {str(e)}")
-
-@router.post("/test", response_model=CodeExecutionResponse)
-async def test_execute():
-    """Test simple sans authentification"""
-    return CodeExecutionResponse(output="✅ Tous les langages sont maintenant supportés: Python, JavaScript (Node.js), C (GCC)")
-
-@router.post("/execute", response_model=CodeExecutionResponse)
-async def execute_code(
+@router.post("/run-python-code", response_model=CodeExecutionResponse)
+async def run_python_code(
     request: CodeExecutionRequest,
     current_user: User = Depends(get_current_user)
 ):
-    """Exécute du code dans le langage spécifié"""
-    
     print(f"DEBUG: User authenticated: {current_user.username}")
     print(f"DEBUG: Code length: {len(request.code)}")
-    print(f"DEBUG: Language: {request.language}")
-    
-    # Validation du langage
-    supported_languages = ['python', 'javascript', 'c']
-    if request.language not in supported_languages:
-        raise HTTPException(
-            status_code=400,
-            detail=f"Langage non supporté. Langages supportés: {', '.join(supported_languages)}"
-        )
-    
-    # Validation de la longueur du code
-    if len(request.code) > 10000:  # Limite de 10KB
+
+    if len(request.code) > 10000:
         raise HTTPException(
             status_code=400,
             detail="Le code est trop long (maximum 10KB)"
         )
-    
-    # Vérifications de sécurité basiques
+
     dangerous_keywords = [
         'import os', 'import sys', 'import subprocess', 'import shutil',
         'open(', 'file(', 'exec(', 'eval(', '__import__',
@@ -227,40 +228,5 @@ async def execute_code(
                 detail=f"Code potentiellement dangereux détecté: {keyword}"
             )
     
-    # Exécuter le code selon le langage
-    executor = CodeExecutor()
-    
-    if request.language == 'python':
-        result = executor.execute_python(request.code)
-    elif request.language == 'javascript':
-        result = executor.execute_javascript(request.code)
-    elif request.language == 'c':
-        result = executor.execute_c(request.code)
-    
+    result = CodeExecutor.execute_python(request.code)
     return result
-
-@router.get("/languages")
-async def get_supported_languages():
-    """Retourne la liste des langages supportés"""
-    return {
-        "languages": [
-            {
-                "code": "python",
-                "name": "Python",
-                "icon": "🐍",
-                "description": "Langage de programmation polyvalent et facile à apprendre"
-            },
-            {
-                "code": "javascript",
-                "name": "JavaScript",
-                "icon": "📜",
-                "description": "Langage de programmation pour le web et Node.js"
-            },
-            {
-                "code": "c",
-                "name": "C",
-                "icon": "⚙️",
-                "description": "Langage de programmation système performant"
-            }
-        ]
-    }

@@ -96,6 +96,10 @@ async def tutor_page(request: Request):
 async def ai_quiz_page(request: Request):
     return templates.TemplateResponse("ai-quiz.html", get_template_context(request))
 
+@app.get("/visualizer", response_class=HTMLResponse)
+async def visualizer_page(request: Request):
+    return templates.TemplateResponse("code_visualizer.html", get_template_context(request))
+
 # Routes de gestion de session
 @app.post("/auth/login-demo")
 async def demo_login(request: Request):

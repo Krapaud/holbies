@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="/static/css/quiz.css">
+<link rel="stylesheet" href="{{ url_for_static('/css/quiz.css') }}">
 {% endblock %}
 
 {% block content %}
@@ -94,5 +94,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="/static/js/quiz.js"></script>
+<script src="{{ url_for_static('/js/quiz.js') }}"></script>
 {% endblock %}
