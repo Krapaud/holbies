@@ -15,9 +15,22 @@ from app.schemas import (
     QuizResult,
     QuizAnswerSubmission
 )
-from app.auth import get_current_active_user
 
 router = APIRouter()
+
+@router.get("/stats")
+def get_site_stats(db: Session = Depends(get_db)):
+    questions_count = db.query(Question).count()
+    users_count = db.query(User).count()
+    # Satisfaction = % de bonnes réponses sur toutes les réponses
+    total_answers = db.query(QuizAnswer).count()
+    correct_answers = db.query(QuizAnswer).filter(QuizAnswer.is_correct == True).count()
+    satisfaction = round((correct_answers / total_answers) * 100, 2) if total_answers > 0 else 0.0
+    return {
+        "questions": questions_count,
+        "users": users_count,
+        "satisfaction": satisfaction
+    }
 
 @router.get("/questions", response_model=List[QuestionSchema])
 async def get_quiz_questions(

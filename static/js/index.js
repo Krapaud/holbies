@@ -32,6 +32,22 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    // Dynamically fetch and update stats
+    fetch('/quiz/stats')
+        .then(response => response.json())
+        .then(data => {
+            // Find stat items in order: questions, users, satisfaction
+            const statNumbers = document.querySelectorAll('.stat-number');
+            if (statNumbers.length >= 3) {
+                statNumbers[0].textContent = data.questions;
+                statNumbers[1].textContent = data.users;
+                statNumbers[2].textContent = data.satisfaction + '%';
+            }
+        })
+        .catch(err => {
+            console.error('Erreur lors de la récupération des stats:', err);
+        });
 });
 
 function typeWriter(element, text, callback = null, withCursor = false) {
