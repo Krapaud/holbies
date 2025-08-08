@@ -313,7 +313,7 @@ class HolbiesApp {
 
     // Function to show welcome video after successful login
     showWelcomeVideo(callback) {
-        // Temporarily bypass video and directly call the callback for redirection
+        // Video playback is disabled. Directly call the callback if provided.
         if (callback) {
             callback();
         }
