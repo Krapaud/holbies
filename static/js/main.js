@@ -13,6 +13,7 @@ class HolbiesApp {
         this.setupEventListeners();
         this.setupNavigation();
         this.setupMatrixBackground();
+        this.setupFormValidation(); // Initialize form validation
     }
 
     checkAuth() {
@@ -99,60 +100,8 @@ class HolbiesApp {
     }
 
     setupMatrixBackground() {
-        this.createMatrixRain();
-        this.createAsciiArt();
-    }
-
-    createMatrixRain() {
-        const matrixBg = document.querySelector('.matrix-bg');
-        if (!matrixBg) return;
-
-        const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヰヱヲン';
-        const columns = Math.floor(window.innerWidth / 20);
-        
-        // Create falling characters
-        for (let i = 0; i < columns; i++) {
-            const column = document.createElement('div');
-            column.className = 'matrix-column';
-            column.style.cssText = `
-                position: absolute;
-                left: ${i * 20}px;
-                top: -100px;
-                color: rgba(0, 255, 65, 0.3);
-                font-family: 'Source Code Pro', monospace;
-                font-size: 14px;
-                animation: matrixFall ${3 + Math.random() * 5}s linear infinite;
-                animation-delay: ${Math.random() * 5}s;
-            `;
-            
-            // Add random characters to the column
-            for (let j = 0; j < 20; j++) {
-                const char = document.createElement('div');
-                char.textContent = chars[Math.floor(Math.random() * chars.length)];
-                char.style.opacity = Math.random();
-                column.appendChild(char);
-            }
-            
-            matrixBg.appendChild(column);
-        }
-
-        // Add CSS animation if not already present
-        if (!document.getElementById('matrix-animations')) {
-            const style = document.createElement('style');
-            style.id = 'matrix-animations';
-            style.textContent = `
-                @keyframes matrixFall {
-                    0% { transform: translateY(-100vh); }
-                    100% { transform: translateY(100vh); }
-                }
-            `;
-            document.head.appendChild(style);
-        }
-    }
-
-    createAsciiArt() {
-        // ASCII art is now handled purely through CSS ::after pseudo-element
-        // No additional dynamic elements needed
+        // Matrix background is now handled purely through CSS
+        // No dynamic JS needed for this
     }
 
     // Utility methods
@@ -223,6 +172,228 @@ class HolbiesApp {
         const result = await response.json();
         console.log('API Result:', result);
         return result;
+    }
+
+    // Form validation
+    setupFormValidation() {
+        const inputs = document.querySelectorAll('input[required]');
+        
+        inputs.forEach(input => {
+            input.addEventListener('blur', this.validateField);
+            input.addEventListener('input', this.clearValidation);
+        });
+
+        this.addPasswordStrengthIndicator();
+    }
+
+    validateField(e) {
+        const field = e.target;
+        const value = field.value.trim();
+        
+        window.holbiesApp.clearValidation(e); // Use global instance
+        
+        let isValid = true;
+        let message = '';
+        
+        if (field.type === 'email') {
+            const emailRegex = /^[^
+@]+@[^
+@]+\.[^
+@]+$/;
+            if (!emailRegex.test(value)) {
+                isValid = false;
+                message = 'Adresse email invalide';
+            }
+        } else if (field.name === 'username') {
+            if (value.length < 3) {
+                isValid = false;
+                message = 'Le nom d\'utilisateur doit faire au moins 3 caractères';
+            }
+        } else if (field.type === 'password') {
+            if (value.length < 6) {
+                isValid = false;
+                message = 'Le mot de passe doit faire au moins 6 caractères';
+            }
+        }
+        
+        if (!isValid) {
+            window.holbiesApp.showFieldError(field, message); // Use global instance
+        }
+        
+        return isValid;
+    }
+
+    clearValidation(e) {
+        const field = e.target;
+        const errorElement = field.parentNode.querySelector('.field-error');
+        
+        if (errorElement) {
+            errorElement.remove();
+        }
+        
+        field.style.borderColor = 'var(--primary-green)';
+    }
+
+    showFieldError(field, message) {
+        field.style.borderColor = 'var(--danger-red)';
+        
+        const errorElement = document.createElement('div');
+        errorElement.className = 'field-error';
+        errorElement.textContent = message;
+        errorElement.style.cssText = `
+            color: var(--danger-red);
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+        `;
+        
+        field.parentNode.appendChild(errorElement);
+    }
+
+    addPasswordStrengthIndicator() {
+        const passwordField = document.querySelector('input[name="password"]');
+        if (!passwordField) return;
+        
+        const indicator = document.createElement('div');
+        indicator.className = 'password-strength';
+        indicator.innerHTML = `
+            <div class="strength-bar">
+                <div class="strength-fill"></div>
+            </div>
+            <div class="strength-text">Force du mot de passe</div>
+        `;
+        
+        indicator.style.cssText = `
+            margin-top: 0.5rem;
+        `;
+        
+        const strengthBar = indicator.querySelector('.strength-fill');
+        const strengthText = indicator.querySelector('.strength-text');
+        
+        passwordField.parentNode.appendChild(indicator);
+        
+        passwordField.addEventListener('input', (e) => {
+            const password = e.target.value;
+            const strength = this.calculatePasswordStrength(password); // Use this.calculatePasswordStrength
+            
+            strengthBar.style.width = `${strength.percentage}%`;
+            strengthBar.style.backgroundColor = strength.color;
+            strengthText.textContent = strength.text;
+        });
+    }
+
+    calculatePasswordStrength(password) {
+        let score = 0;
+        let feedback = 'Très faible';
+        let color = 'var(--danger-red)';
+        
+        if (password.length >= 6) score += 20;
+        if (password.length >= 10) score += 20;
+        if (/[a-z]/.test(password)) score += 20;
+        if (/[A-Z]/.test(password)) score += 20;
+        if (/[0-9]/.test(password)) score += 10;
+        if (/[^A-Za-z0-9]/.test(password)) score += 10;
+        
+        if (score >= 80) {
+            feedback = 'Très fort';
+            color = 'var(--success-green)';
+        } else if (score >= 60) {
+            feedback = 'Fort';
+            color = 'var(--warning-yellow)';
+        } else if (score >= 40) {
+            feedback = 'Moyen';
+            color = 'var(--warning-yellow)';
+        } else if (score >= 20) {
+            feedback = 'Faible';
+            color = 'var(--danger-red)';
+        }
+        
+        return {
+            percentage: score,
+            text: feedback,
+            color: color
+        };
+    }
+
+    // Function to show welcome video after successful login
+    showWelcomeVideo(callback) {
+        const waitForVideoModal = () => {
+            if (window.videoModal) {
+                const videoSources = [
+                    { url: '/static/video/welcome.mp4', type: 'video/mp4' },
+                    { url: '/static/video/welcome.webm', type: 'video/webm' },
+                    { url: '/static/video/welcome.ogv', type: 'video/ogg' }
+                ];
+                
+                let foundVideo = false;
+                let checkedSources = 0;
+                
+                const checkSource = (source) => {
+                    const testVideo = document.createElement('video');
+                    testVideo.onloadstart = () => {
+                        if (!foundVideo) {
+                            foundVideo = true;
+                            window.videoModal.show(source.url);
+                            
+                            const modal = document.getElementById('video-modal');
+                            if (modal) {
+                                const originalClose = window.videoModal.close.bind(window.videoModal);
+                                window.videoModal.close = function() {
+                                    originalClose();
+                                    if (callback) {
+                                        setTimeout(callback, 500);
+                                    }
+                                    window.videoModal.close = originalClose;
+                                };
+                            }
+                        }
+                    };
+                    testVideo.onerror = () => {
+                        checkedSources++;
+                        if (checkedSources >= videoSources.length && !foundVideo) {
+                            if (window.showTestWelcomeVideo) {
+                                foundVideo = true;
+                                window.showTestWelcomeVideo().then(() => {
+                                    if (callback) {
+                                        setTimeout(callback, 500);
+                                    }
+                                });
+                            } else {
+                                if (callback) {
+                                    callback();
+                                }
+                            }
+                        }
+                    };
+                    testVideo.src = source.url;
+                };
+                
+                videoSources.forEach(checkSource);
+                
+            } else {
+                setTimeout(waitForVideoModal, 100);
+            }
+        };
+        
+        waitForVideoModal();
+    }
+
+    // Auth visual animation
+    animateAuthVisual() {
+        const codeStreams = document.querySelectorAll('.code-stream span');
+        
+        codeStreams.forEach((span, index) => {
+            span.style.animationDelay = `${index * 0.2}s`;
+            
+            setInterval(() => {
+                if (Math.random() < 0.1) {
+                    span.style.animation = 'glitch 0.3s ease-in-out';
+                    setTimeout(() => {
+                        span.style.animation = `matrixStream 0.5s forwards`;
+                        span.style.animationDelay = `${index * 0.2}s`;
+                    }, 300);
+                }
+            }, 2000);
+        });
     }
 }
 

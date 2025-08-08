@@ -110,4 +110,4 @@ echo ""
 echo "Pour arrêter le serveur, appuyez sur Ctrl+C"
 echo ""
 
-uvicorn main:app --reload --host 0.0.0.0 --port 8000
+uvicorn main:app --reload --host 0.0.0.0 --port 8000 &

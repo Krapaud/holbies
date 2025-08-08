@@ -1,38 +1,33 @@
 /* ========================================
-   HOLBIES LEARNING HUB - GLOBAL STYLES
+   HOLBIES LEARNING HUB - MAIN STYLESHEET
    ======================================== */
 
+/* Holberton Theme Colors */
 :root {
-    --color-primary: #D7263D; /* Holberton Red */
-    --color-secondary: #F5F5F5; /* Light Gray */
-    --color-dark: #222222; /* Dark Gray */
-    --color-gray: #888888; /* Medium Gray */
-    --color-white: #fff;
+    --holberton-primary: #E1003C;   /* Holberton Red/Pink */
+    --holberton-dark: #292627;     /* Dark background */
+    --holberton-light: #F1F2F2;    /* Light text / backgrounds */
+    --holberton-light-alt: #F9F9F9; /* Alternative light grey */
+    --holberton-magenta: #FF00BF;  /* Accent magenta */
+    --holberton-grey: #a9a9a9;     /* Muted text / borders (keeping original for now) */
+
+    /* General UI Colors (derived or complementary) */
     --danger-red: #dc3545;
     --warning-yellow: #ffc107;
     --success-green: #28a745;
+
+    /* Fonts */
     --font-title: 'Montserrat', Arial, sans-serif;
     --font-body: 'Open Sans', Arial, sans-serif;
-    --shadow-subtle: 0 4px 15px rgba(34,34,34,0.08);
-    --shadow-deep: 0 10px 30px rgba(34,34,34,0.15);
-    --border-radius: 12px;
-    --transition: all 0.2s;
 
-    /* Matrix Theme Specific */
-    --matrix-black: #0d1117;
-    --matrix-dark: #161b22;
-    --matrix-gray: #21262d;
-    --primary-green: #00ff41; /* Neon Green */
-    --secondary-green: #00cc33;
-    --text-light: #c9d1d9;
-    --text-muted: #8b949e;
-    --dark-bg: #0d1117;
-    --dark-card: #161b22;
-    --dark-border: #30363d;
-    --shadow-glow: 0 0 15px rgba(0, 255, 65, 0.3);
+    /* General Properties */
+    --border-radius: 12px;
+    --transition: all 0.2s ease-in-out;
 }
 
-/* Base Styles */
+/* ======================================== 
+    RESET AND BASE STYLES
+   ======================================== */
 * {
     margin: 0;
     padding: 0;
@@ -41,8 +36,8 @@
 
 body {
     font-family: var(--font-body);
-    background-color: var(--matrix-black);
-    color: var(--text-light);
+    background-color: var(--holberton-dark); /* Use Holberton dark for main background */
+    color: var(--holberton-light); /* Use Holberton light for main text */
     line-height: 1.6;
     overflow-x: hidden;
 }
@@ -51,18 +46,18 @@ h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-title);
     text-transform: uppercase;
     font-weight: bold;
-    color: var(--primary-green);
+    color: var(--holberton-primary); /* Use Holberton primary for headings */
 }
 
 a {
-    color: var(--primary-green);
+    color: var(--holberton-primary); /* Use Holberton primary for links */
     text-decoration: none;
     transition: var(--transition);
 }
 
 a:hover {
     text-decoration: underline;
-    color: var(--secondary-green);
+    color: var(--holberton-magenta); /* Use Holberton magenta on hover */
 }
 
 .btn {
@@ -84,40 +79,55 @@ a:hover {
 }
 
 .btn-primary {
-    background: linear-gradient(45deg, var(--primary-green), var(--secondary-green));
-    color: var(--matrix-black) !important;
-    box-shadow: var(--shadow-glow);
+    background-color: var(--holberton-primary);
+    border-color: var(--holberton-primary);
+    color: var(--holberton-light) !important; /* Text color for primary button */
+    box-shadow: 0 4px 15px rgba(225, 0, 60, 0.4); /* Shadow based on primary color */
 }
 
 .btn-primary:hover {
+    background-color: var(--holberton-magenta);
+    border-color: var(--holberton-magenta);
     transform: translateY(-2px);
-    box-shadow: 0 0 30px rgba(0, 255, 65, 0.6);
+    box-shadow: 0 6px 20px rgba(255, 0, 191, 0.6); /* More intense magenta shadow */
 }
 
 .btn-secondary {
     background: transparent;
-    color: var(--primary-green);
-    border: 2px solid var(--primary-green);
+    color: var(--holberton-primary);
+    border: 2px solid var(--holberton-primary);
 }
 
 .btn-secondary:hover {
-    background: var(--primary-green);
-    color: var(--matrix-black);
-    box-shadow: var(--shadow-glow);
+    background: var(--holberton-primary);
+    color: var(--holberton-light);
+    box-shadow: 0 4px 15px rgba(225, 0, 60, 0.4);
 }
 
 .btn-outline {
     background: transparent;
-    color: var(--primary-green);
-    border: 1px solid var(--primary-green);
+    color: var(--holberton-primary);
+    border: 1px solid var(--holberton-primary);
 }
 
 .btn-outline:hover {
-    background: var(--primary-green);
-    color: var(--matrix-black);
-    box-shadow: var(--shadow-glow);
+    background: var(--holberton-primary);
+    color: var(--holberton-light);
+    box-shadow: 0 4px 15px rgba(225, 0, 60, 0.4);
 }
 
+.card, .box {
+    background: var(--holberton-dark);
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    padding: 2em;
+    margin: 1em 0;
+    border: 1px solid var(--holberton-grey);
+}
+
+/* ======================================== 
+    MATRIX BACKGROUND EFFECTS (Adjusted to Holberton palette)
+   ======================================== */
 .matrix-bg {
     position: fixed;
     top: 0;
@@ -125,7 +135,7 @@ a:hover {
     width: 100%;
     height: 100%;
     z-index: -1;
-    background: var(--matrix-black);
+    background: var(--holberton-dark); /* Use Holberton dark for base background */
     overflow: hidden;
 }
 
@@ -137,9 +147,9 @@ a:hover {
     width: 100%;
     height: 100%;
     background: 
-        radial-gradient(circle at 20% 20%, rgba(0, 255, 65, 0.1) 0%, transparent 50%),
-        radial-gradient(circle at 80% 80%, rgba(0, 255, 65, 0.1) 0%, transparent 50%),
-        radial-gradient(circle at 60% 40%, rgba(0, 255, 65, 0.05) 0%, transparent 50%);
+        radial-gradient(circle at 20% 20%, rgba(225, 0, 60, 0.1) 0%, transparent 50%), /* Holberton primary glow */
+        radial-gradient(circle at 80% 80%, rgba(225, 0, 60, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 60% 40%, rgba(225, 0, 60, 0.05) 0%, transparent 50%);
     animation: matrixGlow 6s ease-in-out infinite alternate;
 }
 
@@ -152,12 +162,12 @@ a:hover {
     white-space: pre;
     font-family: 'Source Code Pro', monospace;
     font-size: 16px;
-    color: rgba(0, 255, 65, 0.5);
+    color: rgba(225, 0, 60, 0.5); /* Holberton primary glow */
     z-index: 1;
     animation: asciiFloat 10s ease-in-out infinite;
     line-height: 1;
     letter-spacing: 0;
-    text-shadow: 0 0 15px rgba(0, 255, 65, 0.4);
+    text-shadow: 0 0 15px rgba(225, 0, 60, 0.4);
 }
 
 @keyframes asciiFloat {
@@ -198,11 +208,13 @@ a:hover {
     }
 }
 
-/* Navigation */
+/* ======================================== 
+    NAVIGATION
+   ======================================== */
 .navbar {
-    background: rgba(13, 17, 23, 0.95);
+    background: rgba(41, 38, 39, 0.95); /* Use holberton-dark with transparency */
     backdrop-filter: blur(10px);
-    border-bottom: 1px solid var(--dark-border);
+    border-bottom: 1px solid var(--holberton-grey);
     position: fixed;
     top: 0;
     width: 100%;
@@ -229,13 +241,13 @@ a:hover {
     font-family: var(--font-title);
     font-size: 1.5rem;
     font-weight: 900;
-    color: var(--primary-green);
-    text-shadow: 0 0 10px var(--primary-green);
+    color: var(--holberton-primary); /* Use Holberton primary */
+    text-shadow: 0 0 10px rgba(225, 0, 60, 0.4);
 }
 
 .logo-subtext {
     font-size: 0.8rem;
-    color: var(--text-muted);
+    color: var(--holberton-light); /* Use Holberton light */
     margin-top: -5px;
 }
 
@@ -245,7 +257,7 @@ a:hover {
 }
 
 .nav-link {
-    color: var(--text-light);
+    color: var(--holberton-light); /* Use Holberton light */
     text-decoration: none;
     font-weight: 400;
     transition: var(--transition);
@@ -253,8 +265,8 @@ a:hover {
 }
 
 .nav-link:hover {
-    color: var(--primary-green);
-    text-shadow: 0 0 5px var(--primary-green);
+    color: var(--holberton-primary); /* Use Holberton primary */
+    text-shadow: 0 0 5px rgba(225, 0, 60, 0.4);
 }
 
 .nav-link::after {
@@ -264,7 +276,7 @@ a:hover {
     left: 0;
     width: 0;
     height: 2px;
-    background: var(--primary-green);
+    background: var(--holberton-primary); /* Use Holberton primary */
     transition: width 0.3s ease;
 }
 
@@ -282,11 +294,13 @@ a:hover {
 .hamburger span {
     width: 25px;
     height: 3px;
-    background: var(--primary-green);
+    background: var(--holberton-primary); /* Use Holberton primary */
     transition: var(--transition);
 }
 
-/* Main Content */
+/* ======================================== 
+    MAIN CONTENT
+   ======================================== */
 .main-content {
     margin-top: 80px;
     min-height: calc(100vh - 160px);
@@ -298,74 +312,24 @@ a:hover {
     padding: 0 2rem;
 }
 
-/* Buttons */
-.btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.75rem 1.5rem;
-    border: none;
-    border-radius: var(--border-radius);
-    font-family: var(--font-title);
-    font-weight: 600;
-    text-decoration: none;
-    cursor: pointer;
-    transition: var(--transition);
-    position: relative;
-    overflow: hidden;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.btn-primary {
-    background: linear-gradient(45deg, var(--primary-green), var(--secondary-green));
-    color: var(--matrix-black) !important;
-    box-shadow: var(--shadow-glow);
-}
-
-.btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 0 30px rgba(0, 255, 65, 0.6);
-}
-
-.btn-secondary {
-    background: transparent;
-    color: var(--primary-green);
-    border: 2px solid var(--primary-green);
-}
-
-.btn-secondary:hover {
-    background: var(--primary-green);
-    color: var(--matrix-black);
-    box-shadow: var(--shadow-glow);
-}
-
-.btn-outline {
-    background: transparent;
-    color: var(--primary-green);
-    border: 1px solid var(--primary-green);
-}
-
-.btn-outline:hover {
-    background: var(--primary-green);
-    color: var(--matrix-black);
-    box-shadow: var(--shadow-glow);
-}
-
-/* Footer */
+/* ======================================== 
+    FOOTER
+   ======================================== */
 .footer {
-    background: var(--matrix-dark);
-    border-top: 1px solid var(--dark-border);
+    background: var(--holberton-dark); /* Use Holberton dark */
+    border-top: 1px solid var(--holberton-grey); /* Use Holberton grey */
     padding: 2rem 0;
     text-align: center;
 }
 
 .footer-content p {
-    color: var(--text-muted);
+    color: var(--holberton-grey); /* Use Holberton grey */
     margin: 0.5rem 0;
 }
 
-/* Utility Classes */
+/* ======================================== 
+    UTILITY CLASSES
+   ======================================== */
 .hidden {
     display: none !important;
 }
@@ -396,7 +360,9 @@ a:hover {
 .mt-3 { margin-top: 1.5rem; }
 .mt-4 { margin-top: 2rem; }
 
-/* Responsive Design */
+/* ======================================== 
+    RESPONSIVE DESIGN (General)
+   ======================================== */
 @media (max-width: 768px) {
     .nav-menu {
         display: none;
@@ -413,26 +379,30 @@ a:hover {
     }
 }
 
-/* Scrollbar */
+/* ======================================== 
+    SCROLLBAR CUSTOMIZATION
+   ======================================== */
 ::-webkit-scrollbar {
     width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-    background: var(--matrix-dark);
+    background: var(--holberton-dark);
 }
 
 ::-webkit-scrollbar-thumb {
-    background: var(--primary-green);
+    background: var(--holberton-primary);
     border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: var(--secondary-green);
+    background: var(--holberton-magenta);
 }
 
-/* Selection */
+/* ======================================== 
+    TEXT SELECTION
+   ======================================== */
 ::selection {
-    background: rgba(0, 255, 65, 0.3);
-    color: var(--text-light);
+    background: rgba(225, 0, 60, 0.3); /* Holberton primary with transparency */
+    color: var(--holberton-light);
 }

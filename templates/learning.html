@@ -1,280 +1,203 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Learning Hub - Holbies Learning Hub</title>
-    <link rel="stylesheet" href="/static/css/main.css">
-    <link rel="stylesheet" href="/static/css/learning.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Source+Code+Pro:wght@300;400;600&display=swap" rel="stylesheet">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
-</head>
-<body>
-    <div class="matrix-bg"></div>
+{% extends "base.html" %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="/static/css/learning.css">
+{% endblock %}
+
+{% block content %}
+<div class="learning-container">
+            
+    <!-- En-tête principal -->
+    <div class="learning-header">
+        <h1>🎓 Learning Hub</h1>
+        <p class="learning-subtitle">Choisissez votre mode d'apprentissage et testez vos connaissances</p>
+    </div>
     
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="nav-logo">
-                <span class="logo-text">HOLBIES</span>
-                <span class="logo-subtext">LEARNING</span>
+    <!-- Section d'information générale -->
+    <div class="learning-info-section">
+        <div class="info-grid">
+            <div class="info-item">
+                <span class="info-icon">📊</span>
+                <h3 class="info-title">Suivi des Progrès</h3>
+                <p class="info-description">Suivez vos performances et identifiez vos points d'amélioration</p>
             </div>
-            <div class="nav-menu" id="nav-menu">
-                <a href="/" class="nav-link">Accueil</a>
-                <a href="/learning" class="nav-link active">Learning Hub</a>
-                <a href="/tutor" class="nav-link">HLH Tutor</a>
-                <a href="/dashboard" class="nav-link">Dashboard</a>
-                {% if is_authenticated %}
-                    <span class="nav-user">👋 {{ username }}</span>
-                    <a href="/logout" class="nav-link" id="auth-link">Déconnexion</a>
-                {% else %}
-                    <a href="/auth/login-demo" class="nav-link" id="auth-link">Connexion (Demo)</a>
-                {% endif %}
+            <div class="info-item">
+                <span class="info-icon">🎯</span>
+                <h3 class="info-title">Apprentissage Adaptatif</h3>
+                <p class="info-description">Deux modes d'apprentissage pour différents styles d'étude</p>
             </div>
-            <div class="hamburger" id="hamburger">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-        </div>
-    </nav>
-
-    <main class="main-content">
-        <div class="learning-container">
-            
-            <!-- En-tête principal -->
-            <div class="learning-header">
-                <h1>🎓 Learning Hub</h1>
-                <p class="learning-subtitle">Choisissez votre mode d'apprentissage et testez vos connaissances</p>
-            </div>
-            
-            <!-- Section d'information générale -->
-            <div class="learning-info-section">
-                <div class="info-grid">
-                    <div class="info-item">
-                        <span class="info-icon">📊</span>
-                        <h3 class="info-title">Suivi des Progrès</h3>
-                        <p class="info-description">Suivez vos performances et identifiez vos points d'amélioration</p>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-icon">🎯</span>
-                        <h3 class="info-title">Apprentissage Adaptatif</h3>
-                        <p class="info-description">Deux modes d'apprentissage pour différents styles d'étude</p>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-icon">🚀</span>
-                        <h3 class="info-title">Amélioration Continue</h3>
-                        <p class="info-description">Feedback détaillé pour progresser efficacement</p>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Sélecteur de mode d'apprentissage -->
-            <div class="learning-mode-selector">
-                <div class="mode-card" data-mode="quiz">
-                    <span class="mode-icon">📝</span>
-                    <h3 class="mode-title">Quiz Classique</h3>
-                    <p class="mode-description">Questions à choix multiples avec correction instantanée</p>
-                    <ul class="mode-features">
-                        <li>10 questions techniques</li>
-                        <li>Choix multiples</li>
-                        <li>Correction immédiate</li>
-                        <li>Explications détaillées</li>
-                        <li>Score en temps réel</li>
-                    </ul>
-                </div>
-                
-                <div class="mode-card" data-mode="ai-quiz">
-                    <span class="mode-icon">🤖</span>
-                    <h3 class="mode-title">PLD (Peer Learning Day)</h3>
-                    <p class="mode-description">Réponses libres corrigées par intelligence artificielle</p>
-                    <ul class="mode-features">
-                        <li>Réponses en texte libre</li>
-                        <li>Correction IA avancée</li>
-                        <li>Bonus termes techniques</li>
-                        <li>Feedback personnalisé</li>
-                        <li>Analyse sémantique</li>
-                    </ul>
-                </div>
-            </div>
-            
-            <!-- Zone de contenu dynamique -->
-            <div class="learning-content">
-                
-                <!-- Mode Quiz Classique -->
-                <div class="quiz-mode" id="quiz-mode">
-                    <div class="mode-switcher">
-                        <button class="mode-switch-btn active" data-target="quiz">📝 Quiz Classique</button>
-                        <button class="mode-switch-btn" data-target="ai-quiz">🤖 PLD</button>
-                    </div>
-                    
-                    <div class="quiz-container">
-                        <div class="quiz-header">
-                            <h1 class="quiz-title">Quiz Technique</h1>
-                            <div class="quiz-info">
-                                <span class="quiz-question-counter">Question <span id="current-question">1</span> sur <span id="total-questions">10</span></span>
-                                <span class="quiz-timer" id="timer">00:00</span>
-                            </div>
-                        </div>
-                        
-                        <div class="quiz-progress">
-                            <div class="progress-bar">
-                                <div class="progress-fill" id="progress-fill"></div>
-                            </div>
-                        </div>
-                        
-                        <div class="quiz-content" id="quiz-content">
-                            <!-- Quiz Start Screen -->
-                            <div class="quiz-start" id="quiz-start">
-                                <div class="start-info">
-                                    <h2>Prêt à tester vos connaissances ?</h2>
-                                    <div class="quiz-rules">
-                                        <h3>Règles du quiz :</h3>
-                                        <ul>
-                                            <li>10 questions à choix multiples</li>
-                                            <li>Une seule réponse correcte par question</li>
-                                            <li>Pas de limite de temps</li>
-                                            <li>Correction instantanée avec explications</li>
-                                        </ul>
-                                    </div>
-                                    <button class="btn btn-primary" id="start-quiz-btn">Commencer le Quiz</button>
-                                </div>
-                            </div>
-                            
-                            <!-- Quiz Question -->
-                            <div class="quiz-question hidden" id="quiz-question">
-                                <div class="question-content">
-                                    <h2 class="question-text" id="question-text"></h2>
-                                    <div class="question-options" id="question-options">
-                                        <!-- Options will be inserted here -->
-                                    </div>
-                                    <button class="btn btn-primary" id="submit-answer-btn" disabled>Valider</button>
-                                </div>
-                            </div>
-                            
-                            <!-- Quiz Results -->
-                            <div class="quiz-results hidden" id="quiz-results">
-                                <div class="results-content">
-                                    <h2>Résultats du Quiz</h2>
-                                    <div class="score-display">
-                                        <div class="score-circle">
-                                            <span class="score-value" id="score-value">0</span>
-                                            <span class="score-total">/ 10</span>
-                                        </div>
-                                        <div class="score-percentage" id="score-percentage">0%</div>
-                                    </div>
-                                    <div class="results-details" id="results-details">
-                                        <!-- Results details will be inserted here -->
-                                    </div>
-                                    <div class="results-actions">
-                                        <button class="btn btn-primary" id="retake-quiz-btn">Refaire le Quiz</button>
-                                        <a href="/dashboard" class="btn btn-secondary">Voir le Dashboard</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Mode AI Quiz (PLD) -->
-                <div class="ai-quiz-mode" id="ai-quiz-mode">
-                    <div class="mode-switcher">
-                        <button class="mode-switch-btn" data-target="quiz">📝 Quiz Classique</button>
-                        <button class="mode-switch-btn active" data-target="ai-quiz">🤖 PLD</button>
-                    </div>
-                    
-                    <!-- Contenu du PLD (repris de ai-quiz.html) -->
-                    <!-- Écran de démarrage PLD -->
-                    <section id="ai-quiz-start" class="quiz-section">
-                        <div class="quiz-header">
-                            <h1 class="glitch" data-text="PLD">PLD</h1>
-                            <p class="quiz-subtitle">Peer Learning Day</p>
-                        </div>
-                        
-                        <div class="ai-start-info">
-                            <h3>🧠 Comment fonctionne le PLD ?</h3>
-                            <ul>
-                                <li><strong>Réponses libres :</strong> Répondez avec vos propres mots en texte libre</li>
-                                <li><strong>Correction automatique :</strong> L'IA analyse votre réponse et la compare à la réponse attendue</li>
-                                <li><strong>Scoring intelligent :</strong> 70% pour la similarité, 30% pour l'usage de termes techniques</li>
-                                <li><strong>Bonus technique :</strong> +5 points par terme technique utilisé correctement</li>
-                                <li><strong>Feedback détaillé :</strong> Explication personnalisée de votre performance</li>
-                            </ul>
-                        </div>
-                        
-                        <div class="quiz-actions">
-                            <button id="start-ai-quiz-btn" class="btn btn-primary btn-large">
-                                <span>🚀 Commencer le PLD</span>
-                                <div class="btn-loading"></div>
-                            </button>
-                        </div>
-                        
-                        <div class="quiz-stats">
-                            <div class="stat-item">
-                                <div class="stat-number" id="ai-total-questions">5</div>
-                                <div class="stat-label">Questions</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-number">100</div>
-                                <div class="stat-label">Points/Question</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-number">∞</div>
-                                <div class="stat-label">Apprentissage</div>
-                            </div>
-                        </div>
-                    </section>
-                    
-                    <!-- Les autres sections du PLD seraient ajoutées ici -->
-                    <!-- ... (sections question, résultats, etc.) ... -->
-                    
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <!-- Modals -->
-    <!-- Quiz Modal -->
-    <div class="modal hidden" id="answer-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="modal-title">Résultat</h3>
-                <button class="modal-close" id="modal-close">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="answer-feedback" id="answer-feedback">
-                    <!-- Feedback content will be inserted here -->
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-primary" id="next-question-btn">Question Suivante</button>
+            <div class="info-item">
+                <span class="info-icon">🚀</span>
+                <h3 class="info-title">Amélioration Continue</h3>
+                <p class="info-description">Feedback détaillé pour progresser efficacement</p>
             </div>
         </div>
     </div>
-
-    <!-- AI Quiz Modal -->
-    <div id="ai-answer-modal" class="ai-modal hidden">
-        <div class="ai-modal-content">
-            <h2 id="ai-modal-title">Résultat de la correction</h2>
-            <div id="ai-answer-feedback">
-                <!-- Contenu généré dynamiquement -->
+    
+    <!-- Sélecteur de mode d'apprentissage -->
+    <div class="learning-mode-selector">
+        <div class="mode-card" data-mode="quiz">
+            <span class="mode-icon">📝</span>
+            <h3 class="mode-title">Quiz Classique</h3>
+            <p class="mode-description">Questions à choix multiples avec correction instantanée</p>
+            <ul class="mode-features">
+                <li>10 questions techniques</li>
+                <li>Choix multiples</li>
+                <li>Correction immédiate</li>
+                <li>Explications détaillées</li>
+                <li>Score en temps réel</li>
+            </ul>
+        </div>
+        
+        <div class="mode-card" data-mode="ai-quiz">
+            <span class="mode-icon">🤖</span>
+            <h3 class="mode-title">PLD (Peer Learning Day)</h3>
+            <p class="mode-description">Réponses libres corrigées par intelligence artificielle</p>
+            <ul class="mode-features">
+                <li>Réponses en texte libre</li>
+                <li>Correction IA avancée</li>
+                <li>Bonus termes techniques</li>
+                <li>Feedback personnalisé</li>
+                <li>Analyse sémantique</li>
+            </ul>
+        </div>
+    </div>
+    
+    <!-- Zone de contenu dynamique -->
+    <div class="learning-content">
+        
+        <!-- Mode Quiz Classique -->
+        <div class="quiz-mode" id="quiz-mode">
+            <div class="mode-switcher">
+                <button class="mode-switch-btn active" data-target="quiz">📝 Quiz Classique</button>
+                <button class="mode-switch-btn" data-target="ai-quiz">🤖 PLD</button>
             </div>
-            <div class="modal-actions">
-                <button id="next-ai-question-btn" class="btn btn-primary">
-                    <span>Question Suivante</span>
-                </button>
+            
+            <div class="quiz-container">
+                <div class="quiz-header">
+                    <h1 class="quiz-title">Quiz Technique</h1>
+                    <div class="quiz-info">
+                        <span class="quiz-question-counter">Question <span id="current-question">1</span> sur <span id="total-questions">10</span></span>
+                        <span class="quiz-timer" id="timer">00:00</span>
+                    </div>
+                </div>
+                
+                <div class="quiz-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
+                </div>
+                
+                <div class="quiz-content" id="quiz-content">
+                    <!-- Quiz Start Screen -->
+                    <div class="quiz-start" id="quiz-start">
+                        <div class="start-info">
+                            <h2>Prêt à tester vos connaissances ?</h2>
+                            <div class="quiz-rules">
+                                <h3>Règles du quiz :</h3>
+                                <ul>
+                                    <li>10 questions à choix multiples</li>
+                                    <li>Une seule réponse correcte par question</li>
+                                    <li>Pas de limite de temps</li>
+                                    <li>Correction instantanée avec explications</li>
+                                </ul>
+                            </div>
+                            <button class="btn btn-primary" id="start-quiz-btn">Commencer le Quiz</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Quiz Question -->
+                    <div class="quiz-question hidden" id="quiz-question">
+                        <div class="question-content">
+                            <h2 class="question-text" id="question-text"></h2>
+                            <div class="question-options" id="question-options">
+                                <!-- Options will be inserted here -->
+                            </div>
+                            <button class="btn btn-primary" id="submit-answer-btn" disabled>Valider</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Quiz Results -->
+                    <div class="quiz-results hidden" id="quiz-results">
+                        <div class="results-content">
+                            <h2>Résultats du Quiz</h2>
+                            <div class="score-display">
+                                <div class="score-circle">
+                                    <span class="score-value" id="score-value">0</span>
+                                    <span class="score-total">/ 10</span>
+                                </div>
+                                <div class="score-percentage" id="score-percentage">0%</div>
+                            </div>
+                            <div class="results-details" id="results-details">
+                                <!-- Results details will be inserted here -->
+                            </div>
+                            <div class="results-actions">
+                                <button class="btn btn-primary" id="retake-quiz-btn">Refaire le Quiz</button>
+                                <a href="/dashboard" class="btn btn-secondary">Voir le Dashboard</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Mode AI Quiz (PLD) -->
+            <div class="ai-quiz-mode" id="ai-quiz-mode">
+                <div class="mode-switcher">
+                    <button class="mode-switch-btn" data-target="quiz">📝 Quiz Classique</button>
+                    <button class="mode-switch-btn active" data-target="ai-quiz">🤖 PLD</button>
+                </div>
+                
+                <!-- Contenu du PLD (repris de ai-quiz.html) -->
+                <!-- Écran de démarrage PLD -->
+                <section id="ai-quiz-start" class="quiz-section">
+                    <div class="quiz-header">
+                        <h1 class="glitch" data-text="PLD">PLD</h1>
+                        <p class="quiz-subtitle">Peer Learning Day</p>
+                    </div>
+                    
+                    <div class="ai-start-info">
+                        <h3>🧠 Comment fonctionne le PLD ?</h3>
+                        <ul>
+                            <li><strong>Réponses libres :</strong> Répondez avec vos propres mots en texte libre</li>
+                            <li><strong>Correction automatique :</strong> L'IA analyse votre réponse et la compare à la réponse attendue</li>
+                            <li><strong>Scoring intelligent :</strong> 70% pour la similarité, 30% pour l'usage de termes techniques</li>
+                            <li><strong>Bonus technique :</strong> +5 points par terme technique utilisé correctement</li>
+                            <li><strong>Feedback détaillé :</strong> Explication personnalisée de votre performance</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="quiz-actions">
+                        <button id="start-ai-quiz-btn" class="btn btn-primary btn-large">
+                            <span>🚀 Commencer le PLD</span>
+                            <div class="btn-loading"></div>
+                        </button>
+                    </div>
+                    
+                    <div class="quiz-stats">
+                        <div class="stat-item">
+                            <div class="stat-number" id="ai-total-questions">5</div>
+                            <div class="stat-label">Questions</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">100</div>
+                            <div class="stat-label">Points/Question</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">∞</div>
+                            <div class="stat-label">Apprentissage</div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Les autres sections du PLD seraient ajoutées ici -->
+                <!-- ... (sections question, résultats, etc.) ... -->
+                
             </div>
         </div>
     </div>
+{% endblock %}
 
-    <footer class="footer">
-        <div class="footer-content">
-            <p>&copy; 2025 Holbies Learning Hub. Learning Hub - Centre d'apprentissage unifié.</p>
-            <p>Quiz classique et PLD dans une seule interface</p>
-        </div>
-    </footer>
-
-    <script src="/static/js/main.js"></script>
-    <script src="/static/js/learning.js"></script>
-</body>
-</html>
+{% block scripts %}
+<script src="/static/js/learning.js"></script>
+{% endblock %}
 

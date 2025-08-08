@@ -4,6 +4,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (registerForm) {
         registerForm.addEventListener('submit', handleRegister);
     }
+
+    // Initialize auth visual animation if present
+    if (window.holbiesApp && document.querySelector('.auth-visual')) {
+        window.holbiesApp.animateAuthVisual();
+    }
+
+    // Initialize password strength indicator
+    if (window.holbiesApp && window.holbiesApp.addPasswordStrengthIndicator) {
+        window.holbiesApp.addPasswordStrengthIndicator();
+    }
 });
 
 async function handleRegister(e) {

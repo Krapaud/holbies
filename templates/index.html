@@ -5,118 +5,77 @@
 {% endblock %}
 
 {% block content %}
-<section class="hero">
-    <div class="hero-content">
-        <h1 class="hero-title">
-            <span class="glitch" data-text="HOLBIES">HOLBIES</span>
-            <span class="hero-subtitle">Learning Hub</span>
-        </h1>
-        <p class="hero-description">
-            Système de quiz interactif pour développeurs.<br>
-            Testez vos connaissances avec plus de 100 questions techniques.
-        </p>
-        <div class="hero-features">
-            <div class="feature-badge">
-                <span class="badge-icon">🎯</span>
-                <span class="badge-text">Questions C</span>
-            </div>
-            <div class="feature-badge">
-                <span class="badge-icon">⚡</span>
-                <span class="badge-text">Exécution Multi-Langages</span>
-            </div>
-            <div class="feature-badge">
-                <span class="badge-icon">🏆</span>
-                <span class="badge-text">Style Holberton</span>
-            </div>
-            <div class="feature-badge">
-                <span class="badge-icon">📈</span>
-                <span class="badge-text">Progression</span>
+<section class="hero-section">
+    <div class="container">
+        <div class="hero-content">
+            <h1 class="hero-title"></h1>
+            <p class="hero-subtitle"></p>
+            <p class="hero-description">Découvrez une nouvelle façon d'apprendre et de maîtriser les compétences techniques essentielles.</p>
+            <div class="hero-buttons">
+                <a href="/learning" class="btn btn-primary">Commencer l'apprentissage</a>
+                <a href="#features" class="btn btn-secondary">Découvrir les fonctionnalités</a>
             </div>
         </div>
-    </div>
-    <div class="hero-visual">
-        <div class="code-rain">
-            <div class="code-line">def holbies_quiz():</div>
-            <div class="code-line">    return "Holbies Learning Hub"</div>
-            <div class="code-line">if __name__ == "__main__":</div>
-            <div class="code-line">    holbies_quiz()</div>
+        <div class="hero-image">
+            <!-- Placeholder for a relevant image or animation -->
+            <img src="/static/images/holberton-hero.png" alt="Holberton Learning Hub" class="responsive-image">
         </div>
     </div>
 </section>
 
-<section class="features">
+<section id="features" class="features-section">
     <div class="container">
-        <h2 class="section-title">Learning Hub</h2>
-        <p class="section-subtitle">Deux modes d'apprentissage pour développer vos compétences</p>
-        <div class="learning-modes-grid">
-            <div class="learning-mode-card">
-                <div class="mode-icon">📝</div>
-                <h3>Quiz Classique</h3>
-                <p>Questions à choix multiples avec correction instantanée</p>
-                <ul class="mode-features">
-                    <li>✓ 10 questions techniques</li>
-                    <li>✓ Choix multiples</li>
-                    <li>✓ Explications détaillées</li>
-                </ul>
-                <a href="/learning" class="btn btn-outline">Essayer</a>
-            </div>
-            <div class="learning-mode-card">
-                <div class="mode-icon">😺</div>
-                <h3>PLD (Peer Learning Day)</h3>
-                <p>Réponses libres corrigées par intelligence artificielle</p>
-                <ul class="mode-features">
-                    <li>✓ Réponses en texte libre</li>
-                    <li>✓ Correction IA avancée</li>
-                    <li>✓ Feedback personnalisé</li>
-                </ul>
-                <a href="/learning" class="btn btn-outline">Découvrir</a>
-            </div>
-        </div>
-    </div>
-</section>
-
-<section class="features">
-    <div class="container">
-        <h2 class="section-title">Fonctionnalités</h2>
+        <h2 class="section-heading">Nos Fonctionnalités Clés</h2>
         <div class="features-grid">
-            <div class="feature-card">
-                <div class="feature-icon">💻</div>
-                <h3>Quiz Technique</h3>
-                <p>Plus de 100 questions couvrant différents domaines de la programmation</p>
+            <div class="feature-item">
+                <i class="feature-icon fas fa-brain"></i>
+                <h3>Quiz Intelligents</h3>
+                <p>Des questions techniques variées pour tester vos connaissances.</p>
             </div>
-            <div class="feature-card">
-                <div class="feature-icon">🔐</div>
-                <h3>Authentification Sécurisée</h3>
-                <p>Système d'authentification JWT pour protéger vos données</p>
+            <div class="feature-item">
+                <i class="feature-icon fas fa-robot"></i>
+                <h3>Correction IA</h3>
+                <p>Obtenez un feedback instantané et personnalisé sur vos réponses.</p>
             </div>
-            <div class="feature-card">
-                <div class="feature-icon">📊</div>
-                <h3>Suivi des Progrès</h3>
-                <p>Dashboard personnel pour suivre vos résultats et performances</p>
+            <div class="feature-item">
+                <i class="feature-icon fas fa-chart-line"></i>
+                <h3>Suivi de Progrès</h3>
+                <p>Visualisez votre évolution et identifiez vos points forts et faibles.</p>
             </div>
-            <div class="feature-card">
-                <div class="feature-icon">⚡</div>
-                <h3>Correcteur Automatique</h3>
-                <p>Correction instantanée avec explications détaillées</p>
+            <div class="feature-item">
+                <i class="feature-icon fas fa-code"></i>
+                <h3>Environnement de Code</h3>
+                <p>Pratiquez vos compétences de codage directement dans le navigateur.</p>
             </div>
         </div>
     </div>
 </section>
 
-<section class="stats">
+<section class="cta-section">
     <div class="container">
+        <div class="cta-content">
+            <h2>Prêt à transformer votre apprentissage ?</h2>
+            <p>Rejoignez des milliers d'étudiants et commencez votre parcours vers l'excellence technique.</p>
+            <a href="/register" class="btn btn-primary">S'inscrire maintenant</a>
+        </div>
+    </div>
+</section>
+
+<section class="stats-section">
+    <div class="container">
+        <h2 class="section-heading">Notre Impact en Chiffres</h2>
         <div class="stats-grid">
             <div class="stat-item">
-                <div class="stat-number">100+</div>
-                <div class="stat-label">Questions</div>
+                <span class="stat-number">100+</span>
+                <p class="stat-label">Questions disponibles</p>
             </div>
             <div class="stat-item">
-                <div class="stat-number">5+</div>
-                <div class="stat-label">Catégories</div>
+                <span class="stat-number">5000+</span>
+                <p class="stat-label">Utilisateurs inscrits</p>
             </div>
             <div class="stat-item">
-                <div class="stat-number">∞</div>
-                <div class="stat-label">Apprentissage</div>
+                <span class="stat-number">95%</span>
+                <p class="stat-label">Taux de satisfaction</p>
             </div>
         </div>
     </div>
