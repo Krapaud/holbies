@@ -97,7 +97,7 @@ print('✅ Tables créées avec succès')
 
 # Peupler la base de données
 print_status "Peuplement de la base de données avec les questions..."
-python3 populate_db.py
+python scripts/init_db.py
 
 # Démarrer le serveur
 print_success "🎉 Configuration terminée!"

@@ -3,29 +3,28 @@
    Fichier CSS unifié pour toutes les pages
    ======================================== */
 
-/* Variables CSS pour le thème Matrix */
+/* Variables CSS pour le thème Holberton */
 :root {
-    --primary-green: #00ff41;
-    --secondary-green: #008f11;
-    --dark-green: #003b00;
-    --matrix-black: #0d1117;
-    --matrix-dark: #161b22;
-    --matrix-gray: #21262d;
-    --text-light: #c9d1d9;
-    --text-muted: #8b949e;
-    --accent-blue: #58a6ff;
-    --danger-red: #f85149;
-    --warning-yellow: #f2cc60;
-    --success-green: #3fb950;
+    --primary-blue: #007bff; /* Holberton-like primary color */
+    --secondary-blue: #0056b3;
+    --accent-purple: #6f42c1; /* A complementary accent */
+    --dark-bg: #1a1a2e; /* Dark background */
+    --dark-card: #16213e; /* Slightly lighter dark for cards */
+    --dark-border: #0f3460; /* Darker blue for borders */
+    --text-light: #e0e0e0; /* Light text for dark backgrounds */
+    --text-muted: #a0a0a0; /* Muted text */
+    --danger-red: #dc3545;
+    --warning-yellow: #ffc107;
+    --success-green: #28a745;
     
-    --font-main: 'Source Code Pro', monospace;
-    --font-title: 'Orbitron', monospace;
+    --font-main: 'Inter', sans-serif; /* Modern sans-serif */
+    --font-title: 'Roboto', sans-serif; /* Clean sans-serif for titles */
     
-    --shadow-glow: 0 0 20px rgba(0, 255, 65, 0.3);
-    --shadow-deep: 0 10px 30px rgba(0, 0, 0, 0.5);
+    --shadow-subtle: 0 4px 15px rgba(0, 0, 0, 0.2);
+    --shadow-deep: 0 10px 30px rgba(0, 0, 0, 0.4);
     
     --border-radius: 8px;
-    --transition: all 0.3s ease;
+    --transition: all 0.3s ease-in-out;
 }
 
 /* ========================================
@@ -39,7 +38,7 @@
 
 body {
     font-family: var(--font-main);
-    background-color: var(--matrix-black);
+    background-color: var(--dark-bg);
     color: var(--text-light);
     line-height: 1.6;
     overflow-x: hidden;
@@ -53,46 +52,20 @@ body {
     width: 100%;
     height: 100%;
     z-index: -1;
-    background: var(--matrix-black);
+    background: var(--dark-bg);
     overflow: hidden;
 }
 
-.matrix-bg::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: 
-        radial-gradient(circle at 20% 20%, rgba(0, 255, 65, 0.1) 0%, transparent 50%),
-        radial-gradient(circle at 80% 80%, rgba(0, 255, 65, 0.1) 0%, transparent 50%),
-        radial-gradient(circle at 60% 40%, rgba(0, 255, 65, 0.05) 0%, transparent 50%);
-    animation: matrixGlow 6s ease-in-out infinite alternate;
-}
 
-@keyframes matrixGlow {
-    0% { opacity: 0.5; }
-    100% { opacity: 1; }
-}
 
-@keyframes borderGlow {
-    0%, 100% { 
-        border-color: var(--primary-green);
-        box-shadow: 0 0 20px rgba(0, 255, 65, 0.3);
-    }
-    50% { 
-        border-color: var(--secondary-green);
-        box-shadow: 0 0 40px rgba(0, 255, 65, 0.6);
-    }
-}
+
 
 /* ========================================
    TYPOGRAPHY
    ======================================== */
 h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-title);
-    color: var(--primary-green);
+    color: var(--primary-blue);
     margin-bottom: 1rem;
 }
 
@@ -100,9 +73,9 @@ h1, h2, h3, h4, h5, h6 {
    NAVIGATION
    ======================================== */
 .navbar {
-    background: rgba(13, 17, 23, 0.95);
+    background: rgba(26, 26, 46, 0.95); /* Using dark-bg with transparency */
     backdrop-filter: blur(10px);
-    border-bottom: 1px solid var(--matrix-gray);
+    border-bottom: 1px solid var(--dark-border);
     position: fixed;
     top: 0;
     width: 100%;
@@ -129,8 +102,8 @@ h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-title);
     font-size: 1.5rem;
     font-weight: 900;
-    color: var(--primary-green);
-    text-shadow: 0 0 10px var(--primary-green);
+    color: var(--primary-blue);
+    text-shadow: 0 0 10px var(--primary-blue);
 }
 
 .logo-subtext {
@@ -153,8 +126,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .nav-link:hover {
-    color: var(--primary-green);
-    text-shadow: 0 0 5px var(--primary-green);
+    color: var(--primary-blue);
+    text-shadow: 0 0 5px var(--primary-blue);
 }
 
 .nav-link::after {
@@ -164,7 +137,7 @@ h1, h2, h3, h4, h5, h6 {
     left: 0;
     width: 0;
     height: 2px;
-    background: var(--primary-green);
+    background: var(--primary-blue);
     transition: width 0.3s ease;
 }
 
@@ -182,7 +155,7 @@ h1, h2, h3, h4, h5, h6 {
 .hamburger span {
     width: 25px;
     height: 3px;
-    background: var(--primary-green);
+    background: var(--primary-blue);
     transition: var(--transition);
 }
 
@@ -227,26 +200,26 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .btn-primary {
-    background: linear-gradient(45deg, var(--primary-green), var(--secondary-green));
-    color: var(--matrix-black);
-    box-shadow: var(--shadow-glow);
+    background: linear-gradient(45deg, var(--primary-blue), var(--secondary-blue));
+    color: #ffffff;
+    box-shadow: var(--shadow-subtle);
 }
 
 .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 0 30px rgba(0, 255, 65, 0.6);
+    box-shadow: 0 0 20px rgba(0, 123, 255, 0.4);
 }
 
 .btn-secondary {
     background: transparent;
-    color: var(--primary-green);
-    border: 2px solid var(--primary-green);
+    color: var(--primary-blue);
+    border: 2px solid var(--primary-blue);
 }
 
 .btn-secondary:hover {
-    background: var(--primary-green);
-    color: var(--matrix-black);
-    box-shadow: var(--shadow-glow);
+    background: var(--primary-blue);
+    color: #ffffff;
+    box-shadow: var(--shadow-subtle);
 }
 
 .btn-full {
@@ -301,13 +274,12 @@ h1, h2, h3, h4, h5, h6 {
 .glitch {
     font-family: var(--font-title);
     font-weight: 900;
-    color: var(--primary-green);
+    color: var(--primary-blue);
     text-shadow: 
-        0 0 5px var(--primary-green),
-        0 0 10px var(--primary-green),
-        0 0 15px var(--primary-green);
+        0 0 5px var(--primary-blue),
+        0 0 10px var(--primary-blue),
+        0 0 15px var(--primary-blue);
     position: relative;
-    animation: glitch 2s infinite;
 }
 
 .glitch::before,
@@ -321,49 +293,13 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .glitch::before {
-    animation: glitch-1 0.5s infinite;
     color: #ff0000;
     z-index: -1;
 }
 
 .glitch::after {
-    animation: glitch-2 0.5s infinite;
     color: #00ffff;
     z-index: -2;
-}
-
-@keyframes glitch {
-    0%, 100% { transform: translate(0); }
-    20% { transform: translate(-2px, 2px); }
-    40% { transform: translate(-2px, -2px); }
-    60% { transform: translate(2px, 2px); }
-    80% { transform: translate(2px, -2px); }
-}
-
-@keyframes glitch-1 {
-    0%, 100% { transform: translate(0); }
-    10% { transform: translate(-2px, -1px); }
-    20% { transform: translate(-2px, -1px); }
-    30% { transform: translate(2px, 1px); }
-    40% { transform: translate(2px, -1px); }
-    50% { transform: translate(-1px, 2px); }
-    60% { transform: translate(-1px, 1px); }
-    70% { transform: translate(1px, 1px); }
-    80% { transform: translate(-1px, -1px); }
-    90% { transform: translate(1px, 2px); }
-}
-
-@keyframes glitch-2 {
-    0%, 100% { transform: translate(0); }
-    10% { transform: translate(2px, 1px); }
-    20% { transform: translate(2px, 1px); }
-    30% { transform: translate(-2px, -1px); }
-    40% { transform: translate(-2px, 1px); }
-    50% { transform: translate(1px, -2px); }
-    60% { transform: translate(1px, -1px); }
-    70% { transform: translate(-1px, -1px); }
-    80% { transform: translate(1px, 1px); }
-    90% { transform: translate(-1px, -2px); }
 }
 
 .hero-subtitle {
@@ -396,17 +332,17 @@ h1, h2, h3, h4, h5, h6 {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    background: rgba(0, 20, 0, 0.6);
-    border: 1px solid rgba(0, 255, 65, 0.3);
+    background: rgba(0, 123, 255, 0.1); /* Using primary-blue with transparency */
+    border: 1px solid var(--primary-blue);
     border-radius: 20px;
     padding: 0.5rem 1rem;
     font-size: 0.9rem;
     color: var(--text-light);
-    box-shadow: 0 0 10px rgba(0, 255, 65, 0.1);
+    box-shadow: var(--shadow-subtle);
 }
 
 .badge-icon {
-    color: var(--primary-green);
+    color: var(--primary-blue);
 }
 
 .badge-text {
@@ -423,16 +359,16 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .code-rain {
-    background: var(--matrix-dark);
-    border: 1px solid var(--primary-green);
+    background: var(--dark-card);
+    border: 1px solid var(--dark-border);
     border-radius: var(--border-radius);
     padding: 2rem;
     font-family: var(--font-main);
-    box-shadow: var(--shadow-glow);
+    box-shadow: var(--shadow-subtle);
 }
 
 .code-line {
-    color: var(--primary-green);
+    color: var(--text-light);
     margin: 0.5rem 0;
     opacity: 0;
     animation: typewriter 0.5s forwards;
