@@ -56,7 +56,10 @@ ENV/
 env.bak/
 venv.bak/
 .env
-.venv
+.venv/
+
+# Restriction : n'utiliser que le dossier venv/ comme environnement Python
+.venv/
 
 # Environment variables
 .env

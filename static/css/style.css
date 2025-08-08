@@ -1,101 +1,71 @@
-/* Variables CSS pour le thème Matrix */
-/* Holberton Theme Variables */
+/* === VARIABLES === */
 :root {
-    --color-primary: #D7263D;
-    --color-secondary: #F5F5F5;
-    --color-dark: #222222;
-    --color-gray: #888888;
-    --color-white: #fff;
+    /* Palette Holberton (inspirée du site officiel) */
+    --holberton-blue-primary: #007bff; /* Bleu principal */
+    --holberton-blue-dark: #0056b3; /* Bleu foncé pour les hover/active */
+    --holberton-grey-light: #f8f9fa; /* Gris très clair pour les fonds */
+    --holberton-grey-medium: #6c757d; /* Gris moyen pour le texte secondaire */
+    --holberton-grey-dark: #343a40; /* Gris foncé pour le texte principal/fonds sombres */
+    --holberton-white: #ffffff;
+    --holberton-accent-orange: #fd7e14; /* Accent orange */
+    --holberton-accent-yellow: #ffc107; /* Accent jaune */
+
+    /* Couleurs générales (adaptées au thème Holberton) */
+    --color-primary: var(--holberton-blue-primary);
+    --color-secondary: var(--holberton-grey-light);
+    --color-dark: var(--holberton-grey-dark);
+    --color-gray: var(--holberton-grey-medium);
+    --color-white: var(--holberton-white);
     --danger-red: #dc3545;
-    --warning-yellow: #ffc107;
+    --warning-yellow: var(--holberton-accent-yellow);
     --success-green: #28a745;
-    --font-title: 'Montserrat', Arial, sans-serif;
-    --font-body: 'Open Sans', Arial, sans-serif;
-    --shadow-subtle: 0 4px 15px rgba(34,34,34,0.08);
-    --shadow-deep: 0 10px 30px rgba(34,34,34,0.15);
-    --border-radius: 12px;
-    --transition: all 0.2s;
+
+    /* Couleurs de texte */
+    --text-light: var(--holberton-white);
+    --text-muted: var(--holberton-grey-medium);
+
+    /* Ombres (adaptées pour un look plus subtil ou bleu/gris) */
+    --shadow-glow: 0 0 15px rgba(0, 123, 255, 0.2); /* Ombre bleue */
+
+    /* Polices (sans-serif claires) */
+    --font-title: 'Roboto', 'Arial', sans-serif;
+    --font-body: 'Roboto', 'Arial', sans-serif;
+    --font-code: 'Source Code Pro', 'Fira Mono', 'Consolas', monospace;
+    --font-main: var(--font-body);
+
+    /* Divers */
+    --border-radius: 8px; /* Légèrement réduit pour un look plus moderne */
+    --transition: all 0.2s ease-in-out;
+    --transition-main: all 0.3s ease-in-out;
 }
 
-/* Reset et base */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: var(--font-body);
-    background-color: var(--color-secondary);
-    color: var(--color-dark);
-    line-height: 1.6;
-    overflow-x: hidden;
-}
-
-h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-title);
-    text-transform: uppercase;
-    font-weight: bold;
-    color: var(--color-dark);
-}
-
-a, .btn-primary {
-    background: var(--color-primary);
-    color: #fff !important;
-    border-radius: 6px;
-    padding: 0.5em 1.2em;
+a {
+    color: var(--holberton-blue-primary);
     text-decoration: none;
-    font-family: var(--font-title);
-    font-weight: bold;
-    transition: background 0.2s;
+    transition: var(--transition-main);
 }
 
-a:hover, .btn-primary:hover {
-    background: #b71c2b;
+.btn, .btn-primary {
+    background-color: var(--holberton-blue-primary);
+    color: var(--holberton-white); /* Texte blanc sur bouton bleu */
+    border-radius: var(--border-radius);
+    padding: 0.75em 1.5em; /* Légèrement plus grand */
+    font-family: var(--font-body); /* Utilisation de font-body pour les boutons */
+    font-weight: 600; /* Moins gras que le titre */
+    transition: var(--transition-main);
+    text-transform: uppercase;
+    cursor: pointer;
+    border: none; /* S'assurer qu'il n'y a pas de bordure par défaut */
 }
 
-.card, .box {
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(34,34,34,0.08);
-    padding: 2em;
-    margin: 1em 0;
-}
+.btn-primary:hover {
+    background-color: var(--holberton-blue-dark); /* Assombrir au survol */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Ombre subtile */
 }
 
-/* Background Matrix Animation */
-.matrix-bg {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-    background: var(--matrix-black);
-    overflow: hidden;
-}
+/* Ajoutez ici les styles spécifiques des autres pages (dashboard, learning, etc.) */
 
-.matrix-bg::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: 
-        radial-gradient(circle at 20% 20%, rgba(0, 255, 65, 0.1) 0%, transparent 50%),
-        radial-gradient(circle at 80% 80%, rgba(0, 255, 65, 0.1) 0%, transparent 50%),
-        radial-gradient(circle at 60% 40%, rgba(0, 255, 65, 0.05) 0%, transparent 50%);
-    animation: matrixGlow 6s ease-in-out infinite alternate;
-}
-
-
-/* Typography */
-h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-title);
-    color: var(--color-primary);
-    margin-bottom: 1rem;
-}
+/* === STYLES DES PAGES INDIVIDUELLES FUSIONNÉS === */
 
 /* Navigation */
 .navbar {
@@ -218,25 +188,26 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .btn-primary {
-    background: linear-gradient(45deg, var(--color-primary), var(--color-secondary));
-    color: var(--matrix-black);
+    background: var(--holberton-blue-primary);
+    color: var(--holberton-white);
     box-shadow: var(--shadow-glow);
 }
 
 .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 0 30px rgba(0, 255, 65, 0.6);
+    background-color: var(--holberton-blue-dark);
+    box-shadow: 0 0 30px rgba(0, 123, 255, 0.4);
 }
 
 .btn-secondary {
     background: transparent;
-    color: var(--primary-green);
-    border: 2px solid var(--primary-green);
+    color: var(--holberton-blue-primary);
+    border: 2px solid var(--holberton-blue-primary);
 }
 
 .btn-secondary:hover {
-    background: var(--primary-green);
-    color: var(--matrix-black);
+    background: var(--holberton-blue-primary);
+    color: var(--holberton-white);
     box-shadow: var(--shadow-glow);
 }
 
@@ -415,14 +386,14 @@ h1, h2, h3, h4, h5, h6 {
 /* Features Section */
 .features {
     padding: 4rem 0;
-    background: var(--matrix-dark);
+    background: var(--holberton-grey-light); /* Fond clair */
 }
 
 .section-title {
     text-align: center;
     font-size: 2.5rem;
     margin-bottom: 3rem;
-    color: var(--primary-green);
+    color: var(--holberton-blue-primary); /* Couleur principale Holberton */
 }
 
 .features-grid {
@@ -432,8 +403,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .feature-card {
-    background: var(--matrix-gray);
-    border: 1px solid var(--primary-green);
+    background: var(--holberton-white); /* Fond blanc */
+    border: 1px solid var(--holberton-grey-light); /* Bordure subtile */
     border-radius: var(--border-radius);
     padding: 2rem;
     text-align: center;
@@ -449,7 +420,7 @@ h1, h2, h3, h4, h5, h6 {
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(0, 255, 65, 0.1), transparent);
+    background: linear-gradient(90deg, transparent, rgba(0, 123, 255, 0.1), transparent); /* Effet de survol bleu */
     transition: left 0.5s ease;
 }
 
@@ -459,30 +430,31 @@ h1, h2, h3, h4, h5, h6 {
 
 .feature-card:hover {
     transform: translateY(-5px);
-    box-shadow: var(--shadow-glow);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* Ombre plus prononcée */
 }
 
 .feature-icon {
     font-size: 3rem;
     margin-bottom: 1rem;
+    color: var(--holberton-blue-primary); /* Couleur principale Holberton */
 }
 
 .feature-card h3 {
-    color: var(--primary-green);
+    color: var(--holberton-grey-dark); /* Texte sombre */
     margin-bottom: 1rem;
 }
 
 .feature-card p {
-    color: var(--text-light);
+    color: var(--holberton-grey-medium); /* Texte secondaire */
 }
 
 /* Learning Hub Section */
 .section-subtitle {
     text-align: center;
     font-size: 1.2rem;
-    color: var(--text-light);
+    color: var(--holberton-grey-medium);
     margin-bottom: 3rem;
-    opacity: 0.8;
+    opacity: 1;
 }
 
 .learning-modes-grid {
@@ -493,9 +465,9 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .learning-mode-card {
-    background: linear-gradient(135deg, rgba(0, 255, 65, 0.1), rgba(0, 255, 65, 0.05));
-    border: 2px solid rgba(0, 255, 65, 0.3);
-    border-radius: 15px;
+    background: var(--holberton-white); /* Fond blanc */
+    border: 2px solid var(--holberton-grey-light); /* Bordure subtile */
+    border-radius: var(--border-radius);
     padding: 2.5rem;
     text-align: center;
     transition: all 0.3s ease;
@@ -510,7 +482,7 @@ h1, h2, h3, h4, h5, h6 {
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(0, 255, 65, 0.1), transparent);
+    background: linear-gradient(90deg, transparent, rgba(0, 123, 255, 0.1), transparent); /* Effet de survol bleu */
     animation: cardShimmer 3s infinite;
 }
 
@@ -521,28 +493,29 @@ h1, h2, h3, h4, h5, h6 {
 
 .learning-mode-card:hover {
     transform: translateY(-10px);
-    border-color: rgba(0, 255, 65, 0.6);
-    box-shadow: 0 15px 40px rgba(0, 255, 65, 0.2);
-    background: linear-gradient(135deg, rgba(0, 255, 65, 0.2), rgba(0, 255, 65, 0.1));
+    border-color: var(--holberton-blue-primary); /* Bordure bleue au survol */
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1); /* Ombre subtile */
+    background: var(--holberton-grey-light); /* Fond légèrement grisé au survol */
 }
 
 .mode-icon {
     font-size: 3.5rem;
     margin-bottom: 1.5rem;
     display: block;
+    color: var(--holberton-blue-primary); /* Couleur principale Holberton */
 }
 
 .learning-mode-card h3 {
-    color: var(--primary-green);
+    color: var(--holberton-grey-dark); /* Texte sombre */
     font-family: var(--font-title);
     font-size: 1.6rem;
     font-weight: 700;
     margin-bottom: 1rem;
-    text-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
+    text-shadow: none;
 }
 
 .learning-mode-card p {
-    color: var(--text-light);
+    color: var(--holberton-grey-medium); /* Texte secondaire */
     font-size: 1.1rem;
     line-height: 1.6;
     margin-bottom: 1.5rem;
@@ -557,10 +530,10 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .mode-features li {
-    color: rgba(255, 255, 255, 0.8);
+    color: var(--holberton-grey-dark); /* Texte sombre */
     font-size: 0.95rem;
     padding: 0.5rem 0;
-    border-bottom: 1px solid rgba(0, 255, 65, 0.2);
+    border-bottom: 1px solid var(--holberton-grey-light); /* Bordure subtile */
     text-align: left;
 }
 

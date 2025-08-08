@@ -1,17 +1,20 @@
 from fastapi import FastAPI, Request, Depends, HTTPException, status
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse, RedirectResponse, FileResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, FileResponse, JSONResponse
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from starlette.middleware.sessions import SessionMiddleware
 import uvicorn
 import os
 from dotenv import load_dotenv
 from pathlib import Path
+import sys
+import traceback
+import io
 
 from app.database import engine, get_db
 from app.models import Base
-from app.routers import auth, quiz, users, tutor, ai_quiz
+from app.routers import auth, quiz, users, ai_quiz
 from app.auth import get_current_user
 
 # Charger les variables d'environnement
@@ -61,7 +64,6 @@ def get_template_context(request: Request, **kwargs):
 app.include_router(auth.router, prefix="/api/auth", tags=["authentication"])
 app.include_router(quiz.router, prefix="/api/quiz", tags=["quiz"])
 app.include_router(users.router, prefix="/api/users", tags=["users"])
-app.include_router(tutor.router, prefix="/api/tutor", tags=["tutor"])
 app.include_router(ai_quiz.router, prefix="/api/ai-quiz", tags=["ai-quiz"])
 
 @app.get("/", response_class=HTMLResponse)
@@ -88,17 +90,35 @@ async def learning_page(request: Request):
 async def dashboard_page(request: Request):
     return templates.TemplateResponse("dashboard.html", get_template_context(request))
 
-@app.get("/tutor", response_class=HTMLResponse)
-async def tutor_page(request: Request):
-    return templates.TemplateResponse("tutor.html", get_template_context(request))
-
 @app.get("/ai-quiz", response_class=HTMLResponse)
 async def ai_quiz_page(request: Request):
     return templates.TemplateResponse("ai-quiz.html", get_template_context(request))
 
-@app.get("/visualizer", response_class=HTMLResponse)
-async def visualizer_page(request: Request):
-    return templates.TemplateResponse("code_visualizer.html", get_template_context(request))
+@app.post("/api/visualize")
+async def visualize_code(request: Request):
+    data = await request.json()
+    code = data.get("code", "")
+    trace = []
+    output = io.StringIO()
+    def tracer(frame, event, arg):
+        if event == "line":
+            trace.append({
+                "lineno": frame.f_lineno,
+                "locals": frame.f_locals.copy(),
+            })
+        return tracer
+    try:
+        compiled = compile(code, "<user_code>", "exec")
+        sys.settrace(tracer)
+        exec(compiled, {})
+        sys.settrace(None)
+        error = None
+    except Exception as e:
+        sys.settrace(None)
+        error = traceback.format_exc()
+    finally:
+        sys.settrace(None)
+    return JSONResponse({"trace": trace, "error": error, "output": output.getvalue()})
 
 # Routes de gestion de session
 @app.post("/auth/login-demo")
