@@ -1,72 +1,3 @@
-{% extends "base.html" %}
-
-{% block extra_css %}
-<link rel="stylesheet" href="/static/css/tutor.css">
-{% endblock %}
-<div class="container-fluid">
-    <div class="tutor-container">
-        <div class="tutor-header">
-            <h1>🚀 HLH Tutor - Exécuteur de Code Multi-Langage</h1>
-            <p style="color: #4a5568; margin-bottom: 0;">
-                Exécutez du code Python, JavaScript ou C avec visualisation des résultats en temps réel
-                <small style="opacity: 0.7;">v2.2 - Multi-langage complet</small>
-            </p>
-        </div>
-        
-        <div id="code-executor-container">
-            <div class="toolbar">
-                <div class="language-selector">
-                    <label for="language-select" style="font-weight: 600;">🔧 Langage:</label>
-                    <select id="language-select">
-                        <option value="python">🐍 Python</option>
-                        <option value="javascript">📜 JavaScript</option>
-                        <option value="c">⚙️ C</option>
-                    </select>
-                </div>
-                <button id="run-button" class="run-btn">
-                    <span>▶️</span> Exécuter
-                </button>
-                <button id="clear-button" class="clear-btn">
-                    <span>🗑️</span> Effacer
-                </button>
-            </div>
-            
-            <div class="code-area">
-                <textarea id="code-input" class="code-input" placeholder="Entrez votre code ici..."></textarea>
-            </div>
-            
-            <div id="error-output" class="error-message"></div>
-            <div id="trace-output" class="trace-visualization"></div>
-        </div>
-        
-        <div class="examples">
-            <div class="example-card" onclick="loadPythonExample()">
-                <div class="example-title">
-                    <span>🐍</span> Python - Variables et fonctions
-                </div>
-                <div class="example-desc">Variables, boucles, listes et récursion</div>
-            </div>
-            
-            <div class="example-card" onclick="loadJavaScriptExample()">
-                <div class="example-title">
-                    <span>📜</span> JavaScript - Arrays et fonctions
-                </div>
-                <div class="example-desc">Variables, boucles, arrays et récursion</div>
-            </div>
-            
-            <div class="example-card" onclick="loadCExample()">
-                <div class="example-title">
-                    <span>⚙️</span> C - Structures de contrôle
-                </div>
-                <div class="example-desc">Variables, boucles, tableaux et pointeurs</div>
-            </div>
-        </div>
-    </div>
-</div>
-{% endblock %}
-
-{% block extra_js %}
-<script>
 class HLHTutor {
     constructor() {
         this.currentLanguage = 'python';
@@ -107,11 +38,11 @@ for i in range(3):
 let x = 5;
 let y = 10;
 let result = x + y;
-console.log(\`La somme de \${x} et \${y} est \${result}\`);
+console.log(`La somme de ${x} et ${y} est ${result}`);
 
 // Boucle simple
 for(let i = 0; i < 3; i++) {
-    console.log(\`Iteration \${i}\`);
+    console.log(`Iteration ${i}`);
 }`,
             c: `// Code C
 #include <stdio.h>
@@ -120,11 +51,11 @@ int main() {
     int x = 5;
     int y = 10;
     int result = x + y;
-    printf("La somme de %d et %d est %d\\n", x, y, result);
+    printf("La somme de %d et %d est %d\n", x, y, result);
     
     // Boucle simple
     for(int i = 0; i < 3; i++) {
-        printf("Iteration %d\\n", i);
+        printf("Iteration %d\n", i);
     }
     
     return 0;
@@ -160,7 +91,6 @@ int main() {
         outputDiv.innerHTML = '<div class="loading">🔄 Exécution en cours...</div>';
         
         try {
-            // Vérifier que holbiesApp est disponible
             if (!window.holbiesApp || !window.holbiesApp.token) {
                 throw new Error('Vous devez être connecté pour utiliser le tuteur');
             }
@@ -269,7 +199,6 @@ int main() {
     }
 }
 
-// Exemples de code
 function loadPythonExample() {
     const code = `# Exemple Python - Calculs et structures de données
 x = 5
@@ -304,17 +233,17 @@ function loadJavaScriptExample() {
 let x = 5;
 let y = 10;
 let z = x + y;
-console.log(\`La somme est: \${z}\`);
+console.log(`La somme est: ${z}`);
 
 // Boucle avec tableau
 const numbers = [1, 2, 3, 4, 5];
 let total = 0;
 for(let i = 0; i < numbers.length; i++) {
     total += numbers[i];
-    console.log(\`Ajout de \${numbers[i]}, total: \${total}\`);
+    console.log(`Ajout de ${numbers[i]}, total: ${total}`);
 }
 
-console.log(\`Somme totale: \${total}\`);
+console.log(`Somme totale: ${total}`);
 
 // Fonction récursive
 function fibonacci(n) {
@@ -323,7 +252,7 @@ function fibonacci(n) {
 }
 
 const result = fibonacci(6);
-console.log(\`Fibonacci(6) = \${result}\`);`;
+console.log(`Fibonacci(6) = ${result}`);`;
     
     window.hlhTutor.setLanguage('javascript');
     window.hlhTutor.setCode(code);
@@ -342,7 +271,7 @@ int main() {
     int x = 5;
     int y = 10;
     int z = x + y;
-    printf("La somme est: %d\\n", z);
+    printf("La somme est: %d\n", z);
     
     // Tableau et boucle
     int numbers[] = {1, 2, 3, 4, 5};
@@ -351,14 +280,14 @@ int main() {
     
     for(int i = 0; i < size; i++) {
         total += numbers[i];
-        printf("Ajout de %d, total: %d\\n", numbers[i], total);
+        printf("Ajout de %d, total: %d\n", numbers[i], total);
     }
     
-    printf("Somme totale: %d\\n", total);
+    printf("Somme totale: %d\n", total);
     
     // Fonction récursive
     int result = fibonacci(6);
-    printf("Fibonacci(6) = %d\\n", result);
+    printf("Fibonacci(6) = %d\n", result);
     
     return 0;
 }`;
@@ -367,9 +296,6 @@ int main() {
     window.hlhTutor.setCode(code);
 }
 
-// Initialiser le tuteur
 document.addEventListener('DOMContentLoaded', () => {
     window.hlhTutor = new HLHTutor();
 });
-</script>
-{% endblock %}
