@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="/static/css/login.css">
+<link rel="stylesheet" href="{{ url_for_static('/css/login.css') }}">
 {% endblock %}
 
 {% block content %}
@@ -57,5 +57,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="/static/js/login.js"></script>
+<script src="{{ url_for_static('/js/login.js') }}"></script>
 {% endblock %}

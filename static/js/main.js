@@ -196,10 +196,7 @@ class HolbiesApp {
         let message = '';
         
         if (field.type === 'email') {
-            const emailRegex = /^[^
-@]+@[^
-@]+\.[^
-@]+$/;
+            const emailRegex = /^[^@]+@[^@]+\.[^@]+$/;
             if (!emailRegex.test(value)) {
                 isValid = false;
                 message = 'Adresse email invalide';
@@ -316,65 +313,10 @@ class HolbiesApp {
 
     // Function to show welcome video after successful login
     showWelcomeVideo(callback) {
-        const waitForVideoModal = () => {
-            if (window.videoModal) {
-                const videoSources = [
-                    { url: '/static/video/welcome.mp4', type: 'video/mp4' },
-                    { url: '/static/video/welcome.webm', type: 'video/webm' },
-                    { url: '/static/video/welcome.ogv', type: 'video/ogg' }
-                ];
-                
-                let foundVideo = false;
-                let checkedSources = 0;
-                
-                const checkSource = (source) => {
-                    const testVideo = document.createElement('video');
-                    testVideo.onloadstart = () => {
-                        if (!foundVideo) {
-                            foundVideo = true;
-                            window.videoModal.show(source.url);
-                            
-                            const modal = document.getElementById('video-modal');
-                            if (modal) {
-                                const originalClose = window.videoModal.close.bind(window.videoModal);
-                                window.videoModal.close = function() {
-                                    originalClose();
-                                    if (callback) {
-                                        setTimeout(callback, 500);
-                                    }
-                                    window.videoModal.close = originalClose;
-                                };
-                            }
-                        }
-                    };
-                    testVideo.onerror = () => {
-                        checkedSources++;
-                        if (checkedSources >= videoSources.length && !foundVideo) {
-                            if (window.showTestWelcomeVideo) {
-                                foundVideo = true;
-                                window.showTestWelcomeVideo().then(() => {
-                                    if (callback) {
-                                        setTimeout(callback, 500);
-                                    }
-                                });
-                            } else {
-                                if (callback) {
-                                    callback();
-                                }
-                            }
-                        }
-                    };
-                    testVideo.src = source.url;
-                };
-                
-                videoSources.forEach(checkSource);
-                
-            } else {
-                setTimeout(waitForVideoModal, 100);
-            }
-        };
-        
-        waitForVideoModal();
+        // Temporarily bypass video and directly call the callback for redirection
+        if (callback) {
+            callback();
+        }
     }
 
     // Auth visual animation

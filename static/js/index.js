@@ -2,18 +2,30 @@
 document.addEventListener('DOMContentLoaded', () => {
     const heroTitleElement = document.querySelector('.hero-title');
     const heroSubtitleElement = document.querySelector('.hero-subtitle');
+    const featuresButton = document.querySelector('a[href="#features"]');
 
     const originalTitleText = "HOLBIES";
     const originalSubtitleText = "Learning Hub";
 
-    // Typewriter effect for hero title
+    // Affichage direct du titre sans animation typewriter
     if (heroTitleElement) {
-        heroTitleElement.textContent = ''; // Clear content
-        typeWriter(heroTitleElement, originalTitleText, () => {
-            // After title, start subtitle
-            if (heroSubtitleElement) {
-                heroSubtitleElement.textContent = ''; // Clear content
-                typeWriter(heroSubtitleElement, originalSubtitleText, null, true); // With blinking cursor
+        heroTitleElement.textContent = originalTitleText;
+        if (heroSubtitleElement) {
+            heroSubtitleElement.textContent = originalSubtitleText;
+        }
+    }
+
+    // Smooth scroll for "Découvrir les fonctionnalités" button
+    if (featuresButton) {
+        featuresButton.addEventListener('click', function(e) {
+            e.preventDefault(); // Prevent default anchor jump
+            const targetId = this.getAttribute('href');
+            const targetElement = document.querySelector(targetId);
+            if (targetElement) {
+                console.log('Scrolling to:', targetId);
+                targetElement.scrollIntoView({
+                    behavior: 'smooth'
+                });
             }
         });
     }
@@ -58,17 +70,19 @@ function typeWriter(element, text, callback = null, withCursor = false) {
 
 // Add CSS for blinking cursor animation (if not already in main.css)
 // This ensures the animation is defined even if main.css is not fully loaded or overridden
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes blink-animation {
-        from, to { opacity: 0 }
-        50% { opacity: 1 }
-    }
-    .typewriter-cursor {
-        display: inline-block;
-        margin-left: 2px;
-        color: var(--holberton-primary); /* Use Holberton primary for cursor */
-        vertical-align: bottom;
-    }
-`;
-document.head.appendChild(style);
+(function() {
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes blink-animation {
+            from, to { opacity: 0 }
+            50% { opacity: 1 }
+        }
+        .typewriter-cursor {
+            display: inline-block;
+            margin-left: 2px;
+            color: var(--holberton-primary); /* Use Holberton primary for cursor */
+            vertical-align: bottom;
+        }
+    `;
+    document.head.appendChild(style);
+})();

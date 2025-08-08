@@ -1,0 +1,27 @@
+/* ========================================
+   HOLBIES LEARNING HUB - BASE STYLES
+   (Variables globales et reset uniquement)
+   ======================================== */
+
+:root {
+    --color-primary: #D7263D;
+    --color-secondary: #F5F5F5;
+    --color-dark: #222222;
+    --color-gray: #888888;
+    --color-white: #fff;
+    --danger-red: #dc3545;
+    --warning-yellow: #ffc107;
+    --success-green: #28a745;
+    --font-title: 'Montserrat', Arial, sans-serif;
+    --font-body: 'Open Sans', Arial, sans-serif;
+    --shadow-subtle: 0 4px 15px rgba(34,34,34,0.08);
+    --shadow-deep: 0 10px 30px rgba(34,34,34,0.15);
+    --border-radius: 12px;
+    --transition: all 0.2s;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}

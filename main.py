@@ -1,12 +1,13 @@
 from fastapi import FastAPI, Request, Depends, HTTPException, status
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, FileResponse
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from starlette.middleware.sessions import SessionMiddleware
 import uvicorn
 import os
 from dotenv import load_dotenv
+from pathlib import Path
 
 from app.database import engine, get_db
 from app.models import Base
@@ -28,8 +29,16 @@ app = FastAPI(
 # Ajouter le middleware de session
 app.add_middleware(SessionMiddleware, secret_key="holbies-learning-hub-secret-key-2025")
 
-# Montage des fichiers statiques
+# Montage des fichiers statiques (ancienne méthode, à conserver pour l'instant)
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
+# Nouvelle route pour servir les fichiers statiques
+@app.get("/files/{filename:path}")
+async def serve_static_files(filename: str):
+    file_path = Path("static") / filename
+    if not file_path.is_file():
+        raise HTTPException(status_code=404, detail="File not found")
+    return FileResponse(file_path)
 
 # Templates
 templates = Jinja2Templates(directory="templates")
@@ -43,6 +52,7 @@ def get_template_context(request: Request, **kwargs):
         "user_id": request.session.get("user_id"),
         "username": request.session.get("username"),
         "is_authenticated": bool(request.session.get("user_id")),
+        "url_for_static": lambda p: f"/files{p}", # Nouvelle fonction pour les URLs statiques
         **kwargs
     }
     return context
