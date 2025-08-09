@@ -22,10 +22,15 @@
                 </a>
             </div>
             <div class="nav-menu" id="nav-menu">
-                <a href="/learning" class="nav-link">Learning Hub</a>
-                <a href="/tutor" class="nav-link">HLH Tutor</a>
-                <a href="/dashboard" class="nav-link">Dashboard</a>
-                <a href="/login" class="nav-link" id="auth-link">Connexion</a>
+                {% if is_authenticated %}
+                    <a href="/learning" class="nav-link">Learning Hub</a>
+                    <a href="/tutor" class="nav-link">HLH Tutor</a>
+                    <a href="/dashboard" class="nav-link">Dashboard</a>
+                    <a href="/logout" class="nav-link" id="auth-link">Déconnexion</a>
+                {% else %}
+                    <a href="/login" class="nav-link">Connexion</a>
+                    <a href="/register" class="nav-link">Inscription</a>
+                {% endif %}
             </div>
             <div class="hamburger" id="hamburger">
                 <span></span>

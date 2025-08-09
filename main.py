@@ -60,11 +60,18 @@ def get_template_context(request: Request, **kwargs):
     }
     return context
 
+
 # Inclusion des routers
 app.include_router(auth.router, prefix="/api/auth", tags=["authentication"])
 app.include_router(quiz.router, prefix="/api/quiz", tags=["quiz"])
 app.include_router(users.router, prefix="/api/users", tags=["users"])
 app.include_router(ai_quiz.router, prefix="/api/ai-quiz", tags=["ai-quiz"])
+
+# Route directe pour les stats du site (pour compatibilité frontend)
+from app.routers.quiz import get_site_stats
+@app.get("/quiz/stats")
+def public_site_stats(request: Request, db=Depends(get_db)):
+    return get_site_stats(db)
 
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
@@ -78,20 +85,32 @@ async def login_page(request: Request):
 async def register_page(request: Request):
     return templates.TemplateResponse("register.html", get_template_context(request))
 
+# Dépendance pour vérifier si l'utilisateur est connecté
+async def login_required(request: Request):
+    if not request.session.get("user_id"):
+        return RedirectResponse(url="/login", status_code=status.HTTP_303_SEE_OTHER)
+    return request
+
+
+
 @app.get("/quiz", response_class=HTMLResponse)
 async def quiz_page(request: Request):
+    await login_required(request)
     return templates.TemplateResponse("quiz.html", get_template_context(request))
 
 @app.get("/learning", response_class=HTMLResponse)
 async def learning_page(request: Request):
+    await login_required(request)
     return templates.TemplateResponse("learning.html", get_template_context(request))
 
 @app.get("/dashboard", response_class=HTMLResponse)
 async def dashboard_page(request: Request):
+    await login_required(request)
     return templates.TemplateResponse("dashboard.html", get_template_context(request))
 
 @app.get("/ai-quiz", response_class=HTMLResponse)
 async def ai_quiz_page(request: Request):
+    await login_required(request)
     return templates.TemplateResponse("ai-quiz.html", get_template_context(request))
 
 @app.post("/api/visualize")

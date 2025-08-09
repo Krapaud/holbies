@@ -247,68 +247,56 @@ class HolbiesApp {
     }
 
     addPasswordStrengthIndicator() {
-        const passwordField = document.querySelector('input[name="password"]');
-        if (!passwordField) return;
-        
-        const indicator = document.createElement('div');
-        indicator.className = 'password-strength';
-        indicator.innerHTML = `
-            <div class="strength-bar">
-                <div class="strength-fill"></div>
-            </div>
-            <div class="strength-text">Force du mot de passe</div>
-        `;
-        
-        indicator.style.cssText = `
-            margin-top: 0.5rem;
-        `;
-        
-        const strengthBar = indicator.querySelector('.strength-fill');
-        const strengthText = indicator.querySelector('.strength-text');
-        
-        passwordField.parentNode.appendChild(indicator);
-        
+        const passwordField = document.querySelector('#password'); // Cible par ID pour plus de spécificité
+        const strengthContainer = document.getElementById('password-strength-container');
+
+        if (!passwordField || !strengthContainer) {
+            return; // Ne s'exécute que si les éléments sont sur la page
+        }
+
+        const strengthBar = strengthContainer.querySelector('.password-strength-bar');
+        const strengthText = strengthContainer.querySelector('.password-strength-text');
+
         passwordField.addEventListener('input', (e) => {
             const password = e.target.value;
-            const strength = this.calculatePasswordStrength(password); // Use this.calculatePasswordStrength
+
+            if (password.length === 0) {
+                strengthContainer.classList.add('is-hidden');
+                return;
+            }
             
-            strengthBar.style.width = `${strength.percentage}%`;
-            strengthBar.style.backgroundColor = strength.color;
+            strengthContainer.classList.remove('is-hidden');
+            
+            const strength = this.calculatePasswordStrength(password);
+            
+            // Mise à jour des classes pour la couleur et le texte
+            strengthBar.className = 'password-strength-bar'; // Reset classes
+            strengthText.className = 'password-strength-text'; // Reset classes
+            
+            strengthBar.classList.add(strength.level);
+            strengthText.classList.add(strength.level);
+
             strengthText.textContent = strength.text;
         });
     }
 
     calculatePasswordStrength(password) {
         let score = 0;
-        let feedback = 'Très faible';
-        let color = 'var(--danger-red)';
-        
-        if (password.length >= 6) score += 20;
-        if (password.length >= 10) score += 20;
-        if (/[a-z]/.test(password)) score += 20;
-        if (/[A-Z]/.test(password)) score += 20;
-        if (/[0-9]/.test(password)) score += 10;
-        if (/[^A-Za-z0-9]/.test(password)) score += 10;
-        
-        if (score >= 80) {
-            feedback = 'Très fort';
-            color = 'var(--success-green)';
-        } else if (score >= 60) {
-            feedback = 'Fort';
-            color = 'var(--warning-yellow)';
-        } else if (score >= 40) {
-            feedback = 'Moyen';
-            color = 'var(--warning-yellow)';
-        } else if (score >= 20) {
-            feedback = 'Faible';
-            color = 'var(--danger-red)';
+        if (password.length > 7) score++;    // Longueur
+        if (/[A-Z]/.test(password)) score++; // Majuscule
+        if (/[a-z]/.test(password)) score++; // Minuscule
+        if (/[0-9]/.test(password)) score++; // Chiffre
+        if (/[^A-Za-z0-9]/.test(password)) score++; // Symbole
+
+        switch (score) {
+            case 5:
+            case 4:
+                return { level: 'is-strong', text: 'Fort' };
+            case 3:
+                return { level: 'is-medium', text: 'Moyen' };
+            default:
+                return { level: 'is-weak', text: 'Faible' };
         }
-        
-        return {
-            percentage: score,
-            text: feedback,
-            color: color
-        };
     }
 
     // Function to show welcome video after successful login

@@ -1,3 +1,5 @@
+__all__ = ["router", "get_site_stats"]
+from app.auth import get_current_active_user
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from sqlalchemy import func

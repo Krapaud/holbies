@@ -35,14 +35,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Dynamically fetch and update stats
     fetch('/quiz/stats')
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
-            // Find stat items in order: questions, users, satisfaction
             const statNumbers = document.querySelectorAll('.stat-number');
             if (statNumbers.length >= 3) {
-                statNumbers[0].textContent = data.questions;
-                statNumbers[1].textContent = data.users;
-                statNumbers[2].textContent = data.satisfaction + '%';
+                if (data && data.questions !== undefined) {
+                    statNumbers[0].textContent = data.questions;
+                }
+                if (data && data.users !== undefined) {
+                    statNumbers[1].textContent = data.users;
+                }
+                if (data && data.satisfaction !== undefined) {
+                    statNumbers[2].textContent = data.satisfaction + '%';
+                }
             }
         })
         .catch(err => {

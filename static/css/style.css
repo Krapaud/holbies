@@ -1,3 +1,167 @@
+/* --- Améliorations avancées pour la section #features --- */
+#features .feature-item {
+    opacity: 0;
+    transform: translateY(40px);
+    animation: featureFadeIn 0.8s cubic-bezier(.23,1.02,.67,.98) forwards;
+    animation-delay: var(--feature-delay, 0s);
+}
+#features .feature-item:nth-child(1) { --feature-delay: 0.1s; }
+#features .feature-item:nth-child(2) { --feature-delay: 0.25s; }
+#features .feature-item:nth-child(3) { --feature-delay: 0.4s; }
+#features .feature-item:nth-child(4) { --feature-delay: 0.55s; }
+
+@keyframes featureFadeIn {
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+/* Couleurs d'icônes personnalisées */
+#features .feature-item .feature-icon {
+    font-size: 2.8em;
+    margin-bottom: 0.7em;
+    filter: drop-shadow(0 2px 8px #E1003C44);
+    transition: color 0.18s, filter 0.18s;
+}
+#features .feature-item:nth-child(1) .feature-icon { color: #E1003C; }
+#features .feature-item:nth-child(2) .feature-icon { color: #FFB300; }
+#features .feature-item:nth-child(3) .feature-icon { color: #00B894; }
+#features .feature-item:nth-child(4) .feature-icon { color: #0984E3; }
+
+#features .feature-item:hover {
+    transform: translateY(-12px) scale(1.05);
+    box-shadow: 0 12px 36px var(--primary-color, #E1003C);
+    border-color: var(--accent-color, #FF4D6D);
+    background: rgba(40, 40, 48, 0.99);
+}
+#features .feature-item:hover .feature-icon {
+    filter: drop-shadow(0 4px 16px #fff8);
+}
+
+#features .feature-item h3 {
+    font-size: 1.4em;
+    margin-bottom: 0.6em;
+    letter-spacing: 0.04em;
+}
+
+#features .feature-item p {
+    font-size: 1.12em;
+    line-height: 1.7;
+}
+
+@media (max-width: 700px) {
+    #features .feature-item {
+        animation-delay: 0s !important;
+    }
+}
+/* --- Features Section Modern & Example Content --- */
+#features.features-section {
+    background: linear-gradient(135deg, #232526 0%, #414345 100%);
+    padding: 60px 0 80px 0;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+}
+#features .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2vw;
+}
+#features .section-heading {
+    color: var(--primary-color, #E1003C);
+    font-size: 2.5em;
+    text-align: center;
+    margin-bottom: 2.5em;
+    letter-spacing: 0.04em;
+    text-shadow: 0 2px 16px var(--primary-color, #E1003C), 0 1px 0 #fff2;
+}
+#features .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 2.5em 2em;
+    justify-items: center;
+}
+#features .feature-item {
+    background: rgba(30, 30, 34, 0.98);
+    border-radius: 18px;
+    box-shadow: 0 4px 24px rgba(225,0,60,0.08);
+    padding: 2.5em 1.5em 2em 1.5em;
+    text-align: center;
+    transition: transform 0.18s, box-shadow 0.18s;
+    border: 1.5px solid var(--primary-color, #E1003C);
+}
+#features .feature-item:hover {
+    transform: translateY(-8px) scale(1.04);
+    box-shadow: 0 8px 32px var(--primary-color, #E1003C);
+    border-color: var(--accent-color, #FF4D6D);
+}
+#features .feature-icon {
+    font-size: 2.8em;
+    color: var(--primary-color, #E1003C);
+    margin-bottom: 0.7em;
+    filter: drop-shadow(0 2px 8px #E1003C44);
+    transition: color 0.18s, filter 0.18s;
+}
+#features .feature-item:hover .feature-icon {
+    color: var(--accent-color, #FF4D6D);
+    filter: drop-shadow(0 4px 16px #FF4D6D88);
+}
+#features .feature-item h3 {
+    color: var(--accent-color, #FF4D6D);
+    font-size: 1.3em;
+    margin-bottom: 0.5em;
+    font-family: var(--font-holberton-bold, Arial, sans-serif);
+    letter-spacing: 0.03em;
+}
+#features .feature-item p {
+    color: var(--text-color, #F1F2F2);
+    font-size: 1.08em;
+    line-height: 1.6;
+    margin: 0 auto;
+    max-width: 320px;
+}
+@media (max-width: 700px) {
+    #features .features-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5em;
+    }
+    #features .feature-item {
+        padding: 2em 1em 1.5em 1em;
+    }
+    #features .section-heading {
+        font-size: 2em;
+    }
+}
+
+/*
+Exemple de structure HTML à placer dans le template pour la section #features :
+
+<section id="features" class="features-section">
+    <div class="container">
+        <h2 class="section-heading">Fonctionnalités clés</h2>
+        <div class="features-grid">
+            <div class="feature-item">
+                <div class="feature-icon">🎓</div>
+                <h3>Quiz interactifs</h3>
+                <p>Testez vos connaissances avec des quiz dynamiques et obtenez un feedback instantané.</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">🤖</div>
+                <h3>Correction par IA</h3>
+                <p>Bénéficiez d'une correction intelligente et personnalisée grâce à l'intelligence artificielle.</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">📈</div>
+                <h3>Suivi de progression</h3>
+                <p>Visualisez vos progrès et identifiez vos axes d'amélioration au fil du temps.</p>
+            </div>
+        </div>
+    </div>
+</section>
+*/
+/* Force no underline on all links in all states */
+a, a:hover, a:focus, a:active, a:visited {
+    text-decoration: none !important;
+}
 /* Basic Reset & Box Sizing */
 *, *::before, *::after {
     box-sizing: border-box;
@@ -132,13 +296,11 @@ h6 { font-size: 1em; }
 /* Links */
 a {
     color: var(--primary-color);
-    text-decoration: none;
-    transition: color 0.2s ease-in-out, text-decoration 0.2s ease-in-out;
+    transition: color 0.2s ease-in-out;
 }
 
 a:hover {
     color: var(--button-hover-darken); /* Use a slightly darker red on hover */
-    text-decoration: underline;
 }
 
 /* Navigation Holberton */
@@ -152,8 +314,6 @@ a:hover {
     padding: var(--spacing-sm) 0;
 }
 .nav-container {
-    max-width: 1200px;
-    padding: 0 2.5vw;
     width: 100%;
     box-sizing: border-box;
     display: flex;
@@ -356,7 +516,6 @@ main {
 }
 .footer-content a {
     color: var(--primary-color);
-    text-decoration: underline;
     transition: color 0.2s;
 }
 .footer-content a:hover {
@@ -579,31 +738,58 @@ main {
     gap: 2em;
     margin-top: 2em;
 }
+
+/* --- Stats Section Modernisée --- */
+.stats-section {
+    padding: var(--spacing-xl) 0 var(--spacing-lg) 0;
+}
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 2em;
+    margin-top: 2em;
+}
 .stat-item {
-    /* background removed to inherit body background */
+    background: rgba(30, 30, 34, 0.98);
     border-radius: 14px;
     box-shadow: 0 2px 12px var(--shadow-color);
-    padding: 2em 1em;
+    padding: 2em 1em 1.5em 1em;
     text-align: center;
-    border: 1.5px solid var(--border-color);
+    border: 1.5px solid var(--stat-color, var(--primary-color));
     transition: box-shadow 0.2s, border 0.2s, transform 0.2s;
+    opacity: 0;
+    transform: translateY(40px);
+    animation: statFadeIn 0.7s cubic-bezier(.23,1.02,.67,.98) forwards;
+    animation-delay: var(--stat-delay, 0s);
 }
 .stat-item:hover {
-    box-shadow: 0 8px 32px var(--shadow-color);
-    border-color: var(--primary-color);
-    transform: translateY(-4px) scale(1.03);
+    box-shadow: 0 8px 32px var(--stat-color, var(--primary-color));
+    border-color: var(--accent-color, #FF4D6D);
+    transform: translateY(-8px) scale(1.04);
+    background: rgba(40, 40, 48, 0.99);
+}
+.stat-item i {
+    display: block;
+    margin-bottom: 0.5em;
+    filter: drop-shadow(0 2px 8px #0002);
 }
 .stat-number {
     font-size: 2.5em;
     font-family: var(--font-holberton-bold);
-    color: var(--primary-color);
+    color: var(--stat-color, var(--primary-color));
     margin-bottom: 0.3em;
-    text-shadow: 0 2px 12px var(--primary-color);
+    text-shadow: 0 2px 12px var(--stat-color, var(--primary-color));
 }
 .stat-label {
     color: var(--text-color);
-    font-size: 1em;
-    opacity: 0.85;
+    font-size: 1.08em;
+    opacity: 0.9;
+}
+@keyframes statFadeIn {
+    to {
+        opacity: 1;
+        transform: none;
+    }
 }
 
 @media (max-width: 900px) {
@@ -620,6 +806,7 @@ main {
         align-items: center;
         justify-content: center;
         max-width: 100%;
+        text-align: center;
     }
     .hero-image {
         margin-top: 1.5rem;
@@ -982,4 +1169,283 @@ main {
     font-weight: 800;
     font-style: italic;
     font-display: swap;
+}
+
+/* AUTHENTICATION STYLES */
+.auth-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+    padding: var(--spacing-xl) 0;
+}
+
+.auth-container {
+    display: flex;
+    width: 100%;
+    max-width: 900px;
+    background-color: var(--surface-color);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px var(--shadow-color);
+    overflow: hidden;
+}
+
+.auth-card {
+    flex: 1;
+    padding: var(--spacing-xl);
+}
+
+.auth-header {
+    text-align: center;
+    margin-bottom: var(--spacing-lg);
+}
+
+.auth-title {
+    font-size: 2.5em;
+    color: var(--primary-color);
+    margin-bottom: 0.2em;
+}
+
+.auth-subtitle {
+    font-size: 1.1em;
+    color: var(--text-color);
+    opacity: 0.8;
+}
+
+.form-group {
+    margin-bottom: var(--spacing-md);
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: var(--spacing-xs);
+    font-weight: bold;
+    color: var(--text-color);
+}
+
+.auth-footer {
+    text-align: center;
+    margin-top: var(--spacing-lg);
+    font-size: 0.9em;
+}
+
+.auth-footer a {
+    font-weight: bold;
+}
+
+.auth-visual {
+    flex: 1;
+    background-color: #1a1a1a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-xl);
+    overflow: hidden;
+    position: relative;
+    max-height: 400px; /* Explicitly cap the height */
+    flex-shrink: 0; /* Prevent it from growing */
+    box-sizing: border-box; /* Ensure padding is included in the height */
+}
+
+
+
+#code-animation-container {
+    width: 100%;
+    height: 260px; /* Hauteur fixe pour éviter l'agrandissement */
+    max-width: 420px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #181818;
+    border-radius: 12px;
+    box-shadow: 0 2px 16px #000a;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+
+
+#code-animation-container pre {
+    margin: 0;
+    font-family: 'Courier New', Courier, monospace;
+    color: #0f0;
+    font-size: 1em;
+    white-space: pre-wrap;
+    word-break: break-all;
+    max-height: 100%; /* Ensure text doesn't overflow vertically */
+    overflow-y: auto; /* Add scrollbar if content exceeds max-height */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+
+#code-animation-container .cursor {
+    display: inline-block;
+    background-color: #0f0;
+    width: 10px;
+    height: 1.2em;
+    animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+    from, to { background-color: transparent; }
+    50% { background-color: #0f0; }
+}
+
+@media (max-width: 768px) {
+    .auth-container {
+        flex-direction: column;
+    }
+    .auth-visual {
+        display: none; /* Hide visual on smaller screens */
+    }
+}
+
+/* --- Password Strength Indicator --- */
+.password-strength-container {
+    margin-top: 10px;
+    height: auto;
+    opacity: 1;
+    transition: opacity 0.4s ease-in-out, height 0.4s ease-in-out;
+    overflow: hidden;
+}
+
+.password-strength-container.is-hidden {
+    opacity: 0;
+    height: 0;
+}
+
+.password-strength-bar-container {
+    width: 100%;
+    height: 8px;
+    background-color: var(--background-color);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.password-strength-bar {
+    height: 100%;
+    width: 0%;
+    border-radius: 4px;
+    transition: width 0.4s ease-in-out, background-color 0.4s ease-in-out;
+}
+
+.password-strength-text {
+    margin-top: 6px;
+    font-size: 0.85em;
+    text-align: right;
+    color: var(--text-color);
+    transition: color 0.4s ease-in-out;
+}
+
+/* Strength Levels */
+.password-strength-bar.is-weak {
+    width: 25%;
+    background-color: #e74c3c; /* Rouge */
+}
+.password-strength-bar.is-medium {
+    width: 60%;
+    background-color: #f39c12; /* Orange */
+}
+.password-strength-bar.is-strong {
+    width: 100%;
+    background-color: #2ecc71; /* Vert */
+}
+
+.password-strength-text.is-weak { color: #e74c3c; }
+.password-strength-text.is-medium { color: #f39c12; }
+.password-strength-text.is-strong { color: #2ecc71; }
+
+/* NEW FEATURES SECTION */
+.features-section {
+    padding: var(--spacing-xxl) 0;
+    background-color: var(--background-color);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Ajout d'un pseudo-élément pour un motif de fond subtil */
+.features-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: radial-gradient(circle at top left, rgba(225, 0, 60, 0.05), transparent 30%);
+    opacity: 0.5;
+    z-index: 0;
+}
+
+.features-section .container {
+    position: relative; /* Pour que le contenu soit au-dessus du pseudo-élément */
+    z-index: 1;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--spacing-lg);
+    margin-top: var(--spacing-xl);
+}
+
+.feature-item {
+    background-color: var(--surface-color);
+    border-radius: 12px;
+    padding: 2.5em 2em;
+    text-align: center;
+    border: 1px solid var(--border-color);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.feature-item:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 12px 30px var(--shadow-color-dark);
+    border-color: var(--primary-color);
+}
+
+.feature-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+    color: white;
+    font-size: 2.2em;
+    margin-bottom: 1em;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature-item:hover .feature-icon {
+    transform: scale(1.1) rotate(10deg);
+    box-shadow: 0 0 20px var(--primary-color);
+}
+
+.feature-item h3 {
+    font-size: 1.4em;
+    color: var(--text-color-dark);
+    font-family: var(--font-holberton-bold);
+    margin-bottom: 0.6em;
+}
+
+.feature-item p {
+    color: var(--text-color);
+    font-size: 0.95em;
+    opacity: 0.8;
+    line-height: 1.7;
+}
+
+/* Pour l'animation d'apparition */
+.feature-item {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.feature-item.is-visible {
+    opacity: 1;
+    transform: translateY(0);
 }

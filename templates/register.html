@@ -27,6 +27,12 @@
                 <div class="form-group">
                     <label for="password">Mot de passe</label>
                     <input type="password" id="password" name="password" required>
+                    <div id="password-strength-container" class="password-strength-container is-hidden">
+                        <div class="password-strength-bar-container">
+                            <div class="password-strength-bar"></div>
+                        </div>
+                        <div class="password-strength-text"></div>
+                    </div>
                 </div>
                 
                 <div class="form-group">
@@ -48,17 +54,8 @@
         </div>
         
         <div class="auth-visual">
-            <div class="matrix-code">
-                <div class="code-stream">
-                    <span>01010010</span>
-                    <span>01001101</span>
-                    <span>01100001</span>
-                    <span>01110010</span>
-                    <span>01100011</span>
-                    <span>01100001</span>
-                    <span>01101001</span>
-                    <span>01110011</span>
-                </div>
+            <div id="code-animation-container">
+                <pre><code></code></pre>
             </div>
         </div>
     </div>

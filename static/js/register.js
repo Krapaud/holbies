@@ -5,15 +5,83 @@ document.addEventListener('DOMContentLoaded', () => {
         registerForm.addEventListener('submit', handleRegister);
     }
 
-    // Initialize auth visual animation if present
-    if (window.holbiesApp && document.querySelector('.auth-visual')) {
-        window.holbiesApp.animateAuthVisual();
+
+    // --- Animation de frappe (copie login.js) ---
+    try {
+        const codeContainer = document.getElementById('code-animation-container');
+        if (!codeContainer) {
+            return; // Ne rien faire si le conteneur n'est pas sur la page
+        }
+
+        const codeElement = codeContainer.querySelector('code');
+        if (!codeElement) {
+            return;
+        }
+
+        const codeLines = [
+          "const db = require('./database');",
+          "",
+          "async function addUser(user) {",
+          "  const query = 'INSERT INTO users (username, email, password) VALUES (?, ?, ?)';",
+          "  const params = [user.username, user.email, user.password];",
+          "  ",
+          "  try {",
+          "    await db.run(query, params);",
+          "    console.log(`User ${user.username} added successfully.`);",
+          "  } catch (error) {",
+          "    console.error('Error adding user:', error);",
+          "  }",
+          "}",
+          "",
+          "addUser({",
+          "  username: 'nouveau_developpeur',",
+          "  email: 'dev@holbies.com',",
+          "  password: 'motdepassesecurise'",
+          "});"
+        ];
+        
+        const cursorElement = document.createElement('span');
+        cursorElement.classList.add('cursor');
+        
+        let textNode = document.createTextNode('');
+        codeElement.innerHTML = '';
+        codeElement.appendChild(textNode);
+        codeElement.appendChild(cursorElement);
+
+        let lineIndex = 0;
+        let charIndex = 0;
+
+        function typeCode() {
+            if (lineIndex >= codeLines.length) {
+                setTimeout(() => {
+                    lineIndex = 0;
+                    charIndex = 0;
+                    textNode.nodeValue = '';
+                    typeCode();
+                }, 3000);
+                return;
+            }
+    
+            const currentLine = codeLines[lineIndex];
+            if (charIndex < currentLine.length) {
+                textNode.nodeValue += currentLine[charIndex];
+                charIndex++;
+                setTimeout(typeCode, 40);
+            } else {
+                textNode.nodeValue += '\n';
+                lineIndex++;
+                charIndex = 0;
+                setTimeout(typeCode, 500);
+            }
+        }
+    
+        typeCode();
+
+    } catch (e) {
+        // En cas d'erreur, on ne bloque pas le reste du site
     }
 
-    // Initialize password strength indicator
-    if (window.holbiesApp && window.holbiesApp.addPasswordStrengthIndicator) {
-        window.holbiesApp.addPasswordStrengthIndicator();
-    }
+    
 });
 
 async function handleRegister(e) {
