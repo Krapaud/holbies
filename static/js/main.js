@@ -1,14 +1,13 @@
 // Main JavaScript file for Holbies Learning Hub
 class HolbiesApp {
     constructor() {
-        this.token = localStorage.getItem('access_token');
+        this.token = localStorage.getItem('token') || localStorage.getItem('access_token');
         this.user = null;
         this.init();
     }
 
     init() {
-        this.token = localStorage.getItem('access_token');
-        console.log('App initialized. Token from localStorage:', this.token);
+        this.token = localStorage.getItem('token') || localStorage.getItem('access_token');
         this.checkAuth();
         this.setupEventListeners();
         this.setupNavigation();
@@ -25,7 +24,6 @@ class HolbiesApp {
 
     setupEventListeners() {
         // Setup global event listeners here
-        console.log('Setting up event listeners');
     }
 
     setupNavigation() {
@@ -44,19 +42,38 @@ class HolbiesApp {
     }
 
     updateAuthLink() {
-        const authLink = document.getElementById('auth-link');
-        if (!authLink) return;
+        const navMenu = document.getElementById('nav-menu');
+        if (!navMenu) return;
+
+        // Update token from localStorage in case it changed
+        this.token = localStorage.getItem('token') || localStorage.getItem('access_token');
+
+        // Clear existing navigation links
+        navMenu.innerHTML = '';
 
         if (this.token) {
-            authLink.textContent = 'Déconnexion';
-            authLink.href = '#';
-            authLink.addEventListener('click', (e) => {
-                e.preventDefault();
-                this.logout();
-            });
+            // User is authenticated - show authenticated navigation
+            navMenu.innerHTML = `
+                <a href="/learning" class="nav-link">Learning Hub</a>
+                <a href="/tutor" class="nav-link">HLH Tutor</a>
+                <a href="/dashboard" class="nav-link">Dashboard</a>
+                <a href="#" class="nav-link" id="auth-link">Déconnexion</a>
+            `;
+            
+            // Add logout functionality
+            const authLink = document.getElementById('auth-link');
+            if (authLink) {
+                authLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.logout();
+                });
+            }
         } else {
-            authLink.textContent = 'Connexion';
-            authLink.href = '/login';
+            // User is not authenticated - show login/register links
+            navMenu.innerHTML = `
+                <a href="/login" class="nav-link">Connexion</a>
+                <a href="/register" class="nav-link">Inscription</a>
+            `;
         }
     }
 
@@ -73,6 +90,7 @@ class HolbiesApp {
             if (response.ok) {
                 this.user = await response.json();
                 this.updateUserInterface();
+                this.updateAuthLink(); // Force update navigation after successful auth check
             } else {
                 this.logout();
             }
@@ -94,8 +112,10 @@ class HolbiesApp {
 
     logout() {
         localStorage.removeItem('access_token');
+        localStorage.removeItem('token');
         this.token = null;
         this.user = null;
+        this.updateAuthLink(); // Update navigation immediately
         window.location.href = '/';
     }
 

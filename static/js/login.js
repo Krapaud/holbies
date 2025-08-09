@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
         loginForm.addEventListener('submit', handleLogin);
     }
 
-    // --- Animation de frappe ---
+    // --- Animation de frappe (copie register.js) ---
     try {
         const codeContainer = document.getElementById('code-animation-container');
         if (!codeContainer) {
@@ -18,75 +18,69 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const codeLines = [
-          "import { createConnection } from 'mysql2/promise';",
-          "",
-          "async function attemptLogin(username, password) {",
-          "  let connection;",
-          "  try {",
-          "    connection = await createConnection({",
-          "      host: 'localhost',",
-          "      user: username,",
-          "      password: password,",
-          "      database: 'holbies_db'",
-          "    });",
-          "    console.log(`Successfully connected as ${username}!`);",
-          "    // Perform authentication query here",
-          "    const [rows] = await connection.execute(",
-          "      'SELECT id FROM users WHERE username = ? AND password = ?',",
-          "      [username, password]",
-          "    );",
-          "    if (rows.length > 0) {",
-          "      console.log('Authentication successful.');",
-          "      return true;",
-          "    } else {",
-          "      console.log('Authentication failed: Invalid credentials.');",
-          "      return false;",
-          "    }",
-          "  } catch (error) {",
-          "    console.error('Database connection or query error:', error.message);",
-          "    return false;",
-          "  } finally {",
-          "    if (connection) connection.end();",
+          "// Authentification de l'utilisateur",
+          "async function authenticate(username, password) {",
+          "  const user = await findUserByUsername(username);",
+          "  if (!user) {",
+          "    return { success: false, message: 'Utilisateur non trouvé' };",
           "  }",
+          "  ",
+          "  const isPasswordValid = await verifyPassword(password, user.hashedPassword);",
+          "  if (!isPasswordValid) {",
+          "    return { success: false, message: 'Mot de passe incorrect' };",
+          "  }",
+          "  ",
+          "  const token = generateAuthToken(user.id);",
+          "  return { success: true, token: token };",
           "}",
           "",
-          "// Simulating a login attempt",
-          "attemptLogin('user_holberton', 'password123');"
+          "// Tentative de connexion...",
+          "authenticate('utilisateur_holbies', 'mon_mot_de_passe_secret');"
         ];
         
         const cursorElement = document.createElement('span');
         cursorElement.classList.add('cursor');
         
-        let textNode = document.createTextNode('');
-        codeElement.innerHTML = ''; // On vide l'élément
-        codeElement.appendChild(textNode);
-        codeElement.appendChild(cursorElement);
+        codeElement.innerHTML = ''; // Clear content initially
+        codeElement.appendChild(cursorElement); // Append cursor first
 
+        let currentContent = '';
         let lineIndex = 0;
         let charIndex = 0;
 
         function typeCode() {
+            console.log('typeCode function called');
             if (lineIndex >= codeLines.length) {
-                // Animation terminée, on redémarre
                 setTimeout(() => {
                     lineIndex = 0;
                     charIndex = 0;
-                    textNode.nodeValue = '';
+                    currentContent = ''; // Reset content
+                    codeElement.textContent = ''; // Clear the displayed text
+                    codeElement.appendChild(cursorElement); // Re-append cursor
+                    codeContainer.scrollTop = 0; // Reset scroll to top
                     typeCode();
-                }, 3000); // Pause avant de redémarrer
+                }, 3000);
                 return;
             }
     
             const currentLine = codeLines[lineIndex];
             if (charIndex < currentLine.length) {
-                textNode.nodeValue += currentLine[charIndex];
+                currentContent += currentLine[charIndex];
+                codeElement.textContent = currentContent; // Update textContent
+                codeElement.appendChild(cursorElement); // Keep cursor at the end
                 charIndex++;
-                setTimeout(typeCode, 40); // Vitesse de frappe
+                // Auto-scroll to follow the cursor
+                codeContainer.scrollTop = codeContainer.scrollHeight;
+                setTimeout(typeCode, 40);
             } else {
-                textNode.nodeValue += '\n';
+                currentContent += '\n';
+                codeElement.textContent = currentContent; // Update textContent with newline
+                codeElement.appendChild(cursorElement); // Keep cursor at the end
                 lineIndex++;
                 charIndex = 0;
-                setTimeout(typeCode, 500); // Pause entre les lignes
+                // Ensure scroll follows the new line
+                codeContainer.scrollTop = codeContainer.scrollHeight;
+                setTimeout(typeCode, 500);
             }
         }
     
@@ -94,9 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     } catch (e) {
         // En cas d'erreur, on ne bloque pas le reste du site
-        console.error("Erreur lors de l'initialisation de l'animation :", e);
     }
-    // --- Fin de l'animation ---
 
 });
 
@@ -121,8 +113,13 @@ async function handleLogin(e) {
 
         if (response.ok) {
             localStorage.setItem('access_token', data.access_token);
+            localStorage.setItem('token', data.access_token); // Pour compatibilité avec main.js
             if (window.holbiesApp) {
                 window.holbiesApp.token = data.access_token;
+                // Force update navigation after successful login
+                setTimeout(() => {
+                    window.holbiesApp.updateAuthLink();
+                }, 100);
                 if (window.holbiesApp.showMessage) {
                     window.holbiesApp.showMessage('Connexion réussie!', 'success');
                 }

@@ -43,20 +43,22 @@ document.addEventListener('DOMContentLoaded', () => {
         const cursorElement = document.createElement('span');
         cursorElement.classList.add('cursor');
         
-        let textNode = document.createTextNode('');
-        codeElement.innerHTML = '';
-        codeElement.appendChild(textNode);
-        codeElement.appendChild(cursorElement);
+        codeElement.innerHTML = ''; // Clear content initially
+        codeElement.appendChild(cursorElement); // Append cursor first
 
+        let currentContent = '';
         let lineIndex = 0;
         let charIndex = 0;
 
         function typeCode() {
+            console.log('typeCode function called');
             if (lineIndex >= codeLines.length) {
                 setTimeout(() => {
                     lineIndex = 0;
                     charIndex = 0;
-                    textNode.nodeValue = '';
+                    currentContent = ''; // Reset content
+                    codeElement.textContent = ''; // Clear the displayed text
+                    codeElement.appendChild(cursorElement); // Re-append cursor
                     typeCode();
                 }, 3000);
                 return;
@@ -64,13 +66,19 @@ document.addEventListener('DOMContentLoaded', () => {
     
             const currentLine = codeLines[lineIndex];
             if (charIndex < currentLine.length) {
-                textNode.nodeValue += currentLine[charIndex];
+                currentContent += currentLine[charIndex];
+                codeElement.textContent = currentContent; // Update textContent
+                codeElement.appendChild(cursorElement); // Keep cursor at the end
                 charIndex++;
+                codeContainer.scrollTop = codeContainer.scrollHeight; // Auto-scroll
                 setTimeout(typeCode, 40);
             } else {
-                textNode.nodeValue += '\n';
+                currentContent += "\n";
+                codeElement.textContent = currentContent; // Update textContent with newline
+                codeElement.appendChild(cursorElement); // Keep cursor at the end
                 lineIndex++;
                 charIndex = 0;
+                codeContainer.scrollTop = codeContainer.scrollHeight; // Auto-scroll
                 setTimeout(typeCode, 500);
             }
         }

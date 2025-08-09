@@ -49,16 +49,98 @@ async def get_quiz_questions(
     questions = db.query(Question).order_by(func.random()).limit(limit).all()
     return questions
 
-@router.get("/sessions", response_model=List[QuizSessionSchema])
-async def get_user_quiz_sessions(
+@router.get("/user/stats")
+async def get_user_stats(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user)
 ):
-    """Récupère toutes les sessions de quiz de l'utilisateur"""
+    """Récupère les statistiques de l'utilisateur pour le dashboard"""
+    # Compter les sessions complétées
+    completed_sessions = db.query(QuizSession).filter(
+        QuizSession.user_id == current_user.id,
+        QuizSession.completed == True
+    ).all()
+    
+    total_quizzes = len(completed_sessions)
+    
+    if total_quizzes == 0:
+        return {
+            "total_quizzes": 0,
+            "average_score": 0,
+            "best_score": 0,
+            "current_streak": 0
+        }
+    
+    # Calculer les scores
+    scores = []
+    for session in completed_sessions:
+        if session.total_questions > 0:
+            percentage = (session.score / session.total_questions) * 100
+            scores.append(percentage)
+    
+    average_score = sum(scores) / len(scores) if scores else 0
+    best_score = max(scores) if scores else 0
+    
+    # Calculer la série actuelle (simplifiée - dernières sessions consécutives avec score > 70%)
+    current_streak = 0
+    for session in reversed(completed_sessions[-10:]):  # Regarder les 10 dernières
+        if session.total_questions > 0:
+            percentage = (session.score / session.total_questions) * 100
+            if percentage >= 70:  # Considérer comme réussite si > 70%
+                current_streak += 1
+            else:
+                break
+    
+    return {
+        "total_quizzes": total_quizzes,
+        "average_score": round(average_score, 1),
+        "best_score": round(best_score, 1),
+        "current_streak": current_streak
+    }
+
+@router.get("/user/recent")
+async def get_user_recent_sessions(
+    limit: int = 5,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
+    """Récupère les sessions récentes de l'utilisateur"""
     sessions = db.query(QuizSession).filter(
-        QuizSession.user_id == current_user.id
-    ).order_by(QuizSession.started_at.desc()).all()
-    return sessions
+        QuizSession.user_id == current_user.id,
+        QuizSession.completed == True
+    ).order_by(QuizSession.completed_at.desc()).limit(limit).all()
+    
+    result = []
+    for session in sessions:
+        score_percentage = (session.score / session.total_questions * 100) if session.total_questions > 0 else 0
+        result.append({
+            "id": session.id,
+            "quiz_type": "Quiz Standard",
+            "score": round(score_percentage, 1),
+            "created_at": session.completed_at.isoformat() if session.completed_at else session.started_at.isoformat()
+        })
+    
+    return result
+
+@router.post("/user/reset")
+async def reset_user_progress(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
+    """Réinitialise la progression de l'utilisateur"""
+    # Supprimer toutes les réponses de l'utilisateur
+    user_sessions = db.query(QuizSession).filter(QuizSession.user_id == current_user.id).all()
+    session_ids = [session.id for session in user_sessions]
+    
+    if session_ids:
+        # Supprimer les réponses
+        db.query(QuizAnswer).filter(QuizAnswer.session_id.in_(session_ids)).delete(synchronize_session=False)
+        # Supprimer les sessions
+        db.query(QuizSession).filter(QuizSession.user_id == current_user.id).delete(synchronize_session=False)
+    
+    db.commit()
+    
+    return {"message": "Progression réinitialisée avec succès"}
 
 @router.get("/sessions/active", response_model=QuizSessionSchema)
 async def get_active_quiz_session(
