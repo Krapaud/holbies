@@ -8,7 +8,7 @@ import os
 from sqlalchemy.orm import Session
 
 # Ajouter le répertoire parent au path pour les imports
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from app.database import get_db, engine
 from app.models import User
@@ -35,8 +35,6 @@ def create_test_user():
         test_user = User(
             username="testuser",
             email="test@holbies.com",
-            first_name="Test",
-            last_name="User", 
             hashed_password=hashed_password,
             is_active=True
         )

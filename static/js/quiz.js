@@ -142,9 +142,9 @@ class QuizManager {
 
         options.forEach(option => {
             const optionDiv = document.createElement('div');
-            optionDiv.className = 'option';
+            optionDiv.className = 'option-item';
             optionDiv.innerHTML = `
-                <span class="option-label">${option.key.toUpperCase()})</span>
+                <span class="option-letter">${option.key.toUpperCase()}</span>
                 <span class="option-text">${option.text}</span>
             `;
             
@@ -164,7 +164,7 @@ class QuizManager {
 
     selectOption(optionElement, optionKey) {
         // Remove previous selection
-        document.querySelectorAll('.option').forEach(opt => {
+        document.querySelectorAll('.option-item').forEach(opt => {
             opt.classList.remove('selected');
         });
 

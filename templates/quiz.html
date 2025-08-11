@@ -10,8 +10,14 @@
         <div class="quiz-header">
             <h1 class="quiz-title">Quiz Technique</h1>
             <div class="quiz-info">
-                <span class="quiz-question-counter">Question <span id="current-question">1</span> sur <span id="total-questions">10</span></span>
-                <span class="quiz-timer" id="timer">00:00</span>
+                <span class="quiz-question-counter">
+                    <i class="fas fa-list-ol"></i>
+                    Question <span id="current-question">1</span> sur <span id="total-questions">10</span>
+                </span>
+                <span class="quiz-timer" id="timer">
+                    <i class="fas fa-clock"></i>
+                    00:00
+                </span>
             </div>
         </div>
         
@@ -25,17 +31,20 @@
             <!-- Quiz Start Screen -->
             <div class="quiz-start" id="quiz-start">
                 <div class="start-info">
-                    <h2>Prêt à tester vos connaissances ?</h2>
+                    <h2><i class="fas fa-brain"></i> Prêt à tester vos connaissances ?</h2>
                     <div class="quiz-rules">
-                        <h3>Règles du quiz :</h3>
+                        <h3><i class="fas fa-info-circle"></i> Règles du quiz :</h3>
                         <ul>
-                            <li>10 questions à choix multiples</li>
-                            <li>Une seule réponse correcte par question</li>
-                            <li>Pas de limite de temps</li>
-                            <li>Correction instantanée avec explications</li>
+                            <li><strong>10 questions</strong> à choix multiples</li>
+                            <li><strong>Une seule réponse</strong> correcte par question</li>
+                            <li><strong>Pas de limite</strong> de temps</li>
+                            <li><strong>Correction instantanée</strong> avec explications</li>
                         </ul>
                     </div>
-                    <button class="btn btn-primary" id="start-quiz-btn">Commencer le Quiz</button>
+                    <button class="btn btn-primary btn-large" id="start-quiz-btn">
+                        <i class="fas fa-play"></i>
+                        Commencer le Quiz
+                    </button>
                 </div>
             </div>
             
@@ -46,14 +55,17 @@
                     <div class="question-options" id="question-options">
                         <!-- Options will be inserted here -->
                     </div>
-                    <button class="btn btn-primary" id="submit-answer-btn" disabled>Valider</button>
+                    <button class="btn btn-primary" id="submit-answer-btn" disabled>
+                        <i class="fas fa-check"></i>
+                        Valider ma réponse
+                    </button>
                 </div>
             </div>
             
             <!-- Quiz Results -->
             <div class="quiz-results hidden" id="quiz-results">
                 <div class="results-content">
-                    <h2>Résultats du Quiz</h2>
+                    <h2><i class="fas fa-trophy"></i> Résultats du Quiz</h2>
                     <div class="score-display">
                         <div class="score-circle">
                             <span class="score-value" id="score-value">0</span>
@@ -65,8 +77,14 @@
                         <!-- Results details will be inserted here -->
                     </div>
                     <div class="results-actions">
-                        <button class="btn btn-primary" id="retake-quiz-btn">Refaire le Quiz</button>
-                        <a href="/dashboard" class="btn btn-secondary">Voir le Dashboard</a>
+                        <button class="btn btn-primary" id="retake-quiz-btn">
+                            <i class="fas fa-redo"></i>
+                            Refaire le Quiz
+                        </button>
+                        <a href="/dashboard" class="btn btn-secondary">
+                            <i class="fas fa-chart-line"></i>
+                            Voir le Dashboard
+                        </a>
                     </div>
                 </div>
             </div>
@@ -78,7 +96,10 @@
 <div class="modal hidden" id="answer-modal">
     <div class="modal-content">
         <div class="modal-header">
-            <h3 id="modal-title">Résultat</h3>
+            <h3 id="modal-title">
+                <i class="fas fa-lightbulb"></i>
+                Résultat
+            </h3>
             <button class="modal-close" id="modal-close">&times;</button>
         </div>
         <div class="modal-body">
@@ -87,7 +108,10 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button class="btn btn-primary" id="next-question-btn">Question Suivante</button>
+            <button class="btn btn-primary" id="next-question-btn">
+                <i class="fas fa-arrow-right"></i>
+                Question Suivante
+            </button>
         </div>
     </div>
 </div>
