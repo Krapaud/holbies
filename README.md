@@ -1,18 +1,520 @@
-# 🧠 Holbies Learning Hub
+# 🎯 Holbies Learning Hub
 
-Un système de quiz interactif avec un thème Matrix pour l'apprentissage technique, développé avec FastAPI, PostgreSQL et un design geek sombre inspiré de Matrix. Le projet inclut maintenant un **système de corr2. **🔧 API REST**
-   - Documentation interactive avec Swagger
-   - Endpoints sécurisés avec JWT
-   - Validation automatique des données
-   - Gestion d'erreurs complète
-   - **API AI Quiz** pour sessions PLD
+<div align="center">
 
-3. **🗄️ Base de Données**
-   - Modèles SQLAlchemy bien structurés
-   - **Tables AI Quiz** : sessions, réponses, scores
-   - Migrations avec Alembic
-   - Relations optimisées
-   - Index pour les performancesvancé** pour les questions à réponse libre de type PLD (Peer Learning Day).
+**Plateforme d'apprentissage interactive moderne avec thème Matrix et correction IA**
+
+![Matrix Theme](https://img.shields.io/badge/Theme-Matrix-00ff41?style=for-the-badge)
+![Python](https://img.shields.io/badge/Python-3.8+-3776ab?style=for-the-badge&logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![AI Powered](https://img.shields.io/badge/AI-Powered-ff6b35?style=for-the-badge)
+
+[🚀 Demo Live](#) • [📖 Documentation](#) • [🐛 Issues](https://github.com/Krapaud/project-holbies/issues) • [💡 Contributing](#-contribution)
+
+</div>
+
+---
+
+## 🌟 Présentation
+
+**Holbies Learning Hub** est une plateforme d'apprentissage technique moderne inspirée de l'univers Matrix. Elle combine quiz classiques et intelligence artificielle pour offrir une expérience d'apprentissage immersive et adaptée aux développeurs.
+
+### ✨ Points Forts
+
+- 🧠 **Quiz Intelligents** - Questions techniques variées avec correction automatique
+- 🤖 **IA Avancée** - Correction intelligente des réponses libres avec feedback personnalisé  
+- 🎨 **Interface Matrix** - Design cyberpunk avec animations immersives
+- 📊 **Analytics** - Suivi des performances et progression détaillée
+- 🔐 **Sécurité** - Authentification JWT et protection des données
+- 🐳 **Docker Ready** - Déploiement simplifié avec docker-compose
+
+---
+
+## 🚀 Installation Rapide
+
+### Méthode Docker (Recommandée)
+
+```bash
+# Cloner le projet
+git clone https://github.com/Krapaud/project-holbies.git
+cd project-holbies
+
+# Lancer avec Docker
+docker-compose up --build
+
+# Accéder à l'application
+open http://localhost:8000
+```
+
+### Installation Manuelle
+
+```bash
+# 1. Prérequis
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+
+# 2. Configuration
+cp .env.example .env
+# Modifier .env avec vos paramètres
+
+# 3. Base de données
+python scripts/create_tables.py
+python scripts/populate_db_balanced.py
+
+# 4. Démarrage
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
+```
+
+---
+
+## 🎮 Fonctionnalités
+
+### 🎯 Quiz Classiques
+- **150+ questions** techniques couvrant Python, JavaScript, C, Algorithms, Web, SQL, Linux, Git
+- **Correcteur automatique** avec explications détaillées
+- **Catégories et difficultés** multiples (Easy/Medium/Hard)
+- **Système de scoring** et suivi des performances
+
+### 🤖 AI Quiz (PLD)
+- **Questions à réponse libre** corrigées par Intelligence Artificielle
+- **Scoring intelligent** : 70% similarité sémantique + 30% termes techniques
+- **Feedback personnalisé** avec recommandations d'amélioration
+- **Sessions persistantes** avec historique complet
+
+### 🎨 Interface Matrix
+- **Thème cyberpunk** avec couleurs néon vertes (#00ff41)
+- **Animations fluides** : terminal animé, effets de glitch, particules
+- **Design responsive** optimisé mobile et desktop
+- **Polices monospace** (Courier New, Source Code Pro)
+
+### 🔐 Authentification
+- **JWT Tokens** sécurisés avec expiration
+- **Hachage bcrypt** des mots de passe
+- **Validation avancée** côté client et serveur
+- **Sessions persistantes** avec gestion d'état
+
+### 📊 Dashboard Analytics
+- **Statistiques unifiées** combinant quiz classiques et IA
+- **Graphiques de performance** avec Chart.js
+- **Historique des sessions** avec distinction visuelle
+- **Métriques détaillées** : scores, pourcentages, séries de réussite
+
+---
+
+## 🏗️ Architecture
+
+### Stack Technique
+
+| Composant | Technologie | Version |
+|-----------|-------------|---------|
+| **Backend** | FastAPI | 0.104+ |
+| **Base de données** | PostgreSQL | 13+ |
+| **ORM** | SQLAlchemy | 2.0+ |
+| **Frontend** | HTML/CSS/JS | ES6+ |
+| **Authentification** | JWT | python-jose |
+| **Déploiement** | Docker | Compose v3.8 |
+| **IA** | Analyse sémantique | Custom |
+
+### Structure du Projet
+
+```
+project-holbies/
+├── 🐍 Backend
+│   ├── app/
+│   │   ├── routers/          # Routes API (auth, quiz, ai_quiz, users)
+│   │   ├── models.py         # Modèles SQLAlchemy + tables IA
+│   │   ├── schemas.py        # Schémas Pydantic
+│   │   ├── auth.py          # Authentification JWT
+│   │   └── database.py      # Configuration PostgreSQL
+│   └── main.py              # Point d'entrée FastAPI
+├── 🌐 Frontend
+│   ├── static/
+│   │   ├── css/style.css    # Styles Matrix + animations
+│   │   ├── js/              # Modules JavaScript
+│   │   │   ├── ai-quiz.js   # Gestion AI Quiz
+│   │   │   ├── dashboard.js # Analytics + graphiques
+│   │   │   ├── quiz.js      # Quiz classiques
+│   │   │   └── auth.js      # Authentification
+│   │   ├── fonts/           # Polices Matrix (Aktiv Grotesk)
+│   │   └── images/          # Assets visuels
+│   └── templates/           # Templates Jinja2
+├── 🗄️ Scripts
+│   ├── populate_db_balanced.py  # Questions équilibrées
+│   ├── create_admin.py          # Création admin
+│   └── ai_quiz_corrector.py     # Correcteur IA
+└── 🐳 Docker
+    ├── Dockerfile
+    └── docker-compose.yml
+```
+
+---
+
+## 🌐 API Endpoints
+
+### Authentification
+```http
+POST /api/auth/register     # Inscription utilisateur
+POST /api/auth/token        # Connexion JWT
+GET  /api/auth/me          # Profil utilisateur
+```
+
+### Quiz Classiques
+```http
+GET  /api/quiz/questions    # Liste des questions
+POST /api/quiz/session      # Créer session
+POST /api/quiz/submit       # Soumettre réponses
+GET  /api/quiz/history      # Historique sessions
+```
+
+### AI Quiz (PLD)
+```http
+GET  /api/ai-quiz/questions      # Questions IA disponibles
+POST /api/ai-quiz/session        # Créer session IA
+POST /api/ai-quiz/submit-answer  # Soumettre réponse libre
+GET  /api/ai-quiz/history        # Historique sessions IA
+```
+
+### Dashboard
+```http
+GET  /api/dashboard/stats        # Statistiques utilisateur
+GET  /api/dashboard/performance  # Données graphiques
+```
+
+**📚 Documentation interactive** : http://localhost:8000/docs
+
+---
+
+## 🎯 Système AI Quiz
+
+### 🧠 Fonctionnement de l'IA
+
+Le correcteur IA analyse les réponses textuelles selon plusieurs critères :
+
+#### Scoring Algorithm
+```python
+Score = (Similarité_Sémantique × 0.7) + (Termes_Techniques × 0.3) + Bonus_Technique
+
+# Exemple :
+# Réponse attendue : "La compilation C transforme le code source en exécutable"
+# Réponse utilisateur : "Le compilateur convertit le C en programme exécutable"
+# → Similarité: 85% + Termes: 3 détectés → Score: 95/100
+```
+
+#### Critères d'Évaluation
+- **� Analyse sémantique** : Comparaison intelligente des concepts
+- **🔧 Termes techniques** : Détection automatique et bonus (+5 pts/terme)
+- **📝 Structure logique** : Cohérence de l'argumentation
+- **💡 Feedback personnalisé** : Recommandations ciblées
+
+### 📊 Types de Questions
+
+| Difficulté | Points | Exemples |
+|------------|--------|----------|
+| 🟢 **Easy** | 100 | Définitions, concepts de base |
+| 🟡 **Medium** | 100 | Applications pratiques, explications |
+| 🔴 **Hard** | 100 | Algorithmes complexes, optimisation |
+
+---
+
+## 🎨 Configuration Thème
+
+### Variables CSS Principales
+
+```css
+:root {
+  /* Couleurs Matrix */
+  --matrix-green: #00ff41;
+  --matrix-dark: #0d1117;
+  --secondary-green: #008f11;
+  
+  /* Animations */
+  --glow-animation: matrix-glow 2s ease-in-out infinite alternate;
+  --terminal-speed: 45ms;
+  
+  /* Typographie */
+  --font-matrix: 'Courier New', monospace;
+  --font-size-code: 18px;
+}
+```
+
+### Personnalisation
+
+```bash
+# Modifier les couleurs
+sed -i 's/#00ff41/#ff4500/g' static/css/style.css
+
+# Changer la vitesse du terminal
+sed -i 's/45ms/30ms/g' static/js/index.js
+```
+
+---
+
+## 🧪 Tests et Validation
+
+### Tests Automatiques
+
+```bash
+# Test de l'installation
+python scripts/test_installation.py
+
+# Test des endpoints API
+python -m pytest tests/
+
+# Test de la base de données
+python scripts/reset_db.py && python scripts/populate_db_balanced.py
+```
+
+### Validation Manuelle
+
+1. **Interface** : http://localhost:8000
+2. **Authentification** : Créer compte + connexion
+3. **Quiz classique** : Compléter un quiz
+4. **AI Quiz** : Tester réponse libre
+5. **Dashboard** : Vérifier statistiques
+
+---
+
+## 📈 Métriques et Analytics
+
+### Dashboard Unifié
+
+- **📊 Vue d'ensemble** : Total quiz + sessions IA combinées
+- **📈 Graphique performance** : Évolution chronologique avec distinction visuelle
+- **🎯 Métriques clés** : Score moyen, meilleur score, série actuelle
+- **📋 Historique** : Sessions détaillées avec scores et feedback
+
+### Exemples de Données
+
+```json
+{
+  "stats": {
+    "total_quizzes": 25,
+    "total_ai_sessions": 12,
+    "average_score": 78.5,
+    "best_score": 95,
+    "current_streak": 8
+  },
+  "performance": [
+    {"date": "2025-01-15", "type": "quiz", "score": 80},
+    {"date": "2025-01-16", "type": "ai_quiz", "score": 85}
+  ]
+}
+```
+
+---
+
+## 🚀 Déploiement Production
+
+### Docker Compose (Production)
+
+```yaml
+version: '3.8'
+services:
+  web:
+    build: .
+    ports:
+      - "80:8000"
+    environment:
+      - DEBUG=False
+      - SECRET_KEY=${PRODUCTION_SECRET_KEY}
+      - DATABASE_URL=${PRODUCTION_DB_URL}
+    depends_on:
+      - db
+      
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: holbies_prod
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+```
+
+### Variables d'Environnement
+
+```env
+# Production
+DEBUG=False
+SECRET_KEY=your-super-secret-production-key-256-bits
+DATABASE_URL=postgresql://user:pass@db:5432/holbies_prod
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=60
+
+# Performance
+WORKERS=4
+MAX_CONNECTIONS=100
+```
+
+### Nginx (Optionnel)
+
+```nginx
+server {
+    listen 80;
+    server_name yourdomain.com;
+    
+    location / {
+        proxy_pass http://localhost:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+    
+    location /static/ {
+        alias /app/static/;
+        expires 1y;
+    }
+}
+```
+
+---
+
+## 🛠️ Développement
+
+### Ajouter des Questions
+
+#### Quiz Classique (QCM)
+```python
+# Dans scripts/populate_db_balanced.py
+{
+    "question_text": "Quelle est la complexité de QuickSort ?",
+    "option_a": "O(n)",
+    "option_b": "O(n log n)",
+    "option_c": "O(n²)",
+    "option_d": "O(log n)",
+    "correct_answer": "b",
+    "explanation": "QuickSort a une complexité moyenne de O(n log n)",
+    "difficulty": "medium",
+    "category": "algorithms"
+}
+```
+
+#### AI Quiz (PLD)
+```python
+# Dans app/routers/ai_quiz.py
+{
+    "id": "memory-management-c",
+    "question_text": "Expliquez la gestion mémoire en C avec malloc/free",
+    "expected_answer": "malloc alloue dynamiquement, free libère, attention aux fuites",
+    "technical_terms": ["malloc", "free", "heap", "pointeur", "fuite mémoire"],
+    "difficulty": "hard",
+    "category": "c-programming"
+}
+```
+
+### Contribution
+
+```bash
+# 1. Fork du projet
+git clone https://github.com/votre-username/project-holbies.git
+
+# 2. Créer une branche
+git checkout -b feature/nouvelle-fonctionnalite
+
+# 3. Développement
+# ... vos modifications ...
+
+# 4. Tests
+python scripts/test_installation.py
+
+# 5. Commit et Push
+git commit -am "Ajouter nouvelle fonctionnalité"
+git push origin feature/nouvelle-fonctionnalite
+
+# 6. Pull Request
+```
+
+---
+
+## 🎯 Roadmap
+
+### ✅ Version 2.0 (Actuelle)
+- [x] 🤖 Système AI Quiz avec correction intelligente
+- [x] 📊 Dashboard unifié Quiz + IA
+- [x] 🎨 Interface Matrix avec animations fluides
+- [x] 🔐 Authentification JWT sécurisée
+- [x] 📈 Analytics et graphiques de performance
+- [x] 🐳 Déploiement Docker simplifié
+
+### 🚧 Version 2.1 (En Cours)
+- [ ] 🏆 Système de badges et récompenses
+- [ ] ⏱️ Quiz chronométrés avec mode challenge
+- [ ] 🥇 Classements et compétitions inter-utilisateurs
+- [ ] 💻 Questions de code avec syntax highlighting
+- [ ] 📱 Progressive Web App (PWA)
+- [ ] 🔊 Effets sonores et musique Matrix
+
+### 🔮 Version 2.2 (Futur)
+- [ ] 👥 Mode multijoueur en temps réel
+- [ ] 📁 Import/Export de questions (JSON, CSV)
+- [ ] 🎨 Thèmes personnalisables (Cyberpunk, Retro)
+- [ ] 🌍 Support multilingue (EN, FR, ES)
+- [ ] ☁️ Sauvegarde cloud et synchronisation
+- [ ] 🧠 IA améliorée avec GPT intégration
+
+---
+
+## 📞 Support & Communauté
+
+### 🐛 Signaler un Bug
+- **Issues GitHub** : [Créer un rapport](https://github.com/Krapaud/project-holbies/issues)
+- **Template** : Utilisez le template de bug report
+- **Labels** : bug, enhancement, question
+
+### 💡 Demander une Fonctionnalité
+- **Feature Request** : [Proposer une amélioration](https://github.com/Krapaud/project-holbies/issues)
+- **Discussion** : Expliquez le besoin et l'usage attendu
+
+### 🤝 Contribuer
+1. 🍴 **Fork** le projet
+2. 🌿 **Branch** : `git checkout -b feature/ma-fonctionnalite`
+3. 💾 **Commit** : `git commit -am 'Ajouter ma fonctionnalité'`
+4. 📤 **Push** : `git push origin feature/ma-fonctionnalite`
+5. 🔄 **Pull Request** avec description détaillée
+
+---
+
+## 📄 Licence
+
+```
+MIT License
+
+Copyright (c) 2025 Holbies Learning Hub
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+```
+
+---
+
+<div align="center">
+
+**Créé avec ❤️ pour la communauté des développeurs**
+
+🌟 **[Star ce projet](https://github.com/Krapaud/project-holbies)** si il vous a plu !  
+🐛 **[Reportez les bugs](https://github.com/Krapaud/project-holbies/issues)** pour nous aider à améliorer  
+💡 **[Proposez des améliorations](https://github.com/Krapaud/project-holbies/pulls)** via Pull Request
+
+---
+
+![Matrix Code](https://user-images.githubusercontent.com/placeholder/matrix-animation.gif)
+
+*"There is no spoon... but there is code to learn!"* 🥄💊
+
+</div>
 
 ![Matrix Theme](https://img.shields.io/badge/Theme-Matrix-00ff41)
 ![Python](https://img.shields.io/badge/Python-3.8+-blue)

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Holbies Learning Hub{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='/css/style.css') }}">
+    
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="/" class="logo-link">
+                    <span class="logo-texts">
+                        <span class="logo-text">HOLBIES</span>
+                        <span class="logo-subtext">Learning Hub</span>
+                    </span>
+                    <img src="{{ url_for('static', path='/images/holberton-hero.png') }}" alt="Holberton" class="logo-img" />
+                </a>
+            </div>
+            <nav class="nav-menu" id="nav-menu">
+                <!-- Navigation will be dynamically populated by main.js -->
+                <a href="/login" class="nav-link">Connexion</a>
+                <a href="/register" class="nav-link">Inscription</a>
+            </nav>
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2025 Holbies Learning Hub. Tous droits réservés.</p>
+            <p>Système de quiz interactif pour développeurs</p>
+        </div>
+    </footer>
+
+    <script src="/static/js/main.js"></script>
+    
+    {% block scripts %}{% endblock %}
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

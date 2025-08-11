@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="/static/css/style.css">
+{% endblock %}
+
+{% block content %}
+<section class="hero-section">
+    <div class="container">
+        <div class="hero-split-layout">
+            <div class="hero-left-section">
+                <div class="hero-title-container">
+                    <div class="hero-title-text">
+                        <h1 class="hero-title">HOLBIES</h1>
+                        <p class="hero-subtitle">Learning Hub</p>
+                    </div>
+                    <img src="{{ url_for_static('/images/holberton-hero.png') }}" alt="Holberton Learning Hub" class="hero-title-image">
+                </div>
+                <p class="hero-description">Découvrez une nouvelle façon d'apprendre et de maîtriser les compétences techniques essentielles.</p>
+                <div class="hero-buttons">
+                    <a href="/learning" class="btn btn-primary">Commencer l'apprentissage</a>
+                    <a href="#features" class="btn btn-secondary">Découvrir les fonctionnalités</a>
+                </div>
+            </div>
+            <div class="hero-right-section">
+                <div class="hero-terminal">
+                    <div id="hero-code-animation-container">
+                        <pre><code></code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="hero-image" style="display: none;">
+            <!-- Image moved to title container -->
+        </div>
+    </div>
+</section>
+
+<section id="features" class="features-section">
+    <div class="container">
+        <h2 class="section-heading">Nos Fonctionnalités Clés</h2>
+        <div class="features-grid">
+            <div class="feature-item">
+                <i class="feature-icon fas fa-brain" aria-label="Quiz Intelligents"></i>
+                <h3>Quiz Intelligents</h3>
+                <p>Des questions techniques variées pour tester vos connaissances.</p>
+            </div>
+            <div class="feature-item">
+                <i class="feature-icon fas fa-robot" aria-label="Correction IA"></i>
+                <h3>Correction IA</h3>
+                <p>Obtenez un feedback instantané et personnalisé sur vos réponses.</p>
+            </div>
+            <div class="feature-item">
+                <i class="feature-icon fas fa-chart-line" aria-label="Suivi de Progrès"></i>
+                <h3>Suivi de Progrès</h3>
+                <p>Visualisez votre évolution et identifiez vos points forts et faibles.</p>
+            </div>
+            <div class="feature-item">
+                <i class="feature-icon fas fa-code" aria-label="Environnement de Code"></i>
+                <h3>Environnement de Code</h3>
+                <p>Pratiquez vos compétences de codage directement dans le navigateur.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="cta-section">
+    <div class="container">
+        <div class="cta-content">
+            <h2>Prêt à transformer votre apprentissage ?</h2>
+            <p>Rejoignez des milliers d'étudiants et commencez votre parcours vers l'excellence technique.</p>
+            <a href="/register" class="btn btn-primary">S'inscire maintenant</a>
+        </div>
+    </div>
+</section>
+
+<section class="stats-section">
+    <div class="container">
+        <h2 class="section-heading">Notre Impact en Chiffres</h2>
+        <div class="stats-grid">
+            <div class="stat-item" style="--stat-color: #E1003C; animation-delay: 0.1s;">
+                <i class="fas fa-question-circle" aria-label="Questions disponibles" style="color: #E1003C; font-size:2em;"></i>
+                <span class="stat-number">100+</span>
+                <p class="stat-label">Questions disponibles</p>
+            </div>
+            <div class="stat-item" style="--stat-color: #00B894; animation-delay: 0.25s;">
+                <i class="fas fa-users" aria-label="Utilisateurs inscrits" style="color: #00B894; font-size:2em;"></i>
+                <span class="stat-number">5000+</span>
+                <p class="stat-label">Utilisateurs inscrits</p>
+            </div>
+            <div class="stat-item" style="--stat-color: #0984E3; animation-delay: 0.4s;">
+                <i class="fas fa-smile" aria-label="Taux de satisfaction" style="color: #0984E3; font-size:2em;"></i>
+                <span class="stat-number">95%</span>
+                <p class="stat-label">Taux de satisfaction</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for_static('/js/index.js') }}"></script>
+{% endblock %}
