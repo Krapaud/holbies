@@ -73,12 +73,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 codeElement.textContent = currentContent;
                 codeElement.appendChild(cursorElement);
                 charIndex++;
-                // Force scroll to bottom - seulement le conteneur terminal
-                requestAnimationFrame(() => {
-                    if (codeContainer && codeContainer.scrollHeight > codeContainer.clientHeight) {
-                        codeContainer.scrollTop = codeContainer.scrollHeight;
-                    }
-                });
+                
+                // Scroll vers le curseur pour qu'il soit visible en bas
+                if (codeContainer && cursorElement) {
+                    setTimeout(() => {
+                        cursorElement.scrollIntoView({ 
+                            behavior: 'auto', 
+                            block: 'end',
+                            inline: 'nearest'
+                        });
+                    }, 10);
+                }
+                
                 setTimeout(typeCode, 45);
             } else {
                 currentContent += '\n';
@@ -86,12 +92,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 codeElement.appendChild(cursorElement);
                 lineIndex++;
                 charIndex = 0;
-                // Force scroll to bottom after line break - seulement le conteneur terminal
-                requestAnimationFrame(() => {
-                    if (codeContainer && codeContainer.scrollHeight > codeContainer.clientHeight) {
-                        codeContainer.scrollTop = codeContainer.scrollHeight;
-                    }
-                });
+                
+                // Scroll vers le curseur pour qu'il soit visible en bas
+                if (codeContainer && cursorElement) {
+                    setTimeout(() => {
+                        cursorElement.scrollIntoView({ 
+                            behavior: 'auto', 
+                            block: 'end',
+                            inline: 'nearest'
+                        });
+                    }, 10);
+                }
+                
                 setTimeout(typeCode, 600);
             }
         }

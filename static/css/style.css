@@ -1158,9 +1158,9 @@ main {
     height: 450px;
     background-color: #181818;
     display: flex;
-    align-items: flex-start;
-    justify-content: flex-start;
-    padding: var(--spacing-xl);
+    align-items: center; /* Centrer verticalement */
+    justify-content: center; /* Centrer horizontalement */
+    padding: 25px; /* Padding équilibré pour centrer l'animation 400x400 */
     overflow: hidden;
     position: relative;
     box-sizing: border-box;
@@ -1179,9 +1179,9 @@ main {
 }
 
 #hero-code-animation-container {
-    width: 100%;
-    height: 100%;
-    max-height: 250px; /* Plus petit pour forcer le scroll plus tôt */
+    width: 400px; /* Taille exacte demandée */
+    height: 400px; /* Taille exacte demandée */
+    max-height: 400px;
     overflow-y: auto;
     overflow-x: hidden;
     scroll-behavior: auto; /* Plus direct pour éviter les conflits */
@@ -1195,6 +1195,7 @@ main {
     contain: strict;
     isolation: isolate;
     overscroll-behavior: contain;
+    margin: auto; /* Centrer dans le terminal */
 }
 
 /* Masquer l'ascenseur pour WebKit (Chrome, Safari) */
@@ -1208,10 +1209,10 @@ main {
     margin: 0;
     font-family: 'Courier New', Courier, monospace;
     color: #0f0;
-    font-size: 16px;
+    font-size: 18px; /* Plus grand pour occuper plus d'espace */
     white-space: pre-wrap;
     word-wrap: break-word;
-    line-height: 1.4;
+    line-height: 1.6; /* Plus d'espacement entre les lignes */
 }
 
 /* Masquer l'ascenseur pour WebKit (Chrome, Safari) */
@@ -2366,15 +2367,18 @@ main {
     height: 100%;
     max-height: 400px; /* Taille fixe comme le terminal de la page d'accueil */
     overflow-y: auto;
-    scroll-behavior: smooth;
-    padding: 2px;
+    overflow-x: hidden;
+    scroll-behavior: auto;
+    padding: 8px;
+    padding-bottom: 20px;
     box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    
-    /* Masquer la scrollbar tout en gardant la fonctionnalité */
+    display: block;
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none; /* Internet Explorer 10+ */
+    /* Isolation complète du scroll */
+    contain: strict;
+    isolation: isolate;
+    overscroll-behavior: contain;
 }
 
 /* Masquer la scrollbar pour Chrome, Safari et Opera */
@@ -2386,13 +2390,12 @@ main {
 
 #code-animation-container pre {
     margin: 0;
-    flex: 1;
     font-family: 'Courier New', Courier, monospace;
     color: #0f0;
-    font-size: 1em;
+    font-size: 18px; /* Plus grand pour occuper plus d'espace */
     white-space: pre-wrap;
-    word-break: break-all;
-    overflow: visible; /* Permettre le contenu de dépasser pour le scroll parent */
+    word-wrap: break-word;
+    line-height: 1.6; /* Plus d'espacement entre les lignes */
 }
 
 #code-animation-container code {
