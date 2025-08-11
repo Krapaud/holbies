@@ -62,6 +62,11 @@ venv.bak/
 .venv/
 
 # Environment variables
+config/.env
+config/.env.local
+config/.env.development.local
+config/.env.test.local
+config/.env.production.local
 .env
 .env.local
 .env.development.local
@@ -80,6 +85,8 @@ venv.bak/
 *.sqlite3
 *.db
 *.sqlite
+test.db
+src/test.db
 
 # Log files
 *.log
