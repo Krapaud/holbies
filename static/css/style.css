@@ -55,7 +55,7 @@ input, textarea, select {
 }
 
 /* Small text, helper, muted */
-small, .text-muted, .logo-subtext {
+small, .text-muted {
     font-family: 'AktivGrotesk-HairlineItalic', Arial, sans-serif;
     font-weight: 100;
     font-style: italic;
@@ -742,111 +742,111 @@ a:hover {
 .logo-link {
     text-decoration: none;
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+    flex-direction: row;
+    align-items: center;
     position: relative;
-    transition: all 0.3s ease;
-    padding: 1.2rem 4rem 1.2rem 1rem;
-    border-radius: 8px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 1rem 1.5rem 1rem 1rem;
     overflow: visible;
-    min-width: 200px;
-    min-height: 60px;
-}
-
-.logo-link::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-    transition: left 0.5s ease;
-}
-
-.logo-link:hover::before {
-    left: 100%;
+    min-width: 240px;
+    min-height: 70px;
+    gap: 20px;
 }
 
 .logo-link:hover {
     transform: translateY(-2px);
 }
 
+.logo-texts {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 0.2rem;
+    flex: 1;
+    line-height: 1;
+}
+
 .logo-text {
     font-family: 'AktivGrotesk-Bold', Arial, sans-serif;
-    font-size: 2.5rem;
+    font-size: 2.2rem;
     font-weight: 900;
-    color: #ffffff;
-    letter-spacing: 0.1em;
+    color: var(--primary-color);
+    letter-spacing: 0.08em;
     text-shadow: 
-        2px 2px 4px rgba(0, 0, 0, 0.9),
-        4px 4px 8px rgba(0, 0, 0, 0.6),
-        0 0 20px rgba(225, 0, 60, 0.8),
-        0 0 30px rgba(225, 0, 60, 0.5);
+        2px 2px 4px rgba(0, 0, 0, 0.8),
+        4px 4px 8px rgba(0, 0, 0, 0.5),
+        0 0 20px rgba(225, 0, 60, 0.6),
+        0 0 30px rgba(225, 0, 60, 0.3);
     position: relative;
     transition: all 0.3s ease;
     text-transform: uppercase;
-    margin-bottom: 2px;
-}
-
-.logo-text::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    right: -15px;
-    width: 35px;
-    height: 35px;
-    background-image: url('/static/images/holberton-hero.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    animation: logoPulse 3s ease-in-out infinite;
-    filter: drop-shadow(0 0 10px rgba(225, 0, 60, 0.6)) brightness(1.2);
-    transform: translateY(-50%);
+    margin: 0;
+    line-height: 0.9;
 }
 
 .logo-subtext {
-    font-size: 0.95rem;
-    color: rgba(255, 255, 255, 0.85);
-    letter-spacing: 0.15em;
+    font-size: 0.85rem;
+    color: #ffffff;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    font-weight: 600;
+    font-weight: 500;
     font-family: 'AktivGrotesk-Medium', Arial, sans-serif;
+    font-style: normal;
     transition: all 0.3s ease;
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
     position: relative;
+    margin: 0;
+    line-height: 1;
 }
 
 .logo-subtext::after {
     content: '';
     position: absolute;
-    bottom: -3px;
+    bottom: -2px;
     left: 0;
     width: 0;
     height: 2px;
     background: linear-gradient(90deg, var(--primary-color), #ff4d6d);
-    transition: width 0.3s ease;
+    transition: width 0.4s ease;
     border-radius: 1px;
+}
+
+.logo-img {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    display: block;
+    animation: logoPulse 3s ease-in-out infinite;
+    filter: drop-shadow(0 0 10px rgba(225, 0, 60, 0.5)) brightness(1.1);
+    transition: all 0.3s ease;
+    border-radius: 8px;
 }
 
 .logo-link:hover .logo-text {
     text-shadow: 
         2px 2px 4px rgba(0, 0, 0, 0.9),
         4px 4px 8px rgba(0, 0, 0, 0.6),
-        0 0 25px rgba(225, 0, 60, 1),
-        0 0 40px rgba(225, 0, 60, 0.7);
-    transform: scale(1.02);
+        0 0 25px rgba(225, 0, 60, 0.8),
+        0 0 40px rgba(225, 0, 60, 0.5);
+    transform: scale(1.03);
 }
 
 .logo-link:hover .logo-subtext {
-    color: rgba(255, 255, 255, 1);
-    transform: translateX(3px);
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+    color: rgba(255, 255, 255, 0.95);
+    transform: translateX(2px);
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
 }
 
 .logo-link:hover .logo-subtext::after {
     width: 100%;
 }
+
+.logo-link:hover .logo-img {
+    transform: scale(1.05) rotate(2deg);
+    filter: drop-shadow(0 0 15px rgba(225, 0, 60, 0.8)) brightness(1.2);
+}
+
 .nav-menu {
     display: flex;
     gap: var(--spacing-lg);
@@ -987,7 +987,7 @@ input::placeholder, textarea::placeholder {
 /* Layout - basic container */
 .container {
     width: 90%;
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
     padding: var(--spacing-md) 0;
 }
@@ -1024,10 +1024,11 @@ main {
 .hero-section {
     min-height: 100vh;
     display: flex;
-    align-items: center;
-    padding: var(--spacing-xl) 0 var(--spacing-lg) 0;
+    align-items: flex-start;
+    padding: 0;
     /* background removed to inherit body background */
     box-shadow: 0 8px 32px var(--shadow-color);
+    padding-top: calc(100px + var(--spacing-sm));
 }
 /* Modern Footer Holberton */
 .footer {
@@ -1067,20 +1068,239 @@ main {
 .footer-content a:hover {
     color: var(--accent-color);
 }
+.hero-title-container {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    margin-bottom: 1.5em;
+    flex-wrap: nowrap;
+}
+
+/* Hero Split Layout - 50/50 */
+.hero-split-layout {
+    display: flex;
+    min-height: 70vh;
+    gap: 0;
+}
+
+.hero-left-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 0 40px 0 0;
+}
+
+.hero-right-section {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 0 0 40px;
+}
+
+.hero-layout {
+    display: flex;
+    align-items: center;
+    gap: 60px;
+    min-height: 600px;
+}
+
+.hero-content {
+    flex: 1;
+    max-width: 750px;
+}
+
+.hero-title-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 0.3em;
+    flex-shrink: 0;
+}
+
 .hero-title {
-    font-size: 3.5em;
-    font-family: var(--font-holberton-bold);
+    font-size: 4rem;
+    font-family: 'AktivGrotesk-Bold', Arial, sans-serif;
     color: var(--primary-color);
-    letter-spacing: 0.04em;
-    margin-bottom: 0.2em;
-    text-shadow: 0 4px 24px var(--primary-color), 0 1px 0 #fff2;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    margin: 0;
+    text-transform: uppercase;
+    text-shadow: 
+        2px 2px 4px rgba(0, 0, 0, 0.8),
+        4px 4px 8px rgba(0, 0, 0, 0.5),
+        0 0 20px rgba(225, 0, 60, 0.6),
+        0 0 30px rgba(225, 0, 60, 0.3);
+    line-height: 0.9;
+}
+
+.hero-title-image {
+    width: 280px;
+    height: 280px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 15px rgba(225, 0, 60, 0.5)) brightness(1.1);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.hero-title-image:hover {
+    transform: scale(1.05) rotate(2deg);
+    filter: drop-shadow(0 0 20px rgba(225, 0, 60, 0.8)) brightness(1.2);
+}
+
+/* Hero Terminal Animation - Style identique à auth-visual */
+.hero-terminal {
+    width: 500px;
+    height: 450px;
+    background-color: #181818;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: var(--spacing-xl);
+    overflow: hidden;
+    position: relative;
+    box-sizing: border-box;
+    border-radius: 12px;
+    box-shadow: 0 2px 16px #000a;
+    flex-shrink: 0;
+    flex-grow: 0;
+}
+
+.hero-terminal::before {
+    display: none;
+}
+
+.hero-terminal::after {
+    display: none;
+}
+
+#hero-code-animation-container {
+    width: 100%;
+    height: 100%;
+    max-height: 250px; /* Plus petit pour forcer le scroll plus tôt */
+    overflow-y: auto;
+    overflow-x: hidden;
+    scroll-behavior: auto; /* Plus direct pour éviter les conflits */
+    padding: 8px;
+    padding-bottom: 20px; /* Plus d'espace en bas pour voir le curseur */
+    box-sizing: border-box;
+    display: block; /* Simplifier le layout */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* Internet Explorer 10+ */
+    /* Isolation complète du scroll */
+    contain: strict;
+    isolation: isolate;
+    overscroll-behavior: contain;
+}
+
+/* Masquer l'ascenseur pour WebKit (Chrome, Safari) */
+#hero-code-animation-container::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+}
+
+#hero-code-animation-container pre {
+    margin: 0;
+    font-family: 'Courier New', Courier, monospace;
+    color: #0f0;
+    font-size: 16px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    line-height: 1.4;
+}
+
+/* Masquer l'ascenseur pour WebKit (Chrome, Safari) */
+#hero-code-animation-container pre::-webkit-scrollbar {
+    display: none;
+}
+
+#hero-code-animation-container code {
+    display: block;
+    line-height: 1.4;
+    font-size: 11px;
+}
+
+#hero-code-animation-container .cursor {
+    display: inline-block;
+    background-color: #0f0;
+    width: 10px;
+    height: 1.2em;
+    animation: blink 1s step-end infinite;
+}
+
+/* Responsive adjustments for hero split layout */
+@media (max-width: 1200px) {
+    .hero-split-layout {
+        flex-direction: column;
+        min-height: auto;
+        gap: 40px;
+    }
+    
+    .hero-left-section {
+        padding: 0;
+        text-align: center;
+        align-items: center;
+    }
+    
+    .hero-right-section {
+        padding: 0;
+    }
+    
+    .hero-title-container {
+        justify-content: center;
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .hero-title-image {
+        width: 200px;
+        height: 200px;
+    }
+    
+    .hero-terminal {
+        width: 450px;
+        height: 400px;
+        margin: 0 auto;
+        flex-shrink: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-split-layout {
+        flex-direction: column;
+        gap: 30px;
+    }
+    
+    .hero-left-section {
+        padding: 0;
+    }
+    
+    .hero-right-section {
+        padding: 0;
+    }
+    
+    .hero-terminal {
+        width: 350px;
+        height: 350px;
+        margin: 0 auto;
+        flex-shrink: 0;
+    }
 }
 .hero-subtitle {
-    font-size: 1.5em;
-    color: var(--accent-color);
-    font-family: var(--font-holberton);
-    margin-bottom: 1em;
-    letter-spacing: 0.08em;
+    font-size: 1.4em;
+    color: #ffffff;
+    font-family: 'AktivGrotesk-Medium', Arial, sans-serif;
+    font-weight: 500;
+    margin: 0;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
+    line-height: 1.2;
 }
 .hero-description {
     font-size: 1.15em;
@@ -1120,12 +1340,13 @@ main {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    gap: 3rem;
+    gap: 4rem;
     min-height: 0;
+    max-width: 1400px;
 }
 .hero-content {
     flex: 1 1 0;
-    max-width: 600px;
+    max-width: 750px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -2143,13 +2364,24 @@ main {
 #code-animation-container {
     width: 100%;
     height: 100%;
-    max-height: none; /* Remove max-height restriction */
+    max-height: 400px; /* Taille fixe comme le terminal de la page d'accueil */
     overflow-y: auto;
     scroll-behavior: smooth;
-    padding: 2px; /* Minimal padding */
+    padding: 2px;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
+    
+    /* Masquer la scrollbar tout en gardant la fonctionnalité */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+/* Masquer la scrollbar pour Chrome, Safari et Opera */
+#code-animation-container::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
 }
 
 #code-animation-container pre {
@@ -2160,8 +2392,7 @@ main {
     font-size: 1em;
     white-space: pre-wrap;
     word-break: break-all;
-    overflow-y: auto;
-    scroll-behavior: smooth;
+    overflow: visible; /* Permettre le contenu de dépasser pour le scroll parent */
 }
 
 #code-animation-container code {

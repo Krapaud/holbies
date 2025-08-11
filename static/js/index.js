@@ -58,6 +58,127 @@ document.addEventListener('DOMContentLoaded', () => {
         .catch(err => {
             console.error('Erreur lors de la récupération des stats:', err);
         });
+
+    // --- Hero Terminal Animation ---
+    try {
+        const heroCodeContainer = document.getElementById('hero-code-animation-container');
+        if (!heroCodeContainer) {
+            return; // Skip if container doesn't exist
+        }
+
+        const heroCodeElement = heroCodeContainer.querySelector('code');
+        if (!heroCodeElement) {
+            return;
+        }
+
+        const heroCodeLines = [
+            "// Système d'apprentissage HOLBIES",
+            "class LearningPlatform {",
+            "  constructor() {",
+            "    this.modules = ['Python', 'JavaScript', 'DevOps', 'Algorithms'];",
+            "    this.users = 1250;",
+            "    this.quizzes = 847;",
+            "  }",
+            "",
+            "  async startLearning(student) {",
+            "    console.log(`Bienvenue ${student.name}!`);",
+            "    const course = this.recommendCourse(student.level);",
+            "    return await this.generatePersonalizedQuiz(course);",
+            "  }",
+            "",
+            "  generatePersonalizedQuiz(course) {",
+            "    return {",
+            "      difficulty: 'adaptive',",
+            "      aiCorrection: true,",
+            "      realTimeFeedback: true",
+            "    };",
+            "  }",
+            "}",
+            "",
+            "// Démarrage de votre parcours d'apprentissage...",
+            "const holbies = new LearningPlatform();",
+            "holbies.startLearning({ name: 'Étudiant', level: 'intermediate' });"
+        ];
+        
+        const heroCursorElement = document.createElement('span');
+        heroCursorElement.classList.add('cursor');
+        
+        heroCodeElement.innerHTML = '';
+        heroCodeElement.appendChild(heroCursorElement);
+
+        let heroCurrentContent = '';
+        let heroLineIndex = 0;
+        let heroCharIndex = 0;
+
+        function typeHeroCode() {
+            try {
+                if (heroLineIndex >= heroCodeLines.length) {
+                    setTimeout(() => {
+                        heroLineIndex = 0;
+                        heroCharIndex = 0;
+                        heroCurrentContent = '';
+                        heroCodeElement.textContent = '';
+                        heroCodeElement.appendChild(heroCursorElement);
+                        // Force scroll to top - seulement le conteneur terminal
+                        if (heroCodeContainer) {
+                            heroCodeContainer.scrollTop = 0;
+                        }
+                        typeHeroCode();
+                    }, 4000);
+                    return;
+                }
+
+                const currentLine = heroCodeLines[heroLineIndex];
+                if (heroCharIndex < currentLine.length) {
+                    heroCurrentContent += currentLine[heroCharIndex];
+                    heroCodeElement.textContent = heroCurrentContent;
+                    heroCodeElement.appendChild(heroCursorElement);
+                heroCharIndex++;
+                
+                // Scroll vers le curseur pour qu'il soit visible en bas
+                if (heroCodeContainer && heroCursorElement) {
+                    setTimeout(() => {
+                        heroCursorElement.scrollIntoView({ 
+                            behavior: 'auto', 
+                            block: 'end',
+                            inline: 'nearest'
+                        });
+                    }, 10);
+                }                    setTimeout(typeHeroCode, 45);
+                } else {
+                    heroCurrentContent += '\n';
+                    heroCodeElement.textContent = heroCurrentContent;
+                    heroCodeElement.appendChild(heroCursorElement);
+                heroLineIndex++;
+                heroCharIndex = 0;
+                
+                // Scroll vers le curseur pour qu'il soit visible en bas
+                if (heroCodeContainer && heroCursorElement) {
+                    setTimeout(() => {
+                        heroCursorElement.scrollIntoView({ 
+                            behavior: 'auto', 
+                            block: 'end',
+                            inline: 'nearest'
+                        });
+                    }, 10);
+                }                    setTimeout(typeHeroCode, 600);
+                }
+            } catch (error) {
+                console.error('Erreur dans typeHeroCode:', error);
+                // Redémarrer l'animation en cas d'erreur
+                setTimeout(() => {
+                    heroLineIndex = 0;
+                    heroCharIndex = 0;
+                    heroCurrentContent = '';
+                    typeHeroCode();
+                }, 2000);
+            }
+        }        // Start the animation after a short delay
+        setTimeout(typeHeroCode, 1000);
+
+    } catch (e) {
+        console.error('Erreur animation terminal héros:', e);
+    }
 });
 
 function typeWriter(element, text, callback = null, withCursor = false) {

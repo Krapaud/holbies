@@ -7,18 +7,31 @@
 {% block content %}
 <section class="hero-section">
     <div class="container">
-        <div class="hero-content">
-            <h1 class="hero-title"></h1>
-            <p class="hero-subtitle"></p>
-            <p class="hero-description">Découvrez une nouvelle façon d'apprendre et de maîtriser les compétences techniques essentielles.</p>
-            <div class="hero-buttons">
-                <a href="/learning" class="btn btn-primary">Commencer l'apprentissage</a>
-                <a href="#features" class="btn btn-secondary">Découvrir les fonctionnalités</a>
+        <div class="hero-split-layout">
+            <div class="hero-left-section">
+                <div class="hero-title-container">
+                    <div class="hero-title-text">
+                        <h1 class="hero-title">HOLBIES</h1>
+                        <p class="hero-subtitle">Learning Hub</p>
+                    </div>
+                    <img src="{{ url_for_static('/images/holberton-hero.png') }}" alt="Holberton Learning Hub" class="hero-title-image">
+                </div>
+                <p class="hero-description">Découvrez une nouvelle façon d'apprendre et de maîtriser les compétences techniques essentielles.</p>
+                <div class="hero-buttons">
+                    <a href="/learning" class="btn btn-primary">Commencer l'apprentissage</a>
+                    <a href="#features" class="btn btn-secondary">Découvrir les fonctionnalités</a>
+                </div>
+            </div>
+            <div class="hero-right-section">
+                <div class="hero-terminal">
+                    <div id="hero-code-animation-container">
+                        <pre><code></code></pre>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="hero-image">
-            <!-- Placeholder for a relevant image or animation -->
-            <img src="{{ url_for_static('/images/holberton-hero.png') }}" alt="Holberton Learning Hub" class="responsive-image">
+        <div class="hero-image" style="display: none;">
+            <!-- Image moved to title container -->
         </div>
     </div>
 </section>

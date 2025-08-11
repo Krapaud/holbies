@@ -49,42 +49,55 @@ document.addEventListener('DOMContentLoaded', () => {
         let charIndex = 0;
 
         function typeCode() {
-            console.log('typeCode function called');
             if (lineIndex >= codeLines.length) {
                 setTimeout(() => {
                     lineIndex = 0;
                     charIndex = 0;
-                    currentContent = ''; // Reset content
-                    codeElement.textContent = ''; // Clear the displayed text
-                    codeElement.appendChild(cursorElement); // Re-append cursor
-                    codeContainer.scrollTop = 0; // Reset scroll to top
+                    currentContent = '';
+                    codeElement.textContent = '';
+                    codeElement.appendChild(cursorElement);
+                    // Force scroll to top - seulement le conteneur terminal
+                    requestAnimationFrame(() => {
+                        if (codeContainer) {
+                            codeContainer.scrollTop = 0;
+                        }
+                    });
                     typeCode();
-                }, 3000);
+                }, 4000);
                 return;
             }
     
             const currentLine = codeLines[lineIndex];
             if (charIndex < currentLine.length) {
                 currentContent += currentLine[charIndex];
-                codeElement.textContent = currentContent; // Update textContent
-                codeElement.appendChild(cursorElement); // Keep cursor at the end
+                codeElement.textContent = currentContent;
+                codeElement.appendChild(cursorElement);
                 charIndex++;
-                // Auto-scroll to follow the cursor
-                codeContainer.scrollTop = codeContainer.scrollHeight;
-                setTimeout(typeCode, 40);
+                // Force scroll to bottom - seulement le conteneur terminal
+                requestAnimationFrame(() => {
+                    if (codeContainer && codeContainer.scrollHeight > codeContainer.clientHeight) {
+                        codeContainer.scrollTop = codeContainer.scrollHeight;
+                    }
+                });
+                setTimeout(typeCode, 45);
             } else {
                 currentContent += '\n';
-                codeElement.textContent = currentContent; // Update textContent with newline
-                codeElement.appendChild(cursorElement); // Keep cursor at the end
+                codeElement.textContent = currentContent;
+                codeElement.appendChild(cursorElement);
                 lineIndex++;
                 charIndex = 0;
-                // Ensure scroll follows the new line
-                codeContainer.scrollTop = codeContainer.scrollHeight;
-                setTimeout(typeCode, 500);
+                // Force scroll to bottom after line break - seulement le conteneur terminal
+                requestAnimationFrame(() => {
+                    if (codeContainer && codeContainer.scrollHeight > codeContainer.clientHeight) {
+                        codeContainer.scrollTop = codeContainer.scrollHeight;
+                    }
+                });
+                setTimeout(typeCode, 600);
             }
         }
     
-        typeCode();
+        // Start the animation after a short delay
+        setTimeout(typeCode, 1000);
 
     } catch (e) {
         // En cas d'erreur, on ne bloque pas le reste du site
