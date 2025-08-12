@@ -31,6 +31,8 @@ class AIQuizManager {
         const submitBtn = document.getElementById('submit-ai-answer-btn');
         const nextBtn = document.getElementById('next-ai-question-btn');
         const retakeBtn = document.getElementById('retake-pld-btn');
+        const answerTextarea = document.getElementById('ai-user-answer');
+        const charCounter = document.getElementById('char-count');
 
         if (submitBtn) {
             submitBtn.addEventListener('click', () => this.submitAnswer());
@@ -42,6 +44,25 @@ class AIQuizManager {
 
         if (retakeBtn) {
             retakeBtn.addEventListener('click', () => this.retakeQuiz());
+        }
+
+        // Compteur de caractères avec feedback visuel
+        if (answerTextarea && charCounter) {
+            answerTextarea.addEventListener('input', () => {
+                const count = answerTextarea.value.length;
+                charCounter.textContent = count;
+                
+                // Feedback visuel basé sur la longueur
+                if (count < 50) {
+                    charCounter.style.color = '#ff6b6b'; // Rouge - trop court
+                } else if (count < 100) {
+                    charCounter.style.color = '#ffa726'; // Orange - court
+                } else if (count < 300) {
+                    charCounter.style.color = '#66bb6a'; // Vert - bien
+                } else {
+                    charCounter.style.color = '#42a5f5'; // Bleu - détaillé
+                }
+            });
         }
     }
 
@@ -313,7 +334,7 @@ class AIQuizManager {
         const answerFeedback = document.getElementById('ai-answer-feedback');
         const nextBtn = document.getElementById('next-ai-question-btn');
 
-        // Set title based on score
+        // Set title based on score with emoji
         const percentage = result.percentage;
         if (percentage >= 90) {
             modalTitle.innerHTML = '🏆 Excellente réponse !';
@@ -327,48 +348,79 @@ class AIQuizManager {
             modalTitle.innerHTML = '📖 Réponse à améliorer';
         }
 
-        // Set feedback content
+        // Create structured feedback with better visual organization
         answerFeedback.innerHTML = `
-            <div class="ai-feedback-score">
-                <h3>Score : ${result.score}/${result.max_score} points (${result.percentage}%)</h3>
+            <!-- Section des scores principale -->
+            <div class="feedback-score-section">
+                <div class="score-item">
+                    <span class="score-value">${Math.round(result.score)}</span>
+                    <span class="score-label">Points obtenus</span>
+                </div>
+                <div class="score-item">
+                    <span class="score-value">${Math.round(result.percentage)}%</span>
+                    <span class="score-label">Performance</span>
+                </div>
+                <div class="score-item">
+                    <span class="score-value">${Math.round(result.similarity)}</span>
+                    <span class="score-label">Similarité</span>
+                </div>
+                <div class="score-item">
+                    <span class="score-value">+${result.technical_bonus || 0}</span>
+                    <span class="score-label">Bonus Tech.</span>
+                </div>
             </div>
             
-            <div class="ai-feedback-similarity">
-                <strong>Similarité avec la réponse attendue :</strong> ${result.similarity}%
+            <!-- Section feedback principal -->
+            <div class="feedback-details-section">
+                <h4>🤖 Analyse IA</h4>
+                <p style="color: var(--text-secondary); line-height: 1.6;">${result.feedback}</p>
             </div>
             
-            ${result.technical_terms_found.length > 0 ? `
-                <div class="ai-feedback-technical">
-                    <strong>✅ Termes techniques utilisés :</strong> ${result.technical_terms_found.join(', ')}
-                    <br><strong>Bonus technique :</strong> +${result.technical_bonus} points
+            ${result.technical_terms_found && result.technical_terms_found.length > 0 ? `
+                <div class="feedback-details-section">
+                    <h4>✅ Termes techniques détectés</h4>
+                    <div class="technical-terms-found">
+                        ${result.technical_terms_found.map(term => 
+                            `<span class="technical-term">${term}</span>`
+                        ).join('')}
+                    </div>
                 </div>
             ` : ''}
             
-            <div class="ai-feedback-message">
-                <strong>Feedback :</strong> ${result.feedback}
+            <div class="feedback-details-section">
+                <h4>📖 Réponse attendue</h4>
+                <p style="color: var(--text-secondary); line-height: 1.6; background: rgba(0,0,0,0.3); padding: var(--spacing-md); border-radius: var(--border-radius); border-left: 3px solid var(--primary-color);">
+                    ${question.expected_answer}
+                </p>
             </div>
             
-            <div class="ai-feedback-expected">
-                <strong>Réponse attendue :</strong>
-                <p>${question.expected_answer}</p>
-            </div>
+            ${result.detailed_explanation ? `
+                <div class="feedback-details-section">
+                    <h4>🔍 Explication détaillée</h4>
+                    <p style="color: var(--text-secondary); line-height: 1.6;">
+                        ${result.detailed_explanation}
+                    </p>
+                </div>
+            ` : ''}
             
-            <div class="ai-feedback-explanation">
-                <strong>Explication détaillée :</strong>
-                <p>${result.detailed_explanation}</p>
-            </div>
-            
-            <div class="ai-feedback-terms">
-                <strong>Termes techniques importants :</strong>
-                <p>${question.technical_terms.join(', ')}</p>
+            <div class="feedback-details-section">
+                <h4>🎯 Termes clés à retenir</h4>
+                <div class="technical-terms-found">
+                    ${question.technical_terms.map(term => 
+                        `<span class="technical-term" style="opacity: ${result.technical_terms_found.includes(term) ? '1' : '0.5'}">${term}</span>`
+                    ).join('')}
+                </div>
+                <p style="font-size: 0.9rem; color: var(--text-secondary); margin-top: var(--spacing-sm);">
+                    <i>Les termes en surbrillance ont été détectés dans votre réponse</i>
+                </p>
             </div>
         `;
 
         // Update next button text
         if (this.currentQuestionIndex >= this.questions.length - 1) {
-            nextBtn.textContent = 'Voir les Résultats Finaux';
+            nextBtn.innerHTML = '<span>🎯 Voir les Résultats Finaux</span>';
         } else {
-            nextBtn.textContent = 'Question Suivante';
+            nextBtn.innerHTML = '<span>➡️ Question Suivante</span>';
         }
 
         // Show modal

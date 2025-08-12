@@ -3583,3 +3583,219 @@ main {
     text-transform: capitalize;
 }
 
+/* ================================
+   PLD AI MODAL FEEDBACK STYLING
+   ================================ */
+
+/* Modal overlay avec effet visuel Matrix */
+.ai-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    animation: modalFadeIn 0.3s ease-out;
+}
+
+.ai-modal.hidden {
+    display: none;
+}
+
+/* Animation d'apparition de la modal */
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        backdrop-filter: blur(0px);
+    }
+    to {
+        opacity: 1;
+        backdrop-filter: blur(10px);
+    }
+}
+
+/* Contenu principal de la modal */
+.ai-modal-content {
+    background: linear-gradient(135deg, var(--bg-color) 0%, #1a1a2e 100%);
+    border: 2px solid var(--primary-color);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-xl);
+    max-width: 80vw;
+    max-height: 85vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 
+        0 20px 40px rgba(0, 255, 65, 0.3),
+        inset 0 1px 0 rgba(0, 255, 65, 0.2);
+    animation: modalSlideIn 0.4s ease-out;
+}
+
+/* Animation du contenu */
+@keyframes modalSlideIn {
+    from {
+        transform: translateY(-50px) scale(0.9);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+/* Titre de la modal avec effet glitch */
+.ai-modal-content h2 {
+    color: var(--primary-color);
+    font-family: 'Orbitron', monospace;
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: var(--spacing-lg);
+    text-shadow: 
+        0 0 10px var(--primary-color),
+        0 0 20px var(--primary-color),
+        0 0 30px var(--primary-color);
+    animation: textGlow 2s ease-in-out infinite alternate;
+}
+
+/* Container de feedback avec meilleure organisation */
+#ai-answer-feedback {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(0, 255, 65, 0.3);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+}
+
+/* Section des scores avec design matrix */
+.feedback-score-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+    padding: var(--spacing-md);
+    background: linear-gradient(45deg, rgba(0, 255, 65, 0.1), rgba(0, 0, 0, 0.3));
+    border-radius: var(--border-radius);
+    border: 1px solid rgba(0, 255, 65, 0.2);
+}
+
+.score-item {
+    text-align: center;
+    padding: var(--spacing-md);
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: var(--border-radius);
+    border: 1px solid rgba(0, 255, 65, 0.3);
+    transition: all 0.3s ease;
+}
+
+.score-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 255, 65, 0.4);
+}
+
+.score-value {
+    display: block;
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: var(--primary-color);
+    font-family: 'Orbitron', monospace;
+    text-shadow: 0 0 10px var(--primary-color);
+}
+
+.score-label {
+    display: block;
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin-top: var(--spacing-xs);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Section de feedback détaillé */
+.feedback-details-section {
+    margin-bottom: var(--spacing-lg);
+}
+
+.feedback-details-section h4 {
+    color: var(--primary-color);
+    font-family: 'Orbitron', monospace;
+    margin-bottom: var(--spacing-sm);
+    font-size: 1.2rem;
+    border-bottom: 1px solid rgba(0, 255, 65, 0.3);
+    padding-bottom: var(--spacing-xs);
+}
+
+/* Termes techniques trouvés */
+.technical-terms-found {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-xs);
+    margin-top: var(--spacing-sm);
+}
+
+.technical-term {
+    background: linear-gradient(45deg, var(--primary-color), #00cc52);
+    color: var(--bg-color);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0, 255, 65, 0.3);
+    animation: termGlow 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes termGlow {
+    from {
+        box-shadow: 0 2px 5px rgba(0, 255, 65, 0.3);
+    }
+    to {
+        box-shadow: 0 4px 15px rgba(0, 255, 65, 0.6);
+    }
+}
+
+/* Actions de la modal */
+.modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-lg);
+}
+
+.modal-actions .btn {
+    min-width: 200px;
+    font-size: 1.1rem;
+    padding: var(--spacing-md) var(--spacing-lg);
+}
+
+/* Responsive pour mobiles */
+@media (max-width: 768px) {
+    .ai-modal-content {
+        max-width: 95vw;
+        max-height: 90vh;
+        padding: var(--spacing-lg);
+    }
+    
+    .ai-modal-content h2 {
+        font-size: 1.5rem;
+    }
+    
+    .feedback-score-section {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .score-value {
+        font-size: 2rem;
+    }
+    
+    .modal-actions {
+        flex-direction: column;
+    }
+    
+    .modal-actions .btn {
+        min-width: 100%;
+    }
+}
+
