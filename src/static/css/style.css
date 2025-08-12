@@ -1315,63 +1315,27 @@ main {
 }
 
 #hero-code-animation-container {
-    width: 400px; /* Taille exacte demandée */
-    height: 400px; /* Taille exacte demandée */
-    max-height: 400px;
+    width: 100%; /* Adaptatif au lieu de fixe */
+    height: 100%; /* Adaptatif au lieu de fixe */
     overflow-y: auto;
     overflow-x: hidden;
-    scroll-behavior: auto; /* Plus direct pour éviter les conflits */
-    padding: 8px;
-    padding-bottom: 20px; /* Plus d'espace en bas pour voir le curseur */
+    scroll-behavior: smooth;
+    padding: var(--spacing-md);
     box-sizing: border-box;
-    display: block; /* Simplifier le layout */
+    display: block;
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none; /* Internet Explorer 10+ */
     /* Isolation TOTALE du scroll pour éviter les conflits avec la page */
     contain: strict;
     isolation: isolate;
     overscroll-behavior: contain;
-    scroll-snap-type: none; /* Désactiver snap scroll */
-    transform: translateZ(0); /* Forcer une couche composite */
-    will-change: scroll-position; /* Optimiser les performances de scroll */
-    margin: auto; /* Centrer dans le terminal */
+    scroll-snap-type: none;
+    transform: translateZ(0);
+    will-change: scroll-position;
+    margin: auto;
 }
 
-/* Masquer l'ascenseur pour WebKit (Chrome, Safari) */
-#hero-code-animation-container::-webkit-scrollbar {
-    display: none;
-    width: 0;
-    height: 0;
-}
-
-#hero-code-animation-container pre {
-    margin: 0;
-    font-family: 'Courier New', Courier, monospace;
-    color: #0f0;
-    font-size: 18px; /* Plus grand pour occuper plus d'espace */
-    white-space: pre-wrap;
-    word-wrap: break-word;
-    line-height: 1.6; /* Plus d'espacement entre les lignes */
-}
-
-/* Masquer l'ascenseur pour WebKit (Chrome, Safari) */
-#hero-code-animation-container pre::-webkit-scrollbar {
-    display: none;
-}
-
-#hero-code-animation-container code {
-    display: block;
-    line-height: 1.4;
-    font-size: 11px;
-}
-
-#hero-code-animation-container .cursor {
-    display: inline-block;
-    background-color: #0f0;
-    width: 10px;
-    height: 1.2em;
-    animation: blink 1s step-end infinite;
-}
+/* Styles gérés globalement pour tous les conteneurs d'animation */
 
 /* Responsive adjustments for hero split layout */
 @media (max-width: 1200px) {
@@ -1980,7 +1944,6 @@ main {
         max-height: 50vh;
         overflow-y: auto;
     }
-}
 }
 
 /* Font imports - assuming they are in static/fonts */
@@ -2938,6 +2901,7 @@ main {
     border-radius: 12px;
     box-shadow: 0 8px 32px var(--shadow-color);
     overflow: hidden;
+    align-items: stretch; /* FORCER LES DEUX COLONNES À AVOIR LA MÊME HAUTEUR */
 }
 
 .auth-card {
@@ -3007,36 +2971,21 @@ main {
 
 .auth-visual {
     flex: 1;
-    background-color: #1a1a1a;
+    background-color: #181818;
     display: flex;
     align-items: flex-start;
     justify-content: flex-start;
-    padding: var(--spacing-xl);
+    padding: var(--spacing-md);
     overflow: hidden;
     position: relative;
-    /* Removed max-height and flex-shrink to allow flex to adapt */
     box-sizing: border-box;
-}
-
-
-
-
-.auth-visual {
-    flex: 1;
-    background-color: #181818; /* Changed from #1a1a1a to #181818 */
-    display: flex;
-    align-items: flex-start;
-    justify-content: flex-start;
-    /* padding: var(--spacing-xl); */
-    overflow: hidden;
-    position: relative;
-    /* Removed max-height and flex-shrink to allow flex to adapt */
-    box-sizing: border-box;
-    border-radius: 12px; /* Added from #code-animation-container */
-    box-shadow: 0 2px 16px #000a; /* Added from #code-animation-container */
-    max-width: 420px; /* Added from #code-animation-container */
-    margin: 0 auto; /* Added from #code-animation-container */
-    min-height: 300px; /* Added for animation visibility */
+    border-radius: 12px;
+    box-shadow: 0 2px 16px #000a;
+    max-width: 420px;
+    margin: 0 auto;
+    /* ADAPTATION AUTOMATIQUE À LA HAUTEUR DU CONTAINER PARENT */
+    height: auto; /* S'adapte automatiquement */
+    min-height: 500px; /* Hauteur minimum */
 }
 
 
@@ -3057,47 +3006,117 @@ main {
     scroll-behavior: smooth; /* Smooth scrolling animation */
 }
 
-/* Animation container for typewriter effect */
-#code-animation-container {
-    width: 100%;
-    height: 100%;
-    max-height: 400px; /* Taille fixe comme le terminal de la page d'accueil */
-    overflow-y: auto;
-    overflow-x: hidden;
-    scroll-behavior: auto;
-    padding: 8px;
-    padding-bottom: 20px;
-    box-sizing: border-box;
-    display: block;
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none; /* Internet Explorer 10+ */
-    /* Isolation complète du scroll */
-    contain: strict;
-    isolation: isolate;
-    overscroll-behavior: contain;
+/* Animation container for typewriter effect - VERSION HARDCORE SANS SCROLLBAR */
+#code-animation-container, #hero-code-animation-container {
+    width: 100% !important;
+    height: 100% !important;
+    /* FORCER LA TAILLE - INTERDIRE L'AGRANDISSEMENT */
+    max-height: 100% !important;
+    min-height: 100% !important;
+    /* ZERO SCROLL VISIBLE - ON MASQUE ABSOLUMENT TOUT */
+    overflow: hidden !important; /* MASQUER TOTALEMENT LES SCROLLBARS */
+    padding: var(--spacing-md);
+    box-sizing: border-box !important;
+    display: block !important;
+    position: relative !important;
 }
 
-/* Masquer la scrollbar pour Chrome, Safari et Opera */
-#code-animation-container::-webkit-scrollbar {
-    width: 0;
-    height: 0;
-    display: none;
+/* Spécifique pour auth-visual - VERSION ADAPTATIVE */
+.auth-visual #code-animation-container {
+    width: 100% !important;
+    height: 100% !important;
+    /* ADAPTATION AUTOMATIQUE - PAS DE MAX-HEIGHT FIXE */
+    min-height: 100% !important;
+    /* ZERO SCROLL VISIBLE - MASQUER ABSOLUMENT TOUT */
+    overflow: hidden !important; /* MASQUER TOTALEMENT LES SCROLLBARS */
+    padding: 0 !important; /* auth-visual a déjà le padding */
+    box-sizing: border-box !important;
+    display: block !important;
+    position: relative !important;
 }
 
-#code-animation-container pre {
-    margin: 0;
-    font-family: 'Courier New', Courier, monospace;
-    color: #0f0;
-    font-size: 18px; /* Plus grand pour occuper plus d'espace */
-    white-space: pre-wrap;
-    word-wrap: break-word;
-    line-height: 1.6; /* Plus d'espacement entre les lignes */
+/* Conteneur de pré-code qui peut scroller SANS SCROLLBAR VISIBLE - VERSION ADAPTATIVE */
+#code-animation-container pre,
+#hero-code-animation-container pre,
+.auth-visual #code-animation-container pre {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    /* ADAPTATION AUTOMATIQUE - PAS DE MAX-HEIGHT FIXE POUR AUTH-VISUAL */
+    min-height: 100% !important;
+    /* ICI on permet le scroll mais ON MASQUE LA SCROLLBAR */
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    /* MASQUER SCROLLBAR POUR TOUS LES NAVIGATEURS */
+    scrollbar-width: none !important; /* Firefox */
+    -ms-overflow-style: none !important; /* Internet Explorer 10+ */
+    scroll-behavior: smooth !important;
+    font-family: 'Courier New', Courier, monospace !important;
+    color: #0f0 !important;
+    font-size: clamp(10px, 1.2vw, 14px) !important;
+    white-space: pre-wrap !important;
+    word-wrap: break-word !important;
+    line-height: 1.4 !important;
+    box-sizing: border-box !important;
+    /* EMPÊCHER L'EXPANSION POUR HERO SEULEMENT */
+    flex-shrink: 0 !important;
+    flex-grow: 0 !important;
 }
 
-#code-animation-container code {
-    display: block;
-    line-height: 1.4;
-    font-size: 11px;
+/* Styles spécifiques pour hero (taille fixe) */
+#hero-code-animation-container pre {
+    max-height: 100% !important; /* Garde la taille fixe pour hero */
+}
+
+/* Styles spécifiques pour auth-visual (adaptatif) */
+.auth-visual #code-animation-container pre {
+    max-height: none !important; /* Permet l'adaptation pour auth-visual */
+}
+
+/* MASQUER SCROLLBAR WEBKIT (Chrome, Safari, Edge) */
+#code-animation-container pre::-webkit-scrollbar,
+#hero-code-animation-container pre::-webkit-scrollbar,
+.auth-visual #code-animation-container pre::-webkit-scrollbar {
+    width: 0px !important;
+    height: 0px !important;
+    background: transparent !important;
+    display: none !important;
+}
+
+#code-animation-container pre::-webkit-scrollbar-track,
+#hero-code-animation-container pre::-webkit-scrollbar-track,
+.auth-visual #code-animation-container pre::-webkit-scrollbar-track {
+    background: transparent !important;
+    display: none !important;
+}
+
+#code-animation-container pre::-webkit-scrollbar-thumb,
+#hero-code-animation-container pre::-webkit-scrollbar-thumb,
+.auth-visual #code-animation-container pre::-webkit-scrollbar-thumb {
+    background: transparent !important;
+    display: none !important;
+}
+
+/* CODE ET CURSEUR */
+#code-animation-container code,
+#hero-code-animation-container code,
+.auth-visual #code-animation-container code {
+    display: block !important;
+    line-height: 1.4 !important;
+    font-size: inherit !important;
+    color: #0f0 !important;
+    width: 100% !important;
+}
+
+#code-animation-container .cursor,
+#hero-code-animation-container .cursor,
+.auth-visual #code-animation-container .cursor {
+    display: inline-block !important;
+    background-color: #0f0 !important;
+    width: 8px !important;
+    height: 1.2em !important;
+    animation: blink 1s step-end infinite !important;
 }
 
 #code-animation-container .cursor {

@@ -5,123 +5,133 @@ document.addEventListener('DOMContentLoaded', () => {
         loginForm.addEventListener('submit', handleLogin);
     }
 
-    // --- Animation de frappe (copie register.js) ---
-    try {
-        const codeContainer = document.getElementById('code-animation-container');
-        if (!codeContainer) {
-            return; // Ne rien faire si le conteneur n'est pas sur la page
+    // --- Animation de frappe (attente de la fonction universelle) ---
+    function initLoginAnimation() {
+        console.log('🔧 DEBUG: Initialisation animation login...');
+        
+        // Vérifier que l'élément existe
+        const container = document.getElementById('code-animation-container');
+        console.log('🔧 DEBUG: Container trouvé:', container);
+        
+        if (!container) {
+            console.error('❌ Container #code-animation-container non trouvé !');
+            return;
         }
-
-        const codeElement = codeContainer.querySelector('code');
+        
+        const codeElement = container.querySelector('code');
+        console.log('🔧 DEBUG: Code element trouvé:', codeElement);
+        
         if (!codeElement) {
+            console.error('❌ Element code non trouvé dans le container !');
             return;
         }
 
-        const codeLines = [
-          "// Authentification de l'utilisateur",
-          "async function authenticate(username, password) {",
-          "  const user = await findUserByUsername(username);",
-          "  if (!user) {",
-          "    return { success: false, message: 'Utilisateur non trouvé' };",
+        const loginCodeLines = [
+          "// Système d'authentification HOLBIES",
+          "class AuthenticationService {",
+          "  constructor() {",
+          "    this.database = new Database();",
+          "    this.tokenService = new TokenService();",
+          "    this.security = new SecurityManager();",
           "  }",
-          "  ",
-          "  const isPasswordValid = await verifyPassword(password, user.hashedPassword);",
-          "  if (!isPasswordValid) {",
-          "    return { success: false, message: 'Mot de passe incorrect' };",
+          "",
+          "  async authenticate(username, password) {",
+          "    console.log(`Tentative de connexion pour: ${username}`);",
+          "    ",
+          "    // Validation des entrées",
+          "    if (!this.validateInput(username, password)) {",
+          "      return { success: false, message: 'Données invalides' };",
+          "    }",
+          "",
+          "    // Recherche utilisateur",
+          "    const user = await this.database.findUser(username);",
+          "    if (!user) {",
+          "      console.warn('Utilisateur non trouvé');",
+          "      return { success: false, message: 'Identifiants incorrects' };",
+          "    }",
+          "",
+          "    // Vérification du mot de passe",
+          "    const isValid = await this.security.verifyPassword(",
+          "      password, ",
+          "      user.hashedPassword",
+          "    );",
+          "",
+          "    if (!isValid) {",
+          "      console.warn('Mot de passe incorrect');",
+          "      return { success: false, message: 'Identifiants incorrects' };",
+          "    }",
+          "",
+          "    // Génération du token",
+          "    const token = this.tokenService.generate({",
+          "      userId: user.id,",
+          "      username: user.username,",
+          "      role: user.role,",
+          "      timestamp: Date.now()",
+          "    });",
+          "",
+          "    console.log('Authentification réussie!');",
+          "    return { ",
+          "      success: true, ",
+          "      token: token,",
+          "      user: { id: user.id, username: user.username }",
+          "    };",
           "  }",
-          "  ",
-          "  const token = generateAuthToken(user.id);",
-          "  return { success: true, token: token };",
+          "",
+          "  validateInput(username, password) {",
+          "    return username && password && ",
+          "           username.length >= 3 && ",
+          "           password.length >= 6;",
+          "  }",
           "}",
           "",
-          "// Tentative de connexion...",
-          "authenticate('utilisateur_holbies', 'mon_mot_de_passe_secret');"
+          "// Initialisation du service d'authentification",
+          "const authService = new AuthenticationService();",
+          "",
+          "// Simulation d'une connexion",
+          "authService.authenticate('holbies_user', 'secure_password')",
+          "  .then(result => {",
+          "    if (result.success) {",
+          "      console.log('Redirection vers le dashboard...');",
+          "    } else {",
+          "      console.error('Échec de la connexion:', result.message);",
+          "    }",
+          "  });"
         ];
-        
-        const cursorElement = document.createElement('span');
-        cursorElement.classList.add('cursor');
-        
-        codeElement.innerHTML = ''; // Clear content initially
-        codeElement.appendChild(cursorElement); // Append cursor first
 
-        let currentContent = '';
-        let lineIndex = 0;
-        let charIndex = 0;
-
-        function typeCode() {
-            if (lineIndex >= codeLines.length) {
-                setTimeout(() => {
-                    lineIndex = 0;
-                    charIndex = 0;
-                    currentContent = '';
-                    codeElement.textContent = '';
-                    codeElement.appendChild(cursorElement);
-                    // Force scroll to top - seulement le conteneur terminal
-                    requestAnimationFrame(() => {
-                        if (codeContainer) {
-                            codeContainer.scrollTop = 0;
-                        }
-                    });
-                    typeCode();
-                }, 4000);
-                return;
-            }
-    
-            const currentLine = codeLines[lineIndex];
-            if (charIndex < currentLine.length) {
-                currentContent += currentLine[charIndex];
-                codeElement.textContent = currentContent;
-                codeElement.appendChild(cursorElement);
-                charIndex++;
-                
-                // Scroll UNIQUEMENT dans le conteneur terminal, pas la page entière
-                if (codeContainer && cursorElement) {
-                    setTimeout(() => {
-                        // Calculer la position du curseur dans le conteneur seulement
-                        const containerRect = codeContainer.getBoundingClientRect();
-                        const cursorRect = cursorElement.getBoundingClientRect();
-                        
-                        // Scroll seulement si le curseur sort du conteneur visible
-                        if (cursorRect.bottom > containerRect.bottom) {
-                            codeContainer.scrollTop += (cursorRect.bottom - containerRect.bottom + 10);
-                        }
-                    }, 10);
+        // Utiliser la nouvelle fonction universelle
+        if (window.createAdaptiveTerminalAnimation) {
+            console.log('✅ Fonction createAdaptiveTerminalAnimation trouvée !');
+            const loginAnimation = window.createAdaptiveTerminalAnimation(
+                'code-animation-container',
+                loginCodeLines,
+                {
+                    typingSpeed: 30,
+                    lineDelay: 300,
+                    restartDelay: 5000,
+                    scrollOffset: 15
                 }
-                
-                setTimeout(typeCode, 45);
+            );
+            
+            if (loginAnimation) {
+                console.log('✅ Animation créée avec succès, démarrage...');
+                loginAnimation.start();
             } else {
-                currentContent += '\n';
-                codeElement.textContent = currentContent;
-                codeElement.appendChild(cursorElement);
-                lineIndex++;
-                charIndex = 0;
-                
-                // Scroll UNIQUEMENT dans le conteneur terminal, pas la page entière
-                if (codeContainer && cursorElement) {
-                    setTimeout(() => {
-                        // Calculer la position du curseur dans le conteneur seulement
-                        const containerRect = codeContainer.getBoundingClientRect();
-                        const cursorRect = cursorElement.getBoundingClientRect();
-                        
-                        // Scroll seulement si le curseur sort du conteneur visible
-                        if (cursorRect.bottom > containerRect.bottom) {
-                            codeContainer.scrollTop += (cursorRect.bottom - containerRect.bottom + 10);
-                        }
-                    }, 10);
-                }
-                
-                setTimeout(typeCode, 600);
+                console.error('❌ Échec de création de l\'animation');
             }
+        } else {
+            console.log('⏳ Attente du chargement de terminal-animation.js...');
+            // Attendre que la fonction soit disponible
+            setTimeout(initLoginAnimation, 100);
         }
-    
-        // Start the animation after a short delay
-        setTimeout(typeCode, 1000);
-
-    } catch (e) {
-        // En cas d'erreur, on ne bloque pas le reste du site
     }
 
-});
+    // Démarrer l'animation
+    try {
+        console.log('🚀 Démarrage de l\'animation login...');
+        initLoginAnimation();
+    } catch (e) {
+        console.error('💥 Erreur animation terminal login:', e);
+    }});
 
 async function handleLogin(e) {
     e.preventDefault();

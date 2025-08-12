@@ -6,119 +6,149 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    // --- Animation de frappe (copie login.js) ---
-    try {
-        const codeContainer = document.getElementById('code-animation-container');
-        if (!codeContainer) {
-            return; // Ne rien faire si le conteneur n'est pas sur la page
+    // --- Animation de frappe (attente de la fonction universelle) ---
+    function initRegisterAnimation() {
+        console.log('🔧 DEBUG: Initialisation animation register...');
+        
+        // Vérifier que l'élément existe
+        const container = document.getElementById('code-animation-container');
+        console.log('🔧 DEBUG: Container trouvé:', container);
+        
+        if (!container) {
+            console.error('❌ Container #code-animation-container non trouvé !');
+            return;
         }
-
-        const codeElement = codeContainer.querySelector('code');
+        
+        const codeElement = container.querySelector('code');
+        console.log('🔧 DEBUG: Code element trouvé:', codeElement);
+        
         if (!codeElement) {
+            console.error('❌ Element code non trouvé dans le container !');
             return;
         }
 
-        const codeLines = [
-          "const db = require('./database');",
+        const registerCodeLines = [
+          "// Système d'inscription HOLBIES",
+          "class UserRegistrationService {",
+          "  constructor() {",
+          "    this.database = new Database();",
+          "    this.validator = new InputValidator();",
+          "    this.encryption = new PasswordEncryption();",
+          "    this.emailService = new EmailService();",
+          "  }",
           "",
-          "async function addUser(user) {",
-          "  const query = 'INSERT INTO users (username, email, password) VALUES (?, ?, ?)';",
-          "  const params = [user.username, user.email, user.password];",
-          "  ",
-          "  try {",
-          "    await db.run(query, params);",
-          "    console.log(`User ${user.username} added successfully.`);",
-          "  } catch (error) {",
-          "    console.error('Error adding user:', error);",
+          "  async registerUser(userData) {",
+          "    console.log('Début du processus d\\'inscription...');",
+          "",
+          "    // Validation des données",
+          "    const validation = this.validator.validate(userData);",
+          "    if (!validation.isValid) {",
+          "      return { success: false, errors: validation.errors };",
+          "    }",
+          "",
+          "    // Vérification unicité",
+          "    const existingUser = await this.database.findByEmail(userData.email);",
+          "    if (existingUser) {",
+          "      return { success: false, message: 'Email déjà utilisé' };",
+          "    }",
+          "",
+          "    const existingUsername = await this.database.findByUsername(",
+          "      userData.username",
+          "    );",
+          "    if (existingUsername) {",
+          "      return { success: false, message: 'Nom d\\'utilisateur pris' };",
+          "    }",
+          "",
+          "    // Chiffrement du mot de passe",
+          "    const hashedPassword = await this.encryption.hash(",
+          "      userData.password",
+          "    );",
+          "",
+          "    // Création de l'utilisateur",
+          "    const newUser = {",
+          "      username: userData.username,",
+          "      email: userData.email,",
+          "      password: hashedPassword,",
+          "      createdAt: new Date().toISOString(),",
+          "      isActive: true,",
+          "      role: 'student'",
+          "    };",
+          "",
+          "    try {",
+          "      const userId = await this.database.createUser(newUser);",
+          "      ",
+          "      // Envoi email de bienvenue",
+          "      await this.emailService.sendWelcomeEmail({",
+          "        email: newUser.email,",
+          "        username: newUser.username",
+          "      });",
+          "",
+          "      console.log(`Utilisateur ${userId} créé avec succès!`);",
+          "      return { ",
+          "        success: true, ",
+          "        userId: userId,",
+          "        message: 'Inscription réussie!'",
+          "      };",
+          "    } catch (error) {",
+          "      console.error('Erreur lors de la création:', error);",
+          "      return { success: false, message: 'Erreur serveur' };",
+          "    }",
           "  }",
           "}",
           "",
-          "addUser({",
-          "  username: 'nouveau_developpeur',",
+          "// Initialisation du service d'inscription",
+          "const registrationService = new UserRegistrationService();",
+          "",
+          "// Simulation d'une inscription",
+          "const newUserData = {",
+          "  username: 'nouveau_holbies',",
           "  email: 'dev@holbies.com',",
-          "  password: 'motdepassesecurise'",
-          "});"
+          "  password: 'motdepassesecurise123'",
+          "};",
+          "",
+          "registrationService.registerUser(newUserData)",
+          "  .then(result => {",
+          "    if (result.success) {",
+          "      console.log('Redirection vers la page de connexion...');",
+          "    } else {",
+          "      console.error('Échec de l\\'inscription:', result.message);",
+          "    }",
+          "  });"
         ];
-        
-        const cursorElement = document.createElement('span');
-        cursorElement.classList.add('cursor');
-        
-        codeElement.innerHTML = ''; // Clear content initially
-        codeElement.appendChild(cursorElement); // Append cursor first
 
-        let currentContent = '';
-        let lineIndex = 0;
-        let charIndex = 0;
-
-        function typeCode() {
-            if (lineIndex >= codeLines.length) {
-                setTimeout(() => {
-                    lineIndex = 0;
-                    charIndex = 0;
-                    currentContent = '';
-                    codeElement.textContent = '';
-                    codeElement.appendChild(cursorElement);
-                    // Force scroll to top
-                    requestAnimationFrame(() => {
-                        codeContainer.scrollTop = 0;
-                    });
-                    typeCode();
-                }, 4000);
-                return;
-            }
-    
-            const currentLine = codeLines[lineIndex];
-            if (charIndex < currentLine.length) {
-                currentContent += currentLine[charIndex];
-                codeElement.textContent = currentContent;
-                codeElement.appendChild(cursorElement);
-                charIndex++;
-                
-                // Scroll UNIQUEMENT dans le conteneur terminal, pas la page entière
-                if (codeContainer && cursorElement) {
-                    setTimeout(() => {
-                        // Calculer la position du curseur dans le conteneur seulement
-                        const containerRect = codeContainer.getBoundingClientRect();
-                        const cursorRect = cursorElement.getBoundingClientRect();
-                        
-                        // Scroll seulement si le curseur sort du conteneur visible
-                        if (cursorRect.bottom > containerRect.bottom) {
-                            codeContainer.scrollTop += (cursorRect.bottom - containerRect.bottom + 10);
-                        }
-                    }, 10);
+        // Utiliser la nouvelle fonction universelle
+        if (window.createAdaptiveTerminalAnimation) {
+            console.log('✅ Fonction createAdaptiveTerminalAnimation trouvée !');
+            const registerAnimation = window.createAdaptiveTerminalAnimation(
+                'code-animation-container',
+                registerCodeLines,
+                {
+                    typingSpeed: 30,
+                    lineDelay: 300,
+                    restartDelay: 5000,
+                    scrollOffset: 15
                 }
-                
-                setTimeout(typeCode, 45);
+            );
+            
+            if (registerAnimation) {
+                console.log('✅ Animation créée avec succès, démarrage...');
+                registerAnimation.start();
             } else {
-                currentContent += "\n";
-                codeElement.textContent = currentContent;
-                codeElement.appendChild(cursorElement);
-                lineIndex++;
-                charIndex = 0;
-                
-                // Scroll UNIQUEMENT dans le conteneur terminal, pas la page entière
-                if (codeContainer && cursorElement) {
-                    setTimeout(() => {
-                        // Calculer la position du curseur dans le conteneur seulement
-                        const containerRect = codeContainer.getBoundingClientRect();
-                        const cursorRect = cursorElement.getBoundingClientRect();
-                        
-                        // Scroll seulement si le curseur sort du conteneur visible
-                        if (cursorRect.bottom > containerRect.bottom) {
-                            codeContainer.scrollTop += (cursorRect.bottom - containerRect.bottom + 10);
-                        }
-                    }, 10);
-                }
-                
-                setTimeout(typeCode, 600);
+                console.error('❌ Échec de création de l\'animation');
             }
+        } else {
+            console.log('⏳ Attente du chargement de terminal-animation.js...');
+            // Attendre que la fonction soit disponible
+            setTimeout(initRegisterAnimation, 100);
         }
-    
-        // Start the animation after a short delay
-        setTimeout(typeCode, 1000);
+    }
 
+    // Démarrer l'animation
+    try {
+        console.log('🚀 Démarrage de l\'animation register...');
+        initRegisterAnimation();
     } catch (e) {
-        // En cas d'erreur, on ne bloque pas le reste du site
+        console.error('💥 Erreur animation terminal register:', e);
     }
 
     

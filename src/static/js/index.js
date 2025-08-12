@@ -61,16 +61,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Hero Terminal Animation ---
     try {
-        const heroCodeContainer = document.getElementById('hero-code-animation-container');
-        if (!heroCodeContainer) {
-            return; // Skip if container doesn't exist
-        }
-
-        const heroCodeElement = heroCodeContainer.querySelector('code');
-        if (!heroCodeElement) {
-            return;
-        }
-
         const heroCodeLines = [
             "// Système d'apprentissage HOLBIES",
             "class LearningPlatform {",
@@ -113,88 +103,24 @@ document.addEventListener('DOMContentLoaded', () => {
             "const holbies = new LearningPlatform();",
             "holbies.startLearning({ name: 'Étudiant', level: 'intermediate', id: 1001 });"
         ];
-        
-        const heroCursorElement = document.createElement('span');
-        heroCursorElement.classList.add('cursor');
-        
-        heroCodeElement.innerHTML = '';
-        heroCodeElement.appendChild(heroCursorElement);
 
-        let heroCurrentContent = '';
-        let heroLineIndex = 0;
-        let heroCharIndex = 0;
-
-        function typeHeroCode() {
-            try {
-                if (heroLineIndex >= heroCodeLines.length) {
-                    setTimeout(() => {
-                        heroLineIndex = 0;
-                        heroCharIndex = 0;
-                        heroCurrentContent = '';
-                        heroCodeElement.textContent = '';
-                        heroCodeElement.appendChild(heroCursorElement);
-                        // Force scroll to top - seulement le conteneur terminal
-                        if (heroCodeContainer) {
-                            heroCodeContainer.scrollTop = 0;
-                        }
-                        typeHeroCode();
-                    }, 4000);
-                    return;
+        // Utiliser la nouvelle fonction universelle
+        if (window.createAdaptiveTerminalAnimation) {
+            const heroAnimation = window.createAdaptiveTerminalAnimation(
+                'hero-code-animation-container',
+                heroCodeLines,
+                {
+                    typingSpeed: 35,
+                    lineDelay: 400,
+                    restartDelay: 4000,
+                    scrollOffset: 20
                 }
-
-                const currentLine = heroCodeLines[heroLineIndex];
-                if (heroCharIndex < currentLine.length) {
-                    heroCurrentContent += currentLine[heroCharIndex];
-                    heroCodeElement.textContent = heroCurrentContent;
-                    heroCodeElement.appendChild(heroCursorElement);
-                heroCharIndex++;
-                
-                // Scroll UNIQUEMENT dans le conteneur terminal, pas la page entière
-                if (heroCodeContainer && heroCursorElement) {
-                    setTimeout(() => {
-                        // Calculer la position du curseur dans le conteneur seulement
-                        const containerRect = heroCodeContainer.getBoundingClientRect();
-                        const cursorRect = heroCursorElement.getBoundingClientRect();
-                        
-                        // Scroll seulement si le curseur sort du conteneur visible
-                        if (cursorRect.bottom > containerRect.bottom) {
-                            heroCodeContainer.scrollTop += (cursorRect.bottom - containerRect.bottom + 10);
-                        }
-                    }, 10);
-                }                    setTimeout(typeHeroCode, 45);
-                } else {
-                    heroCurrentContent += '\n';
-                    heroCodeElement.textContent = heroCurrentContent;
-                    heroCodeElement.appendChild(heroCursorElement);
-                heroLineIndex++;
-                heroCharIndex = 0;
-                
-                // Scroll UNIQUEMENT dans le conteneur terminal, pas la page entière
-                if (heroCodeContainer && heroCursorElement) {
-                    setTimeout(() => {
-                        // Calculer la position du curseur dans le conteneur seulement
-                        const containerRect = heroCodeContainer.getBoundingClientRect();
-                        const cursorRect = heroCursorElement.getBoundingClientRect();
-                        
-                        // Scroll seulement si le curseur sort du conteneur visible
-                        if (cursorRect.bottom > containerRect.bottom) {
-                            heroCodeContainer.scrollTop += (cursorRect.bottom - containerRect.bottom + 10);
-                        }
-                    }, 10);
-                }                    setTimeout(typeHeroCode, 600);
-                }
-            } catch (error) {
-                console.error('Erreur dans typeHeroCode:', error);
-                // Redémarrer l'animation en cas d'erreur
-                setTimeout(() => {
-                    heroLineIndex = 0;
-                    heroCharIndex = 0;
-                    heroCurrentContent = '';
-                    typeHeroCode();
-                }, 2000);
+            );
+            
+            if (heroAnimation) {
+                heroAnimation.start();
             }
-        }        // Start the animation after a short delay
-        setTimeout(typeHeroCode, 1000);
+        }
 
     } catch (e) {
         console.error('Erreur animation terminal héros:', e);
