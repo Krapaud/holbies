@@ -11,6 +11,7 @@ class User(Base):
     email = Column(String, unique=True, index=True, nullable=False)
     hashed_password = Column(String, nullable=False)
     is_active = Column(Boolean, default=True)
+    is_admin = Column(Boolean, default=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     
     # Relations
@@ -99,3 +100,75 @@ class AIQuizAnswer(Base):
     
     # Relations
     session = relationship("AIQuizSession", back_populates="ai_answers")
+
+class UserPerformanceStats(Base):
+    __tablename__ = "user_performance_stats"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    date = Column(DateTime(timezone=True), server_default=func.now())
+    
+    # Statistiques Quiz classique
+    quiz_sessions_completed = Column(Integer, default=0)
+    quiz_total_score = Column(Integer, default=0)
+    quiz_total_questions = Column(Integer, default=0)
+    quiz_average_score = Column(Float, default=0.0)
+    quiz_best_score = Column(Integer, default=0)
+    quiz_time_spent_minutes = Column(Integer, default=0)
+    
+    # Statistiques AI Quiz
+    ai_quiz_sessions_completed = Column(Integer, default=0)
+    ai_quiz_total_score = Column(Float, default=0.0)
+    ai_quiz_total_questions = Column(Integer, default=0)
+    ai_quiz_average_score = Column(Float, default=0.0)
+    ai_quiz_best_score = Column(Float, default=0.0)
+    ai_quiz_time_spent_minutes = Column(Integer, default=0)
+    
+    # Statistiques globales
+    total_login_count = Column(Integer, default=0)
+    streak_days = Column(Integer, default=0)
+    last_activity = Column(DateTime(timezone=True))
+    
+    # Progression
+    level = Column(Integer, default=1)
+    experience_points = Column(Integer, default=0)
+    badges_earned = Column(Text)  # JSON string des badges
+    
+    # Relations
+    user = relationship("User")
+
+class DailySystemStats(Base):
+    __tablename__ = "daily_system_stats"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    date = Column(DateTime(timezone=True), server_default=func.now())
+    
+    # Utilisateurs
+    total_users = Column(Integer, default=0)
+    active_users_today = Column(Integer, default=0)
+    new_users_today = Column(Integer, default=0)
+    
+    # Quiz
+    quiz_sessions_today = Column(Integer, default=0)
+    ai_quiz_sessions_today = Column(Integer, default=0)
+    total_questions_answered = Column(Integer, default=0)
+    
+    # Performance
+    average_quiz_score = Column(Float, default=0.0)
+    average_ai_quiz_score = Column(Float, default=0.0)
+    
+    # Engagement
+    average_session_duration = Column(Float, default=0.0)
+    total_time_spent_minutes = Column(Integer, default=0)
+
+class UserActivity(Base):
+    __tablename__ = "user_activities"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    activity_type = Column(String, nullable=False)  # 'login', 'quiz_start', 'quiz_complete', 'ai_quiz_start', etc.
+    activity_data = Column(Text)  # JSON avec détails spécifiques
+    timestamp = Column(DateTime(timezone=True), server_default=func.now())
+    
+    # Relations
+    user = relationship("User")

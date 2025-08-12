@@ -1,0 +1,1052 @@
+{% extends "base.html" %}
+
+{% block title %}Analytics - Performance{% endblock %}
+
+{% block content %}
+<div class="analytics-dashboard">
+    <header class="analytics-header">
+        <div class="container">
+            <h1>📊 Analytics & Performance</h1>
+            <div class="user-info">
+                <span class="level-badge">Niveau {{ user_stats.global.level }}</span>
+                <span class="username">{{ current_user.username }}</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="analytics-content">
+        <div class="container">
+            <!-- Résumé des performances utilisateur -->
+            <section class="performance-summary">
+                <h2>🎯 Votre Performance</h2>
+                <div class="stats-cards">
+                    <div class="stat-card quiz">
+                        <div class="stat-icon">🎯</div>
+                        <div class="stat-content">
+                            <h3>{{ user_stats.quiz.sessions_completed }}</h3>
+                            <p>Quiz complétés</p>
+                            <small>Score moyen: {{ "%.1f"|format(user_stats.quiz.average_score) }}</small>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card ai-quiz">
+                        <div class="stat-icon">🤖</div>
+                        <div class="stat-content">
+                            <h3>{{ user_stats.ai_quiz.sessions_completed }}</h3>
+                            <p>AI Quiz complétés</p>
+                            <small>Score moyen: {{ "%.1f"|format(user_stats.ai_quiz.average_score) }}</small>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card level">
+                        <div class="stat-icon">⭐</div>
+                        <div class="stat-content">
+                            <h3>{{ user_stats.global.level }}</h3>
+                            <p>Niveau atteint</p>
+                            <small>{{ user_stats.global.experience_points }} XP</small>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card streak">
+                        <div class="stat-icon">🔥</div>
+                        <div class="stat-content">
+                            <h3>{{ user_stats.global.streak_days }}</h3>
+                            <p>Jours consécutifs</p>
+                            <small>Continuez comme ça !</small>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Graphique d'évolution -->
+            <section class="performance-chart">
+                <h2>📈 Évolution des Performances</h2>
+                <div class="chart-controls">
+                    <select id="chartPeriod" onchange="updateChart()">
+                        <option value="7">7 derniers jours</option>
+                        <option value="30" selected>30 derniers jours</option>
+                        <option value="90">3 derniers mois</option>
+                    </select>
+                    <select id="chartType" onchange="updateChart()">
+                        <option value="score">Scores</option>
+                        <option value="sessions">Sessions</option>
+                        <option value="questions">Questions</option>
+                    </select>
+                </div>
+                <div class="chart-container">
+                    <canvas id="performanceChart" width="800" height="400"></canvas>
+                </div>
+            </section>
+
+            <!-- Progression détaillée -->
+            <section class="detailed-progress">
+                <h2>📋 Progression Détaillée</h2>
+                <div class="progress-grid">
+                    <div class="progress-card">
+                        <h3>🎯 Quiz Classique</h3>
+                        <div class="progress-stats">
+                            <div class="stat">
+                                <span class="label">Sessions:</span>
+                                <span class="value">{{ user_stats.quiz.sessions_completed }}</span>
+                            </div>
+                            <div class="stat">
+                                <span class="label">Questions:</span>
+                                <span class="value">{{ user_stats.quiz.total_questions }}</span>
+                            </div>
+                            <div class="stat">
+                                <span class="label">Meilleur score:</span>
+                                <span class="value">{{ user_stats.quiz.best_score }}</span>
+                            </div>
+                            <div class="stat">
+                                <span class="label">Score total:</span>
+                                <span class="value">{{ user_stats.quiz.total_score }}</span>
+                            </div>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: {{ (user_stats.quiz.average_score * 10) if user_stats.quiz.average_score else 0 }}%"></div>
+                            <span class="progress-text">{{ "%.1f"|format(user_stats.quiz.average_score) }}% de réussite</span>
+                        </div>
+                    </div>
+                    
+                    <div class="progress-card">
+                        <h3>🤖 AI Quiz</h3>
+                        <div class="progress-stats">
+                            <div class="stat">
+                                <span class="label">Sessions:</span>
+                                <span class="value">{{ user_stats.ai_quiz.sessions_completed }}</span>
+                            </div>
+                            <div class="stat">
+                                <span class="label">Questions:</span>
+                                <span class="value">{{ user_stats.ai_quiz.total_questions }}</span>
+                            </div>
+                            <div class="stat">
+                                <span class="label">Meilleur score:</span>
+                                <span class="value">{{ "%.1f"|format(user_stats.ai_quiz.best_score) }}</span>
+                            </div>
+                            <div class="stat">
+                                <span class="label">Score total:</span>
+                                <span class="value">{{ "%.1f"|format(user_stats.ai_quiz.total_score) }}</span>
+                            </div>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill ai" style="width: {{ user_stats.ai_quiz.average_score if user_stats.ai_quiz.average_score else 0 }}%"></div>
+                            <span class="progress-text">{{ "%.1f"|format(user_stats.ai_quiz.average_score) }}% de réussite</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {% if is_admin and system_stats %}
+            <!-- Statistiques système (Admin seulement) -->
+            <section class="system-stats">
+                <h2>🔧 Statistiques Système (Admin)</h2>
+                <div class="system-grid">
+                    <div class="system-card users">
+                        <h3>👥 Utilisateurs</h3>
+                        <div class="system-metrics">
+                            <div class="metric">
+                                <span class="metric-value">{{ system_stats.users.total }}</span>
+                                <span class="metric-label">Total</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-value">{{ system_stats.users.active_today }}</span>
+                                <span class="metric-label">Actifs aujourd'hui</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-value">{{ system_stats.users.new_this_week }}</span>
+                                <span class="metric-label">Nouveaux (7j)</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="system-card activity">
+                        <h3>⚡ Activité</h3>
+                        <div class="system-metrics">
+                            <div class="metric">
+                                <span class="metric-value">{{ system_stats.activity.total_sessions_today }}</span>
+                                <span class="metric-label">Sessions aujourd'hui</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-value">{{ "%.1f"|format(system_stats.performance.avg_quiz_score) }}</span>
+                                <span class="metric-label">Score moyen Quiz</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-value">{{ "%.1f"|format(system_stats.performance.avg_ai_score) }}</span>
+                                <span class="metric-label">Score moyen AI</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Classements -->
+                <div class="leaderboards">
+                    <div class="leaderboard">
+                        <h4>🏆 Top Quiz</h4>
+                        <div class="leaderboard-list">
+                            {% for user in system_stats.leaderboard.top_quiz_users[:5] %}
+                            <div class="leaderboard-item">
+                                <span class="rank">{{ loop.index }}</span>
+                                <span class="username">{{ user.username }}</span>
+                                <span class="score">{{ "%.1f"|format(user.avg_score) }}</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    <div class="leaderboard">
+                        <h4>🤖 Top AI Quiz</h4>
+                        <div class="leaderboard-list">
+                            {% for user in system_stats.leaderboard.top_ai_users[:5] %}
+                            <div class="leaderboard-item">
+                                <span class="rank">{{ loop.index }}</span>
+                                <span class="username">{{ user.username }}</span>
+                                <span class="score">{{ "%.1f"|format(user.avg_score) }}</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </section>
+            {% endif %}
+
+            <!-- Actions rapides -->
+            <section class="quick-actions">
+                <h2>🚀 Actions Rapides</h2>
+                <div class="actions-grid">
+                    <button class="action-btn" onclick="refreshStats()">
+                        <span class="icon">🔄</span>
+                        Actualiser
+                    </button>
+                    <button class="action-btn" onclick="exportData()">
+                        <span class="icon">📥</span>
+                        Exporter
+                    </button>
+                    <button class="action-btn" onclick="shareProgress()">
+                        <span class="icon">📤</span>
+                        Partager
+                    </button>
+                    <button class="action-btn" onclick="resetProgress()" style="background: #f44336;">
+                        <span class="icon">🗑️</span>
+                        Reset
+                    </button>
+                </div>
+            </section>
+        </div>
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Données de la timeline
+let timelineData = {{ timeline | tojson }};
+let performanceChart;
+
+// Initialisation
+document.addEventListener('DOMContentLoaded', function() {
+    initializeChart();
+    logActivity('page_view', {page: 'analytics'});
+});
+
+function initializeChart() {
+    const ctx = document.getElementById('performanceChart').getContext('2d');
+    
+    // Préparer les données pour Chart.js
+    const chartData = prepareChartData(timelineData, 'score');
+    
+    console.log('🎯 Initialisation du graphique avec:', {
+        datasets: chartData.datasets.length,
+        labels: chartData.labels.length,
+        timeline_entries: timelineData.length
+    });
+    
+    performanceChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: chartData.labels,
+            datasets: chartData.datasets
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+                intersect: false,
+                mode: 'index'
+            },
+            plugins: {
+                title: {
+                    display: true,
+                    text: '📊 Performance au Fil du Temps',
+                    font: {
+                        size: 16,
+                        weight: 'bold'
+                    },
+                    color: '#333'
+                },
+                legend: {
+                    display: true,
+                    position: 'top',
+                    labels: {
+                        usePointStyle: true,
+                        padding: 20
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    titleColor: 'white',
+                    bodyColor: 'white',
+                    borderColor: '#ddd',
+                    borderWidth: 1,
+                    callbacks: {
+                        title: function(context) {
+                            return 'Date: ' + context[0].label;
+                        },
+                        label: function(context) {
+                            const value = context.parsed.y;
+                            const datasetLabel = context.dataset.label;
+                            
+                            if (value === 0) {
+                                return datasetLabel + ': Aucune activité';
+                            }
+                            
+                            const type = document.getElementById('chartType').value;
+                            let unit = '';
+                            if (type === 'score') unit = ' pts';
+                            else if (type === 'sessions') unit = ' session(s)';
+                            else if (type === 'questions') unit = ' question(s)';
+                            
+                            return datasetLabel + ': ' + value.toFixed(1) + unit;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: chartData.yAxisConfig || {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Score'
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Date'
+                    },
+                    grid: {
+                        display: true,
+                        color: 'rgba(0, 0, 0, 0.1)'
+                    }
+                }
+            },
+            elements: {
+                point: {
+                    borderWidth: 2,
+                    hoverBorderWidth: 3
+                },
+                line: {
+                    borderWidth: 3
+                }
+            }
+        }
+    });
+    
+    // Afficher un message si pas de données
+    if (timelineData.length === 0) {
+        showNoDataMessage();
+    }
+}
+
+function showNoDataMessage() {
+    const container = document.querySelector('.chart-container');
+    const message = document.createElement('div');
+    message.className = 'no-data-message';
+    message.innerHTML = `
+        <div style="text-align: center; padding: 3rem; color: #666; background: #f9f9f9; border-radius: 10px; margin: 1rem 0;">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">📊</div>
+            <h3 style="color: #333; margin-bottom: 1rem;">Votre aventure commence ici !</h3>
+            <p style="margin-bottom: 1.5rem; font-size: 1.1rem;">
+                Vous n'avez pas encore de données de performance.<br>
+                Complétez votre premier quiz pour voir vos statistiques apparaître !
+            </p>
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <a href="/quiz" class="btn-primary" style="display: inline-block; padding: 0.75rem 1.5rem; background: #2196f3; color: white; text-decoration: none; border-radius: 8px; font-weight: bold; transition: all 0.2s;">
+                    🎯 Commencer un Quiz
+                </a>
+                <a href="/ai-quiz" class="btn-secondary" style="display: inline-block; padding: 0.75rem 1.5rem; background: #ff9800; color: white; text-decoration: none; border-radius: 8px; font-weight: bold; transition: all 0.2s;">
+                    🤖 Essayer l'AI Quiz
+                </a>
+            </div>
+            <p style="margin-top: 1.5rem; font-size: 0.9rem; color: #888;">
+                💡 Astuce: Vos statistiques se mettront à jour automatiquement après chaque quiz complété !
+            </p>
+        </div>
+    `;
+    container.appendChild(message);
+    
+    // Ajouter des effets de hover
+    const buttons = message.querySelectorAll('.btn-primary, .btn-secondary');
+    buttons.forEach(btn => {
+        btn.addEventListener('mouseenter', () => {
+            btn.style.transform = 'translateY(-2px)';
+            btn.style.boxShadow = '0 4px 8px rgba(0,0,0,0.2)';
+        });
+        btn.addEventListener('mouseleave', () => {
+            btn.style.transform = 'translateY(0)';
+            btn.style.boxShadow = 'none';
+        });
+    });
+}
+
+function prepareChartData(timeline, type) {
+    console.log('📊 Préparation des données graphique:', {
+        timeline_length: timeline.length,
+        type: type,
+        sample_data: timeline.slice(0, 3)
+    });
+    
+    // Grouper les données par date
+    const dateGroups = {};
+    timeline.forEach(item => {
+        if (item.date) {
+            const date = item.date.split('T')[0]; // Extraire juste la date
+            if (!dateGroups[date]) {
+                dateGroups[date] = {quiz: null, ai_quiz: null};
+            }
+            dateGroups[date][item.type] = item;
+        }
+    });
+    
+    // Créer les datasets
+    const dates = Object.keys(dateGroups).sort();
+    const quizData = [];
+    const aiQuizData = [];
+    
+    dates.forEach(date => {
+        const group = dateGroups[date];
+        
+        let quizValue = 0;
+        let aiValue = 0;
+        
+        if (type === 'score') {
+            quizValue = group.quiz ? parseFloat(group.quiz.avg_score || 0) : 0;
+            aiValue = group.ai_quiz ? parseFloat(group.ai_quiz.avg_score || 0) : 0;
+        } else if (type === 'sessions') {
+            quizValue = group.quiz ? parseInt(group.quiz.sessions || 0) : 0;
+            aiValue = group.ai_quiz ? parseInt(group.ai_quiz.sessions || 0) : 0;
+        } else if (type === 'questions') {
+            quizValue = group.quiz ? parseInt(group.quiz.total_questions || 0) : 0;
+            aiValue = group.ai_quiz ? parseInt(group.ai_quiz.total_questions || 0) : 0;
+        }
+        
+        quizData.push(quizValue);
+        aiQuizData.push(aiValue);
+    });
+    
+    console.log('📈 Données préparées:', {
+        dates: dates,
+        quiz_data: quizData,
+        ai_data: aiQuizData,
+        max_quiz: Math.max(...quizData),
+        max_ai: Math.max(...aiQuizData)
+    });
+    
+    // Configuration avancée selon le type
+    let yAxisConfig = {
+        beginAtZero: true,
+        title: {
+            display: true,
+            text: type === 'score' ? 'Score Moyen' : 
+                  type === 'sessions' ? 'Nombre de Sessions' : 'Nombre de Questions'
+        }
+    };
+    
+    // Ajuster l'échelle pour les scores AI Quiz
+    if (type === 'score' && Math.max(...aiQuizData) > 100) {
+        yAxisConfig.suggestedMax = Math.max(...aiQuizData) * 1.1;
+    }
+    
+    return {
+        labels: dates.map(date => new Date(date).toLocaleDateString('fr-FR', {
+            day: '2-digit',
+            month: '2-digit'
+        })),
+        datasets: [
+            {
+                label: 'Quiz Classique',
+                data: quizData,
+                borderColor: '#2196f3',
+                backgroundColor: 'rgba(33, 150, 243, 0.1)',
+                tension: 0.4,
+                fill: false,
+                pointRadius: 5,
+                pointHoverRadius: 8,
+                borderWidth: 3,
+                hidden: quizData.every(v => v === 0) // Masquer si pas de données
+            },
+            {
+                label: 'AI Quiz',
+                data: aiQuizData,
+                borderColor: '#ff9800',
+                backgroundColor: 'rgba(255, 152, 0, 0.1)',
+                tension: 0.4,
+                fill: false,
+                pointRadius: 5,
+                pointHoverRadius: 8,
+                borderWidth: 3,
+                hidden: aiQuizData.every(v => v === 0) // Masquer si pas de données
+            }
+        ],
+        yAxisConfig: yAxisConfig
+    };
+}
+
+async function updateChart() {
+    const period = document.getElementById('chartPeriod').value;
+    const type = document.getElementById('chartType').value;
+    
+    console.log('🔄 Mise à jour du graphique:', { period, type });
+    
+    try {
+        showLoading('Mise à jour du graphique...');
+        
+        // Récupérer nouvelles données
+        const response = await fetch(`/api/performance/stats/timeline?days=${period}`);
+        const data = await response.json();
+        
+        console.log('📊 Réponse API timeline:', data);
+        
+        if (data.success) {
+            timelineData = data.data || [];
+            
+            console.log('✅ Nouvelles données reçues:', {
+                count: timelineData.length,
+                sample: timelineData.slice(0, 2)
+            });
+            
+            // Mettre à jour le graphique
+            const chartData = prepareChartData(timelineData, type);
+            
+            // Mise à jour des données
+            performanceChart.data.labels = chartData.labels;
+            performanceChart.data.datasets = chartData.datasets;
+            
+            // Mise à jour de la configuration Y
+            if (chartData.yAxisConfig) {
+                performanceChart.options.scales.y = chartData.yAxisConfig;
+            }
+            
+            // Mise à jour du titre
+            const typeLabels = {
+                'score': 'Scores Moyens',
+                'sessions': 'Nombre de Sessions',
+                'questions': 'Nombre de Questions'
+            };
+            
+            const periodLabels = {
+                '7': '7 derniers jours',
+                '30': '30 derniers jours', 
+                '90': '3 derniers mois'
+            };
+            
+            performanceChart.options.plugins.title.text = 
+                `📊 ${typeLabels[type]} - ${periodLabels[period]}`;
+            
+            performanceChart.update('active');
+            
+            // Gérer l'affichage si pas de données
+            const noDataMsg = document.querySelector('.no-data-message');
+            if (timelineData.length === 0) {
+                if (!noDataMsg) {
+                    showNoDataMessage();
+                }
+            } else {
+                if (noDataMsg) {
+                    noDataMsg.remove();
+                }
+            }
+            
+            showSuccess(`Graphique mis à jour: ${timelineData.length} entrées`);
+        } else {
+            showError('Erreur lors de la mise à jour: ' + (data.error || 'Inconnue'));
+        }
+    } catch (error) {
+        console.error('❌ Erreur updateChart:', error);
+        showError('Erreur de connexion: ' + error.message);
+    }
+}
+
+async function refreshStats() {
+    try {
+        showLoading('Actualisation des statistiques...');
+        
+        const response = await fetch('/api/performance/stats/performance');
+        const data = await response.json();
+        
+        if (data.success) {
+            // Recharger la page pour afficher les nouvelles stats
+            window.location.reload();
+        } else {
+            showError('Erreur lors de l\'actualisation');
+        }
+    } catch (error) {
+        showError('Erreur de connexion');
+    }
+}
+
+function exportData() {
+    // Créer un CSV avec les données
+    const csvContent = "data:text/csv;charset=utf-8," 
+        + "Date,Type,Sessions,Score Moyen,Score Total,Questions\n"
+        + timelineData.map(item => 
+            `${item.date},${item.type},${item.sessions},${item.avg_score},${item.total_score},${item.total_questions}`
+        ).join("\n");
+    
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `performance_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    showSuccess('Données exportées');
+}
+
+function shareProgress() {
+    const stats = {{ user_stats | tojson }};
+    const shareText = `🎯 Mes performances sur Holbies:\n` +
+        `📊 ${stats.quiz.sessions_completed} quiz complétés (moyenne: ${stats.quiz.average_score.toFixed(1)})\n` +
+        `🤖 ${stats.ai_quiz.sessions_completed} AI quiz complétés (moyenne: ${stats.ai_quiz.average_score.toFixed(1)})\n` +
+        `⭐ Niveau ${stats.global.level} - ${stats.global.experience_points} XP\n` +
+        `🔥 ${stats.global.streak_days} jours consécutifs!`;
+    
+    if (navigator.share) {
+        navigator.share({
+            title: 'Mes performances Holbies',
+            text: shareText
+        });
+    } else {
+        navigator.clipboard.writeText(shareText).then(() => {
+            showSuccess('Texte copié dans le presse-papiers');
+        });
+    }
+}
+
+function resetProgress() {
+    if (confirm('⚠️ Êtes-vous sûr de vouloir réinitialiser vos statistiques ?\nCette action est irréversible !')) {
+        showWarning('Fonctionnalité de reset non implémentée (protection des données)');
+    }
+}
+
+async function logActivity(type, data) {
+    try {
+        await fetch('/api/performance/stats/activity', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                type: type,
+                data: data
+            })
+        });
+    } catch (error) {
+        // Ignorer les erreurs de log
+    }
+}
+
+// Système de notifications (réutilisé depuis admin)
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.textContent = message;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.classList.add('show');
+    }, 100);
+    
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => {
+            document.body.removeChild(notification);
+        }, 300);
+    }, 3000);
+}
+
+function showSuccess(message) { showNotification(message, 'success'); }
+function showError(message) { showNotification(message, 'error'); }
+function showWarning(message) { showNotification(message, 'warning'); }
+function showLoading(message) { showNotification(message, 'loading'); }
+
+// Auto-refresh toutes les 5 minutes
+setInterval(refreshStats, 300000);
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.analytics-dashboard {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.analytics-header {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 1rem 0;
+}
+
+.analytics-header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.analytics-header h1 {
+    color: white;
+    margin: 0;
+    font-size: 1.8rem;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: white;
+}
+
+.level-badge {
+    background: #4caf50;
+    color: white;
+    padding: 0.2rem 0.5rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.analytics-content {
+    padding: 2rem 0;
+}
+
+/* Stats cards */
+.stats-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 10px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+}
+
+.stat-icon {
+    font-size: 2rem;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: #f0f0f0;
+}
+
+.stat-content h3 {
+    margin: 0;
+    font-size: 2rem;
+    color: #333;
+}
+
+.stat-content p {
+    margin: 0;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.stat-content small {
+    color: #999;
+    font-size: 0.8rem;
+}
+
+/* Chart section */
+.performance-chart {
+    background: white;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.chart-controls {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.chart-controls select {
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background: white;
+}
+
+.chart-container {
+    position: relative;
+    height: 400px;
+}
+
+/* Progress section */
+.detailed-progress {
+    background: white;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.progress-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.progress-card {
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.progress-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.stat {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.25rem 0;
+}
+
+.stat .label {
+    color: #666;
+}
+
+.stat .value {
+    font-weight: bold;
+    color: #333;
+}
+
+.progress-bar {
+    position: relative;
+    background: #f0f0f0;
+    border-radius: 10px;
+    height: 20px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4caf50, #8bc34a);
+    transition: width 0.5s ease;
+}
+
+.progress-fill.ai {
+    background: linear-gradient(90deg, #ff9800, #ffc107);
+}
+
+.progress-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: #333;
+}
+
+/* System stats (admin) */
+.system-stats {
+    background: white;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-left: 4px solid #ff9800;
+}
+
+.system-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.system-card {
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.system-metrics {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 1rem;
+}
+
+.metric {
+    text-align: center;
+}
+
+.metric-value {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.metric-label {
+    font-size: 0.8rem;
+    color: #666;
+}
+
+/* Leaderboards */
+.leaderboards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+}
+
+.leaderboard {
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.leaderboard h4 {
+    margin: 0 0 1rem 0;
+    color: #333;
+}
+
+.leaderboard-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.leaderboard-item:last-child {
+    border-bottom: none;
+}
+
+.rank {
+    width: 30px;
+    font-weight: bold;
+    color: #ff9800;
+}
+
+.username {
+    flex: 1;
+    color: #333;
+}
+
+.score {
+    font-weight: bold;
+    color: #4caf50;
+}
+
+/* Quick actions */
+.quick-actions {
+    background: white;
+    border-radius: 10px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    border: none;
+    border-radius: 8px;
+    background: #2196f3;
+    color: white;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.action-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Notifications */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 1rem;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    z-index: 1001;
+    max-width: 300px;
+}
+
+.notification.show {
+    transform: translateX(0);
+}
+
+.notification.success { background: #4caf50; }
+.notification.error { background: #f44336; }
+.notification.warning { background: #ff9800; }
+.notification.info { background: #2196f3; }
+.notification.loading { background: #6c757d; }
+
+@media (max-width: 768px) {
+    .stats-cards {
+        grid-template-columns: 1fr;
+    }
+    
+    .progress-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .chart-controls {
+        flex-direction: column;
+    }
+    
+    .system-metrics {
+        flex-direction: column;
+        gap: 1rem;
+    }
+}
+</style>
+{% endblock %}

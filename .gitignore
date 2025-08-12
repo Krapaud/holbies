@@ -1,3 +1,19 @@
+# Migrations
+migrations/
+*/migrations/
+alembic/
+alembic.ini
+
+# Database dumps
+*.sql
+*.dump
+
+# Temporary editor/project files
+*.orig
+*.rej
+*.tmp
+*.temp
+*~
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

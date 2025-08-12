@@ -12,10 +12,11 @@ import sys
 import traceback
 import io
 
-from .app.database import engine, get_db
-from .app.models import Base
-from .app.routers import auth, quiz, users, ai_quiz
-from .app.auth import get_current_user
+from app.database import engine, get_db
+from app.models import Base
+from app.routers import auth, quiz, users, ai_quiz
+from app.routers import performance
+from app.auth import get_current_user
 
 # Charger les variables d'environnement
 load_dotenv()
@@ -66,9 +67,10 @@ app.include_router(auth.router, prefix="/api/auth", tags=["authentication"])
 app.include_router(quiz.router, prefix="/api/quiz", tags=["quiz"])
 app.include_router(users.router, prefix="/api/users", tags=["users"])
 app.include_router(ai_quiz.router, prefix="/api/ai-quiz", tags=["ai-quiz"])
+app.include_router(performance.router, prefix="/api/performance", tags=["performance"])
 
 # Route directe pour les stats du site (pour compatibilité frontend)
-from .app.routers.quiz import get_site_stats
+from app.routers.quiz import get_site_stats
 @app.get("/quiz/stats")
 def public_site_stats(request: Request, db=Depends(get_db)):
     return get_site_stats(db)
@@ -112,6 +114,11 @@ async def dashboard_page(request: Request):
 async def ai_quiz_page(request: Request):
     await login_required(request)
     return templates.TemplateResponse("ai-quiz.html", get_template_context(request))
+
+@app.get("/admin", response_class=HTMLResponse)
+async def admin_redirect(request: Request):
+    """Redirection vers le dashboard admin"""
+    return RedirectResponse(url="/api/users/admin/dashboard", status_code=302)
 
 @app.post("/api/visualize")
 async def visualize_code(request: Request):

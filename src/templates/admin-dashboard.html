@@ -1,0 +1,773 @@
+{% extends "base.html" %}
+
+{% block title %}Administration - Holbies{% endblock %}
+
+{% block content %}
+<div class="admin-dashboard">
+    <header class="admin-header">
+        <div class="container">
+            <h1>🛠️ Dashboard Administrateur</h1>
+            <div class="admin-user-info">
+                <span class="admin-badge">👑 Admin</span>
+                <span class="username">{{ current_user.username }}</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="admin-content">
+        <div class="container">
+            <!-- Statistiques principales -->
+            <section class="stats-grid">
+                <div class="stat-card users">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-content">
+                        <h3>{{ stats.total_users }}</h3>
+                        <p>Utilisateurs totaux</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card active">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-content">
+                        <h3>{{ stats.active_users }}</h3>
+                        <p>Utilisateurs actifs</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card admins">
+                    <div class="stat-icon">👑</div>
+                    <div class="stat-content">
+                        <h3>{{ stats.admin_count }}</h3>
+                        <p>Administrateurs</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card quizzes">
+                    <div class="stat-icon">🎯</div>
+                    <div class="stat-content">
+                        <h3>{{ stats.quiz_sessions }}</h3>
+                        <p>Sessions de quiz</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card questions">
+                    <div class="stat-icon">❓</div>
+                    <div class="stat-content">
+                        <h3>{{ stats.questions }}</h3>
+                        <p>Questions</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card ai">
+                    <div class="stat-icon">🤖</div>
+                    <div class="stat-content">
+                        <h3>{{ stats.ai_sessions }}</h3>
+                        <p>Sessions AI</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Actions rapides -->
+            <section class="admin-actions">
+                <h2>🚀 Actions Rapides</h2>
+                <div class="actions-grid">
+                    <button class="action-btn primary" onclick="refreshStats()">
+                        <span class="icon">📊</span>
+                        Actualiser les stats
+                    </button>
+                    <button class="action-btn secondary" onclick="exportUsers()">
+                        <span class="icon">📥</span>
+                        Exporter utilisateurs
+                    </button>
+                    <button class="action-btn warning" onclick="showBackupModal()">
+                        <span class="icon">💾</span>
+                        Sauvegarde
+                    </button>
+                    <button class="action-btn danger" onclick="showMaintenanceModal()">
+                        <span class="icon">🔧</span>
+                        Maintenance
+                    </button>
+                </div>
+            </section>
+
+            <!-- Gestion des utilisateurs -->
+            <section class="users-management">
+                <h2>👥 Gestion des Utilisateurs</h2>
+                
+                <div class="users-controls">
+                    <div class="search-box">
+                        <input type="text" id="userSearch" placeholder="🔍 Rechercher un utilisateur..." onkeyup="filterUsers()">
+                    </div>
+                    <div class="filter-buttons">
+                        <button class="filter-btn active" data-filter="all">Tous</button>
+                        <button class="filter-btn" data-filter="admin">👑 Admins</button>
+                        <button class="filter-btn" data-filter="user">👤 Users</button>
+                        <button class="filter-btn" data-filter="active">✅ Actifs</button>
+                        <button class="filter-btn" data-filter="inactive">❌ Inactifs</button>
+                    </div>
+                </div>
+
+                <div class="users-table-container">
+                    <table class="users-table" id="usersTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Utilisateur</th>
+                                <th>Email</th>
+                                <th>Statut</th>
+                                <th>Rôle</th>
+                                <th>Créé le</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                            <tr class="user-row" 
+                                data-role="{{ 'admin' if user.is_admin else 'user' }}" 
+                                data-status="{{ 'active' if user.is_active else 'inactive' }}">
+                                <td class="user-id">{{ user.id }}</td>
+                                <td class="user-username">
+                                    <div class="username-cell">
+                                        <span class="username">{{ user.username }}</span>
+                                        {% if user.id == current_user.id %}
+                                        <span class="current-user-badge">C'est vous</span>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                                <td class="user-email">{{ user.email }}</td>
+                                <td class="user-status">
+                                    {% if user.is_active %}
+                                    <span class="status active">✅ Actif</span>
+                                    {% else %}
+                                    <span class="status inactive">❌ Inactif</span>
+                                    {% endif %}
+                                </td>
+                                <td class="user-role">
+                                    {% if user.is_admin %}
+                                    <span class="role admin">👑 Admin</span>
+                                    {% else %}
+                                    <span class="role user">👤 User</span>
+                                    {% endif %}
+                                </td>
+                                <td class="user-created">
+                                    {{ user.created_at.strftime('%d/%m/%Y') if user.created_at else 'N/A' }}
+                                </td>
+                                <td class="user-actions">
+                                    <div class="action-buttons">
+                                        {% if user.id != current_user.id %}
+                                        <button class="btn-action edit" onclick="editUser({{ user.id }})" title="Modifier">
+                                            ✏️
+                                        </button>
+                                        <button class="btn-action toggle" onclick="toggleUserRole({{ user.id }})" title="Changer le rôle">
+                                            {% if user.is_admin %}👤{% else %}👑{% endif %}
+                                        </button>
+                                        <button class="btn-action delete" onclick="deleteUser({{ user.id }})" title="Supprimer">
+                                            🗑️
+                                        </button>
+                                        {% else %}
+                                        <span class="protected">🔒 Protégé</span>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Logs récents (placeholder) -->
+            <section class="recent-logs">
+                <h2>📋 Logs Récents</h2>
+                <div class="logs-container">
+                    <div class="log-entry">
+                        <span class="log-time">{{ "now"|strftime('%H:%M:%S') }}</span>
+                        <span class="log-level info">INFO</span>
+                        <span class="log-message">Dashboard administrateur affiché</span>
+                    </div>
+                    <div class="log-entry">
+                        <span class="log-time">{{ "now"|strftime('%H:%M:%S') }}</span>
+                        <span class="log-level success">SUCCESS</span>
+                        <span class="log-message">{{ stats.total_users }} utilisateurs chargés</span>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+</div>
+
+<!-- Modales -->
+<div id="confirmModal" class="modal">
+    <div class="modal-content">
+        <h3 id="modalTitle">Confirmation</h3>
+        <p id="modalMessage">Êtes-vous sûr ?</p>
+        <div class="modal-buttons">
+            <button class="btn secondary" onclick="closeModal()">Annuler</button>
+            <button class="btn primary" id="confirmButton">Confirmer</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// Variables globales
+let allUsers = {{ users | tojson }};
+
+// Actualiser les statistiques
+function refreshStats() {
+    showLoading('Actualisation des statistiques...');
+    fetch('/api/users/admin/stats')
+        .then(response => response.json())
+        .then(data => {
+            updateStatsDisplay(data);
+            showSuccess('Statistiques actualisées');
+        })
+        .catch(error => {
+            showError('Erreur lors de l\'actualisation');
+        });
+}
+
+// Mettre à jour l'affichage des stats
+function updateStatsDisplay(stats) {
+    document.querySelector('.stat-card.users h3').textContent = stats.total_users;
+    document.querySelector('.stat-card.active h3').textContent = stats.active_users;
+    document.querySelector('.stat-card.admins h3').textContent = stats.admin_count;
+    document.querySelector('.stat-card.quizzes h3').textContent = stats.quiz_sessions;
+    document.querySelector('.stat-card.questions h3').textContent = stats.questions;
+    document.querySelector('.stat-card.ai h3').textContent = stats.ai_sessions;
+}
+
+// Filtrer les utilisateurs
+function filterUsers() {
+    const searchTerm = document.getElementById('userSearch').value.toLowerCase();
+    const activeFilter = document.querySelector('.filter-btn.active').dataset.filter;
+    const rows = document.querySelectorAll('.user-row');
+    
+    rows.forEach(row => {
+        const username = row.querySelector('.user-username').textContent.toLowerCase();
+        const email = row.querySelector('.user-email').textContent.toLowerCase();
+        const role = row.dataset.role;
+        const status = row.dataset.status;
+        
+        let showRow = true;
+        
+        // Filtre de recherche
+        if (searchTerm && !username.includes(searchTerm) && !email.includes(searchTerm)) {
+            showRow = false;
+        }
+        
+        // Filtre par catégorie
+        if (activeFilter !== 'all') {
+            if (activeFilter === 'admin' && role !== 'admin') showRow = false;
+            if (activeFilter === 'user' && role !== 'user') showRow = false;
+            if (activeFilter === 'active' && status !== 'active') showRow = false;
+            if (activeFilter === 'inactive' && status !== 'inactive') showRow = false;
+        }
+        
+        row.style.display = showRow ? '' : 'none';
+    });
+}
+
+// Gestion des filtres
+document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        filterUsers();
+    });
+});
+
+// Actions sur les utilisateurs
+function editUser(userId) {
+    showInfo(`Édition de l'utilisateur ${userId}`);
+    // Implémenter l'édition
+}
+
+function toggleUserRole(userId) {
+    const user = allUsers.find(u => u.id === userId);
+    const newRole = user.is_admin ? 'utilisateur standard' : 'administrateur';
+    
+    showConfirm(
+        `Changer le rôle`,
+        `Transformer ${user.username} en ${newRole} ?`,
+        () => {
+            // Implémenter le changement de rôle
+            showSuccess(`Rôle de ${user.username} modifié`);
+        }
+    );
+}
+
+function deleteUser(userId) {
+    const user = allUsers.find(u => u.id === userId);
+    
+    showConfirm(
+        `Supprimer l'utilisateur`,
+        `Supprimer définitivement ${user.username} ? Cette action est irréversible.`,
+        () => {
+            // Implémenter la suppression
+            showSuccess(`Utilisateur ${user.username} supprimé`);
+        }
+    );
+}
+
+// Autres actions
+function exportUsers() {
+    showInfo('Export des utilisateurs en cours...');
+    // Implémenter l'export
+}
+
+function showBackupModal() {
+    showInfo('Fonctionnalité de sauvegarde à venir');
+}
+
+function showMaintenanceModal() {
+    showConfirm(
+        'Mode maintenance',
+        'Activer le mode maintenance ? Les utilisateurs ne pourront plus accéder à l\'application.',
+        () => {
+            showWarning('Mode maintenance activé');
+        }
+    );
+}
+
+// Système de notifications
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.textContent = message;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.classList.add('show');
+    }, 100);
+    
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => {
+            document.body.removeChild(notification);
+        }, 300);
+    }, 3000);
+}
+
+function showSuccess(message) { showNotification(message, 'success'); }
+function showError(message) { showNotification(message, 'error'); }
+function showWarning(message) { showNotification(message, 'warning'); }
+function showInfo(message) { showNotification(message, 'info'); }
+function showLoading(message) { showNotification(message, 'loading'); }
+
+// Système de confirmation
+function showConfirm(title, message, onConfirm) {
+    document.getElementById('modalTitle').textContent = title;
+    document.getElementById('modalMessage').textContent = message;
+    document.getElementById('confirmModal').style.display = 'flex';
+    
+    const confirmBtn = document.getElementById('confirmButton');
+    confirmBtn.onclick = () => {
+        closeModal();
+        onConfirm();
+    };
+}
+
+function closeModal() {
+    document.getElementById('confirmModal').style.display = 'none';
+}
+
+// Auto-refresh des stats toutes les 30 secondes
+setInterval(refreshStats, 30000);
+
+// Recherche en temps réel
+document.getElementById('userSearch').addEventListener('input', filterUsers);
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Styles spécifiques au dashboard admin */
+.admin-dashboard {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.admin-header {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 1rem 0;
+}
+
+.admin-header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.admin-header h1 {
+    color: white;
+    margin: 0;
+    font-size: 1.8rem;
+}
+
+.admin-user-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: white;
+}
+
+.admin-badge {
+    background: #ffd700;
+    color: #333;
+    padding: 0.2rem 0.5rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.admin-content {
+    padding: 2rem 0;
+}
+
+/* Grille des statistiques */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 10px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+}
+
+.stat-icon {
+    font-size: 2rem;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+}
+
+.stat-card.users .stat-icon { background: #e3f2fd; }
+.stat-card.active .stat-icon { background: #e8f5e8; }
+.stat-card.admins .stat-icon { background: #fff3e0; }
+.stat-card.quizzes .stat-icon { background: #f3e5f5; }
+.stat-card.questions .stat-icon { background: #e0f2f1; }
+.stat-card.ai .stat-icon { background: #fce4ec; }
+
+.stat-content h3 {
+    margin: 0;
+    font-size: 2rem;
+    color: #333;
+}
+
+.stat-content p {
+    margin: 0;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+/* Actions rapides */
+.admin-actions {
+    background: white;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.admin-actions h2 {
+    margin: 0 0 1rem 0;
+    color: #333;
+}
+
+.actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.action-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.action-btn.primary { background: #2196f3; color: white; }
+.action-btn.secondary { background: #6c757d; color: white; }
+.action-btn.warning { background: #ff9800; color: white; }
+.action-btn.danger { background: #f44336; color: white; }
+
+.action-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Gestion des utilisateurs */
+.users-management {
+    background: white;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.users-management h2 {
+    margin: 0 0 1rem 0;
+    color: #333;
+}
+
+.users-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    gap: 1rem;
+}
+
+.search-box input {
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    width: 250px;
+}
+
+.filter-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.filter-btn {
+    padding: 0.3rem 0.8rem;
+    border: 1px solid #ddd;
+    background: white;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: all 0.2s ease;
+}
+
+.filter-btn.active,
+.filter-btn:hover {
+    background: #2196f3;
+    color: white;
+    border-color: #2196f3;
+}
+
+/* Table des utilisateurs */
+.users-table-container {
+    overflow-x: auto;
+}
+
+.users-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.users-table th,
+.users-table td {
+    padding: 0.8rem;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.users-table th {
+    background: #f8f9fa;
+    font-weight: 600;
+    color: #333;
+}
+
+.username-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.current-user-badge {
+    background: #4caf50;
+    color: white;
+    padding: 0.1rem 0.3rem;
+    border-radius: 10px;
+    font-size: 0.7rem;
+}
+
+.status, .role {
+    padding: 0.2rem 0.5rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+}
+
+.status.active { background: #e8f5e8; color: #4caf50; }
+.status.inactive { background: #ffebee; color: #f44336; }
+
+.role.admin { background: #fff3e0; color: #ff9800; }
+.role.user { background: #e3f2fd; color: #2196f3; }
+
+.action-buttons {
+    display: flex;
+    gap: 0.3rem;
+}
+
+.btn-action {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.3rem;
+    border-radius: 3px;
+    font-size: 0.8rem;
+    transition: background 0.2s ease;
+}
+
+.btn-action:hover {
+    background: #f0f0f0;
+}
+
+.protected {
+    color: #999;
+    font-size: 0.8rem;
+}
+
+/* Logs */
+.recent-logs {
+    background: white;
+    border-radius: 10px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.recent-logs h2 {
+    margin: 0 0 1rem 0;
+    color: #333;
+}
+
+.logs-container {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.log-entry {
+    display: flex;
+    gap: 1rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #f0f0f0;
+    font-family: monospace;
+    font-size: 0.8rem;
+}
+
+.log-time {
+    color: #666;
+    width: 80px;
+}
+
+.log-level {
+    width: 60px;
+    font-weight: bold;
+}
+
+.log-level.info { color: #2196f3; }
+.log-level.success { color: #4caf50; }
+.log-level.warning { color: #ff9800; }
+.log-level.error { color: #f44336; }
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    max-width: 400px;
+    width: 90%;
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 1rem;
+}
+
+.btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn.primary { background: #2196f3; color: white; }
+.btn.secondary { background: #6c757d; color: white; }
+
+/* Notifications */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 1rem;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    z-index: 1001;
+}
+
+.notification.show {
+    transform: translateX(0);
+}
+
+.notification.success { background: #4caf50; }
+.notification.error { background: #f44336; }
+.notification.warning { background: #ff9800; }
+.notification.info { background: #2196f3; }
+.notification.loading { background: #6c757d; }
+
+@media (max-width: 768px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .users-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .search-box input {
+        width: 100%;
+    }
+    
+    .filter-buttons {
+        flex-wrap: wrap;
+    }
+}
+</style>
+{% endblock %}

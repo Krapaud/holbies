@@ -11,7 +11,9 @@ sys.path.insert(0, str(Path(__file__).parent / "src"))
 
 if __name__ == "__main__":
     import uvicorn
-    from main import app
+    
+    # Import the app from the main module
+    from src.main import app
     
     uvicorn.run(
         app,
