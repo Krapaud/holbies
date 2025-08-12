@@ -74,14 +74,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 codeElement.appendChild(cursorElement);
                 charIndex++;
                 
-                // Scroll vers le curseur pour qu'il soit visible en bas
+                // Scroll UNIQUEMENT dans le conteneur terminal, pas la page entière
                 if (codeContainer && cursorElement) {
                     setTimeout(() => {
-                        cursorElement.scrollIntoView({ 
-                            behavior: 'auto', 
-                            block: 'end',
-                            inline: 'nearest'
-                        });
+                        // Calculer la position du curseur dans le conteneur seulement
+                        const containerRect = codeContainer.getBoundingClientRect();
+                        const cursorRect = cursorElement.getBoundingClientRect();
+                        
+                        // Scroll seulement si le curseur sort du conteneur visible
+                        if (cursorRect.bottom > containerRect.bottom) {
+                            codeContainer.scrollTop += (cursorRect.bottom - containerRect.bottom + 10);
+                        }
                     }, 10);
                 }
                 
@@ -93,14 +96,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 lineIndex++;
                 charIndex = 0;
                 
-                // Scroll vers le curseur pour qu'il soit visible en bas
+                // Scroll UNIQUEMENT dans le conteneur terminal, pas la page entière
                 if (codeContainer && cursorElement) {
                     setTimeout(() => {
-                        cursorElement.scrollIntoView({ 
-                            behavior: 'auto', 
-                            block: 'end',
-                            inline: 'nearest'
-                        });
+                        // Calculer la position du curseur dans le conteneur seulement
+                        const containerRect = codeContainer.getBoundingClientRect();
+                        const cursorRect = cursorElement.getBoundingClientRect();
+                        
+                        // Scroll seulement si le curseur sort du conteneur visible
+                        if (cursorRect.bottom > containerRect.bottom) {
+                            codeContainer.scrollTop += (cursorRect.bottom - containerRect.bottom + 10);
+                        }
                     }, 10);
                 }
                 

@@ -4,8 +4,28 @@ migrations/
 alembic/
 alembic.ini
 
-# Database dumps
-*.sql
+# Data# Scripts utiles - À GARDER
+!check_docker_config.sh
+!Makefile
+!README_DOCKER.md
+!DOCKER_ONLY_RESTRICTION.md
+
+# Virtual environments - ⚠️ DOCKER ONLY PROJECT ⚠️
+# Ce projet utilise UNIQUEMENT Docker - Pas d'environnements virtuels Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+.env
+.venv/
+.virtualenv/
+conda-env/
+Pipfile.lock
+poetry.lock
+
+# Restriction : n'utiliser que le dossier venv/ comme environnement Python
+.venv/*.sql
 *.dump
 
 # Temporary editor/project files
