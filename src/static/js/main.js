@@ -97,8 +97,7 @@ class HolbiesApp {
             // User is authenticated - show user menu and authenticated navigation
             navMenu.innerHTML = `
                 <a href="/learning" class="nav-link">Learning Hub</a>
-                <a href="/tutor" class="nav-link">HLH Tutor</a>
-                <a href="/dashboard" class="nav-link">Dashboard</a>
+                <a href="/pld" class="nav-link">PLD</a>
             `;
             
             // Show user menu

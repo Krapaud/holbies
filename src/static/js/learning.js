@@ -23,6 +23,13 @@ document.addEventListener('DOMContentLoaded', function() {
         
         card.style.cursor = 'pointer';
         
+        // Add click event listener (en plus de l'onclick HTML)
+        card.addEventListener('click', function() {
+            const mode = this.getAttribute('data-mode');
+            console.log('Click détecté sur carte avec mode:', mode);
+            redirectToQuiz(mode);
+        });
+        
         // Add hover effects
         card.addEventListener('mouseenter', function() {
             const icon = this.querySelector('.mode-icon');
@@ -67,9 +74,9 @@ function redirectToQuiz(mode) {
         if (mode === 'quiz') {
             console.log('Redirection vers /quiz');
             window.location.href = '/quiz';
-        } else if (mode === 'ai-quiz') {
-            console.log('Redirection vers /ai-quiz');
-            window.location.href = '/ai-quiz';
+        } else if (mode === 'pld') {
+            console.log('Redirection vers /pld');
+            window.location.href = '/pld';
         }
     }, 500);
 }

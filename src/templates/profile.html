@@ -1,90 +1,309 @@
 {% extends "base.html" %}
 
-{% block title %}Mon Profil - Holbies Learning Hub{% endblock %}
+{% block title %}Dashboard - Holbies Learning Hub{% endblock %}
 
 {% block extra_css %}
+<link rel="stylesheet" href="/static/css/style.css">
 <style>
 .profile-container {
-    max-width: 800px;
+    max-width: 1200px;
     margin: 2rem auto;
-    padding: 2rem;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 2rem;
+}
+
+.profile-sidebar {
     background: var(--card-background);
     border-radius: 12px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    padding: 2rem;
+    height: fit-content;
+    position: sticky;
+    top: 2rem;
+}
+
+.profile-main {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.profile-card {
+    background: var(--card-background);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    padding: 2rem;
 }
 
 .profile-header {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 1.5rem;
+    gap: 1rem;
     margin-bottom: 2rem;
     padding-bottom: 1.5rem;
     border-bottom: 2px solid rgba(225, 0, 60, 0.2);
+    text-align: center;
 }
 
 .profile-avatar {
-    width: 80px;
-    height: 80px;
+    width: 120px;
+    height: 120px;
     border-radius: 50%;
     background: linear-gradient(135deg, var(--primary-color), #ff4d6d);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 2rem;
+    font-size: 3rem;
     font-weight: bold;
     color: white;
     text-transform: uppercase;
+    position: relative;
+    box-shadow: 0 8px 24px rgba(225, 0, 60, 0.3);
+}
+
+.profile-avatar::after {
+    content: '';
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    width: 24px;
+    height: 24px;
+    background: #4caf50;
+    border-radius: 50%;
+    border: 3px solid var(--card-background);
 }
 
 .profile-info h1 {
     margin: 0;
     color: var(--primary-color);
-    font-size: 1.8rem;
+    font-size: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: center;
 }
 
 .profile-info p {
-    margin: 0.5rem 0 0 0;
+    margin: 0.3rem 0;
     color: var(--text-color);
     opacity: 0.8;
 }
 
-.profile-section {
-    margin-bottom: 2rem;
+.profile-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-top: 1.5rem;
 }
 
-.profile-section h2 {
-    color: var(--primary-color);
-    font-size: 1.3rem;
-    margin-bottom: 1rem;
+.stat-item {
+    text-align: center;
+    padding: 1rem;
+    background: rgba(225, 0, 60, 0.05);
+    border-radius: 8px;
+    border: 1px solid rgba(225, 0, 60, 0.1);
     display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 80px;
+}
+
+.stat-item * {
+    text-align: center !important;
+    display: block;
+    width: 100%;
+}
+
+.stat-number {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--primary-color);
+    margin-bottom: 0.25rem;
+    line-height: 1.2;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: var(--text-color);
+    opacity: 0.7;
+    margin-top: 0.25rem;
+    line-height: 1.2;
+}
+
+/* Classes spécifiques au profil pour éviter les conflits */
+.profile-stat-item {
+    text-align: center !important;
+    padding: 1rem !important;
+    background: rgba(225, 0, 60, 0.05) !important;
+    border-radius: 8px !important;
+    border: 1px solid rgba(225, 0, 60, 0.1) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-height: 80px !important;
+    transform: none !important;
+    animation: none !important;
+    opacity: 1 !important;
+    box-shadow: none !important;
+}
+
+.profile-stat-item:hover {
+    transform: none !important;
+    box-shadow: 0 2px 8px rgba(225, 0, 60, 0.2) !important;
+}
+
+.profile-stat-number {
+    font-size: 1.5rem !important;
+    font-weight: bold !important;
+    color: var(--primary-color) !important;
+    margin-bottom: 0.25rem !important;
+    line-height: 1.2 !important;
+    text-align: center !important;
+    display: block !important;
+    width: 100% !important;
+}
+
+.profile-stat-label {
+    font-size: 0.9rem !important;
+    color: var(--text-color) !important;
+    opacity: 0.7 !important;
+    margin-top: 0.25rem !important;
+    line-height: 1.2 !important;
+    text-align: center !important;
+    display: block !important;
+    width: 100% !important;
+    text-transform: none !important;
+    margin-top: 0.3rem;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: rgba(225, 0, 60, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 0.5rem 0;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-color), #ff4d6d);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+.achievement-badge {
+    display: inline-flex;
     align-items: center;
     gap: 0.5rem;
+    background: linear-gradient(135deg, #ffd700, #ffed4e);
+    color: #333;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    margin: 0.3rem;
+    box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
 }
 
-.profile-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+.recent-activity {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.activity-item {
+    display: flex;
+    align-items: center;
     gap: 1rem;
+    padding: 1rem;
+    border-bottom: 1px solid rgba(225, 0, 60, 0.1);
+    transition: background 0.2s ease;
 }
 
-.profile-card {
+.activity-item:hover {
     background: rgba(225, 0, 60, 0.05);
-    border: 1px solid rgba(225, 0, 60, 0.2);
-    border-radius: 8px;
-    padding: 1.5rem;
 }
 
-.profile-card h3 {
-    margin: 0 0 0.5rem 0;
-    color: var(--primary-color);
-    font-size: 1rem;
+.activity-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
 }
 
-.profile-card p {
-    margin: 0;
-    color: var(--text-color);
-    font-size: 1.1rem;
+.activity-icon.quiz {
+    background: linear-gradient(135deg, #4caf50, #45a049);
+    color: white;
+}
+
+.activity-icon.learning {
+    background: linear-gradient(135deg, #2196f3, #1976d2);
+    color: white;
+}
+
+.activity-icon.achievement {
+    background: linear-gradient(135deg, #ffd700, #ffed4e);
+    color: #333;
+}
+
+.activity-content {
+    flex: 1;
+}
+
+.activity-title {
     font-weight: 600;
+    color: var(--text-color);
+    margin: 0;
+}
+
+.activity-time {
+    font-size: 0.85rem;
+    color: var(--text-color);
+    opacity: 0.6;
+    margin: 0.2rem 0 0 0;
+}
+
+.chart-container {
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(225, 0, 60, 0.05);
+    border-radius: 8px;
+    border: 1px dashed rgba(225, 0, 60, 0.2);
+    color: var(--text-color);
+    opacity: 0.6;
+}
+
+.edit-profile-btn {
+    background: transparent;
+    border: 2px solid var(--primary-color);
+    color: var(--primary-color);
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s ease;
+    width: 100%;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+.edit-profile-btn:hover {
+    background: var(--primary-color);
+    color: white;
 }
 
 .admin-badge {
@@ -122,19 +341,52 @@
     color: white;
 }
 
-@media (max-width: 768px) {
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    color: var(--primary-color);
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+.grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+.grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+
+@media (max-width: 1024px) {
     .profile-container {
+        grid-template-columns: 1fr;
         margin: 1rem;
+        gap: 1rem;
+    }
+    
+    .profile-sidebar {
+        position: static;
+    }
+    
+    .grid-2,
+    .grid-3 {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .profile-stats {
+        grid-template-columns: 1fr;
+    }
+    
+    .profile-card {
         padding: 1.5rem;
-    }
-    
-    .profile-header {
-        flex-direction: column;
-        text-align: center;
-    }
-    
-    .btn-group {
-        flex-direction: column;
     }
 }
 </style>
@@ -142,85 +394,236 @@
 
 {% block content %}
 <div class="profile-container">
-    <div class="profile-header">
-        <div class="profile-avatar">
-            {{ user.username[0] }}
+    <!-- Sidebar avec informations principales -->
+    <div class="profile-sidebar">
+        <div class="profile-header">
+            <div class="profile-avatar">
+                {{ user.username[0] }}
+            </div>
+            <div class="profile-info">
+                <h1>{{ user.username }}
+                    {% if user.is_admin %}
+                    <span class="admin-badge">Admin</span>
+                    {% endif %}
+                </h1>
+                <p>{{ user.email }}</p>
+                <p>Membre depuis 
+                    {% set months = {
+                        'January': 'Janvier', 'February': 'Février', 'March': 'Mars',
+                        'April': 'Avril', 'May': 'Mai', 'June': 'Juin',
+                        'July': 'Juillet', 'August': 'Août', 'September': 'Septembre',
+                        'October': 'Octobre', 'November': 'Novembre', 'December': 'Décembre'
+                    } %}
+                    {{ months[user.created_at.strftime('%B')] }} {{ user.created_at.strftime('%Y') }}
+                </p>
+            </div>
         </div>
-        <div class="profile-info">
-            <h1>{{ user.username }}
-                {% if user.is_admin %}
-                <span class="admin-badge">Admin</span>
-                {% endif %}
-            </h1>
-            <p>{{ user.email }}</p>
-            <p>Membre depuis {{ user.created_at.strftime('%B %Y') }}</p>
+
+        <!-- Statistiques rapides -->
+        <div class="profile-stats">
+            <div class="profile-stat-item">
+                <span class="profile-stat-number" id="total-quiz">{{ total_quiz_completed }}</span>
+                <div class="profile-stat-label">Quiz complétés</div>
+            </div>
+            <div class="profile-stat-item">
+                <span class="profile-stat-number" id="avg-score">{{ average_score }}%</span>
+                <div class="profile-stat-label">Score moyen</div>
+            </div>
+            <div class="profile-stat-item">
+                <span class="profile-stat-number" id="streak">{{ current_streak }}</span>
+                <div class="profile-stat-label">Cette semaine</div>
+            </div>
+        </div>
+
+        <!-- Actions rapides -->
+        <div class="actions-section">
+            <a href="#" class="edit-profile-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke="currentColor" stroke-width="2"/>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" stroke-width="2"/>
+                </svg>
+                Modifier le profile
+            </a>
+            
         </div>
     </div>
 
-    <div class="profile-section">
-        <h2>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <circle cx="8.5" cy="7" r="4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M20 8v6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M23 11h-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            Informations du compte
-        </h2>
-        <div class="profile-grid">
-            <div class="profile-card">
-                <h3>Statut du compte</h3>
-                <p>{% if user.is_active %}Actif{% else %}Inactif{% endif %}</p>
-            </div>
-            <div class="profile-card">
-                <h3>Type de compte</h3>
-                <p>{% if user.is_admin %}Administrateur{% else %}Utilisateur standard{% endif %}</p>
-            </div>
-            <div class="profile-card">
-                <h3>Date d'inscription</h3>
-                <p>{{ user.created_at.strftime('%d/%m/%Y') }}</p>
-            </div>
-            <div class="profile-card">
-                <h3>Dernière connexion</h3>
-                <p>Aujourd'hui</p>
+    <!-- Contenu principal -->
+    <div class="profile-main">
+        <!-- Progression et performances -->
+        <div class="profile-card">
+            <h2 class="section-header">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <path d="M22 12h-4l-3 9L9 3l-3 9H2" stroke="currentColor" stroke-width="2"/>
+                </svg>
+                Performances et Progression
+            </h2>
+            
+            <div class="grid-2">
+                <div>
+                    <h3 style="color: var(--primary-color); margin-bottom: 1rem;">Progression générale</h3>
+                    <div style="margin-bottom: 1rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span>Niveau actuel</span>
+                            <span style="font-weight: 600;">Intermédiaire</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 65%"></div>
+                        </div>
+                        <small style="color: var(--text-color); opacity: 0.7;">65% vers le niveau avancé</small>
+                    </div>
+                    
+                    <div style="margin-bottom: 1rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span>Python</span>
+                            <span style="font-weight: 600;">78%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 78%"></div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 1rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span>JavaScript</span>
+                            <span style="font-weight: 600;">45%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 45%"></div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span>DevOps</span>
+                            <span style="font-weight: 600;">32%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 32%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 style="color: var(--primary-color); margin-bottom: 1rem;">Graphique de progression</h3>
+                    <div class="chart-container">
+                        <div style="text-align: center;">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
+                                <path d="M3 3v18h18" stroke="currentColor" stroke-width="2"/>
+                                <path d="M7 12l4-4 4 4 4-4" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            <p style="margin: 0.5rem 0 0 0;">Graphique de performances</p>
+                            <small>Données des 30 derniers jours</small>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="actions-section">
-        <h2>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            Actions
-        </h2>
-        <div class="btn-group">
-            <a href="/dashboard" class="btn btn-primary">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    <polyline points="9,22 9,12 15,12 15,22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <!-- Badges et accomplissements -->
+        <div class="profile-card">
+            <h2 class="section-header">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2"/>
                 </svg>
-                Retour au Dashboard
-            </a>
-            <a href="/learning" class="btn btn-secondary">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                Badges et Accomplissements
+            </h2>
+            
+            <div style="margin-bottom: 1.5rem;">
+                <div class="achievement-badge">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="currentColor"/>
+                    </svg>
+                    Premier Quiz
+                </div>
+                <div class="achievement-badge">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="currentColor"/>
+                    </svg>
+                    Série de 5
+                </div>
+                <div class="achievement-badge">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="currentColor"/>
+                    </svg>
+                    Score Parfait
+                </div>
+            </div>
+            
+            <div style="padding: 1rem; background: rgba(225, 0, 60, 0.05); border-radius: 8px; border: 1px dashed rgba(225, 0, 60, 0.2);">
+                <p style="margin: 0; text-align: center; color: var(--text-color); opacity: 0.7;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style="vertical-align: middle; margin-right: 0.5rem;">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                    Continuez à apprendre pour débloquer plus de badges !
+                </p>
+            </div>
+        </div>
+
+        <!-- Activité récente -->
+        <div class="profile-card">
+            <h2 class="section-header">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                    <polyline points="12,6 12,12 16,14" stroke="currentColor" stroke-width="2"/>
                 </svg>
-                Learning Hub
-            </a>
-            {% if user.is_admin %}
-            <a href="/admin" class="btn btn-secondary">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                    <path d="M12 2L2 7l10 5 10-5-10-5z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M2 17l10 5 10-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M2 12l10 5 10-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-                Administration
-            </a>
-            {% endif %}
+                Activité Récente
+            </h2>
+            
+            <div class="recent-activity">
+                <div class="activity-item">
+                    <div class="activity-icon quiz">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <div class="activity-content">
+                        <p class="activity-title">Quiz Python - Fonctions complété</p>
+                        <p class="activity-time">Score: 92% • Il y a 2 heures</p>
+                    </div>
+                </div>
+                
+                <div class="activity-item">
+                    <div class="activity-icon learning">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <div class="activity-content">
+                        <p class="activity-title">Module "Structures de données" démarré</p>
+                        <p class="activity-time">Il y a 1 jour</p>
+                    </div>
+                </div>
+                
+                <div class="activity-item">
+                    <div class="activity-icon achievement">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="currentColor"/>
+                        </svg>
+                    </div>
+                    <div class="activity-content">
+                        <p class="activity-title">Badge "Série de 5" débloqué</p>
+                        <p class="activity-time">Il y a 2 jours</p>
+                    </div>
+                </div>
+                
+                <div class="activity-item">
+                    <div class="activity-icon quiz">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <div class="activity-content">
+                        <p class="activity-title">Quiz JavaScript - Variables complété</p>
+                        <p class="activity-time">Score: 78% • Il y a 3 jours</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for_static('/js/profile.js') }}"></script>
 {% endblock %}

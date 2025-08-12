@@ -172,3 +172,47 @@ class UserActivity(Base):
     
     # Relations
     user = relationship("User")
+
+class PLDCategory(Base):
+    __tablename__ = "pld_categories"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, unique=True, index=True, nullable=False)  # 'shell', 'python', etc.
+    display_name = Column(String, nullable=False)
+    description = Column(Text)
+    icon = Column(String, default="📚")
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    
+    # Relations
+    themes = relationship("PLDTheme", back_populates="category", cascade="all, delete-orphan")
+
+class PLDTheme(Base):
+    __tablename__ = "pld_themes"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, index=True, nullable=False)  # 'permission', 'io', etc.
+    display_name = Column(String, nullable=False)
+    description = Column(Text)
+    icon = Column(String, default="📝")
+    category_id = Column(Integer, ForeignKey("pld_categories.id"), nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    
+    # Relations
+    category = relationship("PLDCategory", back_populates="themes")
+    questions = relationship("PLDQuestion", back_populates="theme", cascade="all, delete-orphan")
+
+class PLDQuestion(Base):
+    __tablename__ = "pld_questions"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    question_text = Column(Text, nullable=False)
+    expected_answer = Column(Text, nullable=False)
+    technical_terms = Column(Text, nullable=False)  # JSON array as string
+    explanation = Column(Text, nullable=False)
+    difficulty = Column(String, default="medium")  # 'easy', 'medium', 'hard'
+    max_score = Column(Integer, default=100)
+    theme_id = Column(Integer, ForeignKey("pld_themes.id"), nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    
+    # Relations
+    theme = relationship("PLDTheme", back_populates="questions")

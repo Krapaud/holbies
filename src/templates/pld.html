@@ -26,7 +26,7 @@
                 <a href="/" class="nav-link">Accueil</a>
                 <a href="/learning" class="nav-link">Learning Hub</a>
                 <a href="/tutor" class="nav-link">HLH Tutor</a>
-                <a href="/dashboard" class="nav-link">Dashboard</a>
+                <a href="/profile" class="nav-link">Dashboard</a>
                 {% if is_authenticated %}
                     <span class="nav-user">👋 {{ username }}</span>
                     <a href="/logout" class="nav-link" id="auth-link">Déconnexion</a>
@@ -43,10 +43,10 @@
     </nav>
 
     <main class="main-content">
-        <div class="ai-quiz-container">
+        <div class="pld-container">
             
             <!-- Écran de démarrage -->
-            <section id="ai-quiz-start" class="quiz-section">
+            <section id="pld-start" class="quiz-section">
                 <div class="quiz-header">
                     <h1 class="glitch" data-text="PLD">PLD</h1>
                     <p class="quiz-subtitle">Peer Learning Day</p>
@@ -63,11 +63,40 @@
                     </ul>
                 </div>
                 
-                <div class="quiz-actions" style="display: flex; justify-content: center; align-items: center; text-align: center; width: 100%; margin: 2rem 0;">
-                    <button id="start-ai-quiz-btn" class="btn btn-primary btn-large">
-                        <span>🚀 Commencer le PLD</span>
-                        <div class="btn-loading"></div>
-                    </button>
+                <!-- Sélecteur de catégories -->
+                <div class="category-selector">
+                    <h3>📚 Choisissez une catégorie :</h3>
+                    <div class="categories-grid">
+                        <div class="category-card" data-category="shell" onclick="selectCategory('shell')">
+                            <div class="category-icon">🐚</div>
+                            <div class="category-name">Shell</div>
+                            <div class="category-description">Scripts Bash, commandes Unix</div>
+                        </div>
+                        
+                        <div class="category-card" data-category="c" onclick="selectCategory('c')">
+                            <div class="category-icon">⚙️</div>
+                            <div class="category-name">C</div>
+                            <div class="category-description">Programmation système, pointeurs</div>
+                        </div>
+                        
+                        <div class="category-card" data-category="python" onclick="selectCategory('python')">
+                            <div class="category-icon">🐍</div>
+                            <div class="category-name">Python</div>
+                            <div class="category-description">Syntaxe, structures de données</div>
+                        </div>
+                        
+                        <div class="category-card" data-category="javascript" onclick="selectCategory('javascript')">
+                            <div class="category-icon">🟨</div>
+                            <div class="category-name">JavaScript</div>
+                            <div class="category-description">DOM, événements, async</div>
+                        </div>
+                        
+                        <div class="category-card" data-category="sql" onclick="selectCategory('sql')">
+                            <div class="category-icon">�️</div>
+                            <div class="category-name">SQL</div>
+                            <div class="category-description">Bases de données, requêtes</div>
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="quiz-stats">
@@ -86,8 +115,33 @@
                 </div>
             </section>
 
+            <!-- Sélection de thème -->
+            <section id="pld-theme-selection" class="quiz-section hidden">
+                <div class="quiz-header">
+                    <h2 class="glitch">🎯 Choisissez un thème</h2>
+                    <p class="quiz-description">
+                        Catégorie sélectionnée : <span id="selected-category-display"></span>
+                    </p>
+                </div>
+                
+                <div class="theme-selector">
+                    <div class="back-button" onclick="backToCategories()">
+                        ← Retour aux catégories
+                    </div>
+                    <div id="themes-grid" class="themes-grid">
+                        <!-- Les thèmes seront chargés dynamiquement -->
+                    </div>
+                </div>
+                
+                <div class="theme-actions">
+                    <button class="action-button secondary" onclick="selectAllThemes()">
+                        🎲 Toute la catégorie
+                    </button>
+                </div>
+            </section>
+
             <!-- Écran de question avec layout amélioré -->
-            <section id="ai-quiz-question" class="quiz-section hidden">
+            <section id="pld-question" class="quiz-section hidden">
                 <!-- Barre de progression et compteur reorganisés -->
                 <div class="quiz-progress-section">
                     <div class="progress-container">
@@ -143,7 +197,7 @@
             </section>
 
             <!-- Écran de résultats optimisé -->
-            <section id="ai-quiz-results" class="quiz-section hidden">
+            <section id="pld-results" class="quiz-section hidden">
                 <div class="quiz-header">
                     <h1>🎯 Résultats du PLD</h1>
                 </div>
@@ -186,7 +240,7 @@
                 </div>
                 
                 <div class="quiz-actions">
-                    <button id="retake-ai-quiz-btn" class="btn btn-secondary">
+                    <button id="retake-pld-btn" class="btn btn-secondary">
                         <span>🔄 Refaire le PLD</span>
                     </button>
                     <a href="/quiz" class="btn btn-primary">
@@ -220,6 +274,6 @@
     </footer>
 
     <script src="/static/js/main.js"></script>
-    <script src="/static/js/ai-quiz.js"></script>
+    <script src="/static/js/pld.js"></script>
 </body>
 </html>

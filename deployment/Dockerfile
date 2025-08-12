@@ -19,6 +19,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copier le code de l'application
 COPY src/ ./src/
+COPY scripts/user_management/ ./scripts/user_management/
 COPY config/ ./config/
 COPY deployment/wait-for-postgres.sh ./deployment/
 

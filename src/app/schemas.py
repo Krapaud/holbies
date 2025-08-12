@@ -130,3 +130,66 @@ class AIQuizResult(BaseModel):
     total_questions: int
     average_percentage: float
     answers: List[AIQuizAnswer]
+
+# ================================
+# PLD MANAGEMENT SCHEMAS
+# ================================
+
+class PLDCategoryBase(BaseModel):
+    name: str
+    display_name: str
+    description: Optional[str] = None
+    icon: str = "📚"
+
+class PLDCategoryCreate(PLDCategoryBase):
+    pass
+
+class PLDCategory(PLDCategoryBase):
+    id: int
+    created_at: datetime
+    
+    class Config:
+        from_attributes = True
+
+class PLDThemeBase(BaseModel):
+    name: str
+    display_name: str
+    description: Optional[str] = None
+    icon: str = "📝"
+
+class PLDThemeCreate(PLDThemeBase):
+    category_id: int
+
+class PLDTheme(PLDThemeBase):
+    id: int
+    category_id: int
+    created_at: datetime
+    
+    class Config:
+        from_attributes = True
+
+class PLDQuestionBase(BaseModel):
+    question_text: str
+    expected_answer: str
+    technical_terms: List[str]
+    explanation: str
+    difficulty: str = "medium"
+    max_score: int = 100
+
+class PLDQuestionCreate(PLDQuestionBase):
+    theme_id: int
+
+class PLDQuestion(PLDQuestionBase):
+    id: int
+    theme_id: int
+    technical_terms: str  # JSON string in DB
+    created_at: datetime
+    
+    class Config:
+        from_attributes = True
+
+class PLDCategoryWithThemes(PLDCategory):
+    themes: List[PLDTheme] = []
+
+class PLDThemeWithQuestions(PLDTheme):
+    questions: List[PLDQuestion] = []

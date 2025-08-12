@@ -9,7 +9,7 @@ import json
 from datetime import datetime
 
 from app.database import get_db
-from app.models import User, AIQuizSession, AIQuizAnswer
+from app.models import User, AIQuizSession, AIQuizAnswer, PLDCategory, PLDTheme, PLDQuestion
 from app.schemas import AIQuizSession as AIQuizSessionSchema, AIQuizAnswer as AIQuizAnswerSchema, AIQuizAnswerSubmission, AIQuizResult
 from app.auth import get_current_active_user
 
@@ -145,57 +145,256 @@ class AIQuizCorrector:
 # Instance du correcteur IA
 ai_corrector = AIQuizCorrector()
 
-# Base de données des questions textuelles
+# ================================
+# SERVICES DE BASE DE DONNÉES
+# ================================
+
+def get_questions_from_db(db: Session, category: str = None, theme: str = None):
+    """Récupérer les questions depuis la base de données"""
+    query = db.query(PLDQuestion).join(PLDTheme).join(PLDCategory)
+    
+    if category:
+        query = query.filter(PLDCategory.name == category)
+    
+    if theme:
+        query = query.filter(PLDTheme.name == theme)
+    
+    questions = query.all()
+    
+    # Convertir au format attendu par le frontend
+    result = []
+    for q in questions:
+        result.append({
+            "question_id": q.id,
+            "question_text": q.question_text,
+            "expected_answer": q.expected_answer,
+            "technical_terms": json.loads(q.technical_terms),
+            "explanation": q.explanation,
+            "difficulty": q.difficulty,
+            "category": q.theme.category.name,
+            "theme": q.theme.name,
+            "max_score": q.max_score
+        })
+    
+    return result
+
+def get_categories_from_db(db: Session):
+    """Récupérer toutes les catégories depuis la base de données"""
+    categories = db.query(PLDCategory).all()
+    return [
+        {
+            "name": cat.name,
+            "display_name": cat.display_name,
+            "description": cat.description,
+            "icon": cat.icon,
+            "question_count": sum(len(theme.questions) for theme in cat.themes)
+        }
+        for cat in categories
+    ]
+
+def get_themes_from_db(db: Session, category: str):
+    """Récupérer les thèmes d'une catégorie depuis la base de données"""
+    category_obj = db.query(PLDCategory).filter(PLDCategory.name == category).first()
+    if not category_obj:
+        return []
+    
+    return [
+        {
+            "name": theme.name,
+            "display_name": theme.display_name,
+            "description": theme.description,
+            "icon": theme.icon,
+            "question_count": len(theme.questions)
+        }
+        for theme in category_obj.themes
+    ]
+
+def find_question_by_id_db(db: Session, question_id: int):
+    """Trouver une question par ID dans la base de données"""
+    question = db.query(PLDQuestion).filter(PLDQuestion.id == question_id).first()
+    if not question:
+        return None
+    
+    return {
+        "question_id": question.id,
+        "question_text": question.question_text,
+        "expected_answer": question.expected_answer,
+        "technical_terms": json.loads(question.technical_terms),
+        "explanation": question.explanation,
+        "difficulty": question.difficulty,
+        "category": question.theme.category.name,
+        "theme": question.theme.name,
+        "max_score": question.max_score
+    }
+
+def count_total_questions_db(db: Session):
+    """Compter le nombre total de questions dans la base de données"""
+    return db.query(PLDQuestion).count()
+
+# AI Quiz Session Management Endpoints
+
+# Base de données des questions textuelles (LEGACY - à supprimer après migration)
+# Base de données des questions avec structure hiérarchique : catégorie -> thème -> questions
 AI_QUESTIONS_DB = {
-    1: {
-        "question_id": 1,
-        "question_text": "Expliquez ce qu'est un pointeur en C et comment il fonctionne.",
-        "expected_answer": "Un pointeur est une variable qui stocke l'adresse mémoire d'une autre variable. Il permet d'accéder indirectement aux données en mémoire en utilisant l'opérateur de déréférencement *.",
-        "technical_terms": ["pointeur", "adresse mémoire", "variable", "déréférencement", "opérateur *", "indirection"],
-        "explanation": "Un pointeur en C est fondamental pour la gestion de la mémoire dynamique et l'efficacité du code. L'opérateur & récupère l'adresse d'une variable, tandis que * déréférence un pointeur pour accéder à la valeur.",
-        "difficulty": "medium",
-        "category": "c-programming",
-        "max_score": 100
-    },
-    2: {
-        "question_id": 2,
-        "question_text": "Décrivez la différence entre malloc() et calloc() en C.",
-        "expected_answer": "malloc() alloue un bloc de mémoire de taille spécifiée sans l'initialiser, tandis que calloc() alloue de la mémoire pour un tableau d'éléments et initialise tous les octets à zéro.",
-        "technical_terms": ["malloc", "calloc", "allocation dynamique", "mémoire", "initialisation", "zéro", "heap", "octets"],
-        "explanation": "malloc() est plus rapide car elle n'initialise pas la mémoire, mais calloc() garantit une mémoire propre initialisée à zéro, ce qui peut éviter des bugs liés aux valeurs non initialisées.",
-        "difficulty": "medium",
-        "category": "c-programming",
-        "max_score": 100
-    },
-    3: {
-        "question_id": 3,
-        "question_text": "Qu'est-ce que la segmentation fault et pourquoi se produit-elle ?",
-        "expected_answer": "Une segmentation fault est une erreur qui se produit quand un programme tente d'accéder à une zone mémoire qui ne lui appartient pas ou qui n'est pas autorisée, souvent causée par un déréférencement de pointeur invalide.",
-        "technical_terms": ["segmentation fault", "SIGSEGV", "mémoire", "pointeur invalide", "déréférencement", "accès mémoire", "protection mémoire"],
-        "explanation": "Les segmentation faults sont un mécanisme de protection du système d'exploitation pour empêcher les programmes d'écraser la mémoire d'autres processus ou du système.",
-        "difficulty": "medium",
-        "category": "c-programming",
-        "max_score": 100
-    },
-    4: {
-        "question_id": 4,
-        "question_text": "Expliquez le concept de gestion automatique de la mémoire vs manuelle en C.",
-        "expected_answer": "En C, la gestion mémoire est manuelle : le programmeur doit explicitement allouer avec malloc/calloc et libérer avec free. Contrairement aux langages avec garbage collector, C donne le contrôle total mais exige une discipline stricte.",
-        "technical_terms": ["gestion mémoire", "malloc", "free", "garbage collector", "allocation manuelle", "libération", "fuites mémoire", "stack", "heap"],
-        "explanation": "La gestion manuelle offre performance et contrôle précis, mais augmente le risque de fuites mémoire et d'erreurs. Les langages modernes automatisent souvent cette gestion.",
-        "difficulty": "hard",
-        "category": "c-programming",
-        "max_score": 100
-    },
-    5: {
-        "question_id": 5,
-        "question_text": "Décrivez ce qui se passe lors de la compilation d'un programme C.",
-        "expected_answer": "La compilation C se fait en plusieurs étapes : préprocesseur (macros, includes), compilateur (code source vers assembleur), assembleur (assembleur vers code objet), et éditeur de liens (liaison des modules pour créer l'exécutable).",
-        "technical_terms": ["préprocesseur", "compilateur", "assembleur", "éditeur de liens", "linker", "code objet", "exécutable", "macros", "bibliothèques"],
-        "explanation": "Chaque étape a un rôle spécifique : le préprocesseur traite les directives, le compilateur optimise et génère du code machine, l'éditeur de liens résout les symboles externes.",
-        "difficulty": "hard",
-        "category": "c-programming",
-        "max_score": 100
+    "shell": {
+        "permission": {
+            1: {
+                "question_id": 1,
+                "question_text": "Expliquez la différence entre chmod 755 et chmod 644 sur un fichier.",
+                "expected_answer": "chmod 755 donne les permissions rwx pour le propriétaire et rx pour le groupe et les autres, tandis que chmod 644 donne rw pour le propriétaire et r pour le groupe et les autres. 755 est typique pour les exécutables, 644 pour les fichiers de données.",
+                "technical_terms": ["chmod", "permissions", "rwx", "propriétaire", "groupe", "autres", "octal", "755", "644"],
+                "explanation": "Les permissions Unix utilisent 3 bits par catégorie : r(4) + w(2) + x(1). 755 = rwxr-xr-x, 644 = rw-r--r--",
+                "difficulty": "medium",
+                "category": "shell",
+                "theme": "permission",
+                "max_score": 100
+            },
+            2: {
+                "question_id": 2,
+                "question_text": "Comment changer le propriétaire d'un fichier et pourquoi utiliser sudo ?",
+                "expected_answer": "On utilise chown pour changer le propriétaire : chown utilisateur:groupe fichier. Sudo est nécessaire car seul le root ou le propriétaire actuel peut changer la propriété d'un fichier.",
+                "technical_terms": ["chown", "propriétaire", "groupe", "sudo", "root", "permissions", "utilisateur"],
+                "explanation": "chown modifie les métadonnées du système de fichiers. Sudo élève temporairement les privilèges pour les opérations administratives.",
+                "difficulty": "medium",
+                "category": "shell",
+                "theme": "permission",
+                "max_score": 100
+            },
+            3: {
+                "question_id": 3,
+                "question_text": "Que fait umask et comment calculer les permissions résultantes ?",
+                "expected_answer": "umask définit les permissions par défaut en soustrayant ses valeurs des permissions maximales. Pour les fichiers (666), umask 022 donne 644. Pour les dossiers (777), umask 022 donne 755.",
+                "technical_terms": ["umask", "permissions par défaut", "masque", "666", "777", "022", "soustraction"],
+                "explanation": "umask agit comme un masque inversé : il retire des permissions. Plus umask est élevé, moins il y a de permissions accordées par défaut.",
+                "difficulty": "hard",
+                "category": "shell",
+                "theme": "permission",
+                "max_score": 100
+            },
+            4: {
+                "question_id": 4,
+                "question_text": "Expliquez les permissions spéciales : sticky bit, SUID et SGID.",
+                "expected_answer": "SUID (4000) permet d'exécuter avec les droits du propriétaire, SGID (2000) avec ceux du groupe, sticky bit (1000) empêche la suppression par d'autres utilisateurs dans un répertoire partagé.",
+                "technical_terms": ["sticky bit", "SUID", "SGID", "permissions spéciales", "4000", "2000", "1000", "exécution"],
+                "explanation": "Ces permissions spéciales modifient le comportement d'exécution et d'accès au-delà des permissions standards rwx.",
+                "difficulty": "hard",
+                "category": "shell",
+                "theme": "permission",
+                "max_score": 100
+            },
+            5: {
+                "question_id": 5,
+                "question_text": "Comment voir les permissions détaillées d'un fichier ?",
+                "expected_answer": "ls -l affiche les permissions sous forme de chaîne (rwxrwxrwx), ls -la inclut les fichiers cachés, stat donne des informations détaillées incluant les permissions en octal.",
+                "technical_terms": ["ls -l", "ls -la", "stat", "permissions", "octal", "fichiers cachés", "métadonnées"],
+                "explanation": "Plusieurs commandes permettent de voir les permissions avec différents niveaux de détail selon les besoins.",
+                "difficulty": "easy",
+                "category": "shell",
+                "theme": "permission",
+                "max_score": 100
+            },
+            6: {
+                "question_id": 6,
+                "question_text": "Quelle est la différence entre su et sudo ?",
+                "expected_answer": "su change d'utilisateur complètement et nécessite le mot de passe de l'utilisateur cible, sudo exécute une commande avec des privilèges élevés en utilisant votre propre mot de passe et selon la configuration sudoers.",
+                "technical_terms": ["su", "sudo", "utilisateur", "mot de passe", "privilèges", "sudoers", "switch user"],
+                "explanation": "su est un changement complet d'identité, sudo est une élévation temporaire et contrôlée de privilèges.",
+                "difficulty": "medium",
+                "category": "shell",
+                "theme": "permission",
+                "max_score": 100
+            },
+            7: {
+                "question_id": 7,
+                "question_text": "Comment donner temporairement les permissions d'exécution à un script ?",
+                "expected_answer": "chmod +x script.sh ajoute les permissions d'exécution pour tous, ou chmod u+x pour le propriétaire seulement. On peut aussi utiliser sh script.sh sans changer les permissions.",
+                "technical_terms": ["chmod +x", "chmod u+x", "permissions d'exécution", "script", "sh", "propriétaire"],
+                "explanation": "Les permissions d'exécution sont nécessaires pour lancer un script directement. Alternativement, passer par l'interpréteur contourne cette exigence.",
+                "difficulty": "easy",
+                "category": "shell",
+                "theme": "permission",
+                "max_score": 100
+            }
+        },
+        "io": {
+            8: {
+                "question_id": 8,
+                "question_text": "Expliquez la différence entre >, >> et < dans le shell.",
+                "expected_answer": "> redirige la sortie en écrasant le fichier, >> ajoute à la fin du fichier, < redirige l'entrée depuis un fichier. > et >> concernent la sortie (stdout), < concerne l'entrée (stdin).",
+                "technical_terms": ["redirection", "stdout", "stdin", ">", ">>", "<", "écrasement", "ajout", "entrée", "sortie"],
+                "explanation": "Les redirections permettent de manipuler les flux d'entrée et sortie standard des commandes Unix.",
+                "difficulty": "medium",
+                "category": "shell",
+                "theme": "io",
+                "max_score": 100
+            },
+            9: {
+                "question_id": 9,
+                "question_text": "Comment fonctionne le pipe | et donnez un exemple d'utilisation ?",
+                "expected_answer": "Le pipe | connecte la sortie d'une commande à l'entrée de la suivante. Exemple : ls -l | grep '.txt' filtre les fichiers .txt dans la liste. C'est un mécanisme de communication inter-processus.",
+                "technical_terms": ["pipe", "|", "sortie", "entrée", "grep", "ls", "filtre", "inter-processus", "chaînage"],
+                "explanation": "Les pipes permettent de chaîner des commandes pour créer des workflows complexes de traitement de données.",
+                "difficulty": "medium",
+                "category": "shell",
+                "theme": "io",
+                "max_score": 100
+            },
+            10: {
+                "question_id": 10,
+                "question_text": "Quelle est la différence entre 2> et 2>&1 ?",
+                "expected_answer": "2> redirige stderr (erreurs) vers un fichier, 2>&1 redirige stderr vers stdout. Cela permet de capturer les erreurs avec la sortie normale ou de les traiter séparément.",
+                "technical_terms": ["stderr", "stdout", "2>", "2>&1", "redirection", "erreurs", "descripteur de fichier"],
+                "explanation": "La gestion séparée des flux d'erreur et de sortie normale permet un meilleur contrôle du traitement des résultats.",
+                "difficulty": "hard",
+                "category": "shell",
+                "theme": "io",
+                "max_score": 100
+            },
+            11: {
+                "question_id": 11,
+                "question_text": "Comment rechercher un mot dans des fichiers avec grep ?",
+                "expected_answer": "grep 'mot' fichier recherche dans un fichier, grep -r 'mot' dossier/ recherche récursivement, grep -i pour ignorer la casse, grep -n pour afficher les numéros de lignes.",
+                "technical_terms": ["grep", "recherche", "récursif", "-r", "-i", "-n", "casse", "numéros de lignes", "pattern"],
+                "explanation": "grep est un outil puissant de recherche textuelle avec de nombreuses options pour affiner les résultats.",
+                "difficulty": "easy",
+                "category": "shell",
+                "theme": "io",
+                "max_score": 100
+            },
+            12: {
+                "question_id": 12,
+                "question_text": "Comment utiliser find pour localiser des fichiers ?",
+                "expected_answer": "find /chemin -name 'pattern' trouve par nom, find . -type f pour les fichiers seulement, find . -size +1M pour les fichiers > 1MB, find . -mtime -7 pour les fichiers modifiés dans les 7 derniers jours.",
+                "technical_terms": ["find", "-name", "-type", "-size", "-mtime", "pattern", "fichiers", "répertoires", "critères"],
+                "explanation": "find permet des recherches complexes basées sur divers critères : nom, type, taille, date de modification, permissions...",
+                "difficulty": "medium",
+                "category": "shell",
+                "theme": "io",
+                "max_score": 100
+            },
+            13: {
+                "question_id": 13,
+                "question_text": "Expliquez l'utilisation de head, tail et less.",
+                "expected_answer": "head affiche les premières lignes d'un fichier (défaut 10), tail les dernières lignes, less permet de naviguer dans un fichier page par page. tail -f suit un fichier en temps réel.",
+                "technical_terms": ["head", "tail", "less", "premières lignes", "dernières lignes", "navigation", "tail -f", "temps réel"],
+                "explanation": "Ces outils permettent d'examiner des fichiers de différentes manières selon les besoins : aperçu, fin de logs, lecture complète.",
+                "difficulty": "easy",
+                "category": "shell",
+                "theme": "io",
+                "max_score": 100
+            },
+            14: {
+                "question_id": 14,
+                "question_text": "Comment combiner plusieurs commandes avec && et || ?",
+                "expected_answer": "&& exécute la commande suivante seulement si la précédente réussit (code de retour 0), || exécute si la précédente échoue. Exemple : make && make install || echo 'Échec'",
+                "technical_terms": ["&&", "||", "code de retour", "succès", "échec", "enchaînement conditionnel", "make"],
+                "explanation": "Ces opérateurs permettent un contrôle de flux conditionnel basé sur le succès ou l'échec des commandes précédentes.",
+                "difficulty": "medium",
+                "category": "shell",
+                "theme": "io",
+                "max_score": 100
+            }
+        }
     }
 }
 
@@ -254,7 +453,7 @@ async def start_ai_quiz_session(
     # Créer une nouvelle session
     ai_quiz_session = AIQuizSession(
         user_id=current_user.id,
-        total_questions=len(AI_QUESTIONS_DB)
+        total_questions=count_total_questions_db(db)
     )
     db.add(ai_quiz_session)
     db.commit()
@@ -263,27 +462,51 @@ async def start_ai_quiz_session(
 
 @router.get("/ai-questions", response_model=List[AIQuestionResponse])
 async def get_ai_questions(
+    category: str = None,
+    theme: str = None,
+    db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user)
 ):
-    """Récupère la liste des questions pour le quiz IA"""
-    questions = []
-    for question_data in AI_QUESTIONS_DB.values():
-        questions.append(AIQuestionResponse(**question_data))
-    return questions
+    """Récupère la liste des questions pour le quiz IA par catégorie et/ou thème depuis la DB"""
+    try:
+        questions_data = get_questions_from_db(db, category, theme)
+        
+        if not questions_data:
+            detail = "No questions found"
+            if category and theme:
+                detail = f"No questions found for category '{category}' and theme '{theme}'"
+            elif category:
+                detail = f"No questions found for category '{category}'"
+            raise HTTPException(status_code=404, detail=detail)
+        
+        questions = []
+        for question_data in questions_data:
+            questions.append(AIQuestionResponse(**question_data))
+        
+        return questions
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error retrieving questions: {str(e)}"
+        )
 
 @router.get("/ai-questions/{question_id}", response_model=AIQuestionResponse)
 async def get_ai_question(
     question_id: int,
+    db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user)
 ):
-    """Récupère une question spécifique pour le quiz IA"""
-    if question_id not in AI_QUESTIONS_DB:
+    """Récupère une question spécifique pour le quiz IA depuis la DB"""
+    question_data = find_question_by_id_db(db, question_id)
+    if not question_data:
         raise HTTPException(
             status_code=404,
             detail="Question not found"
         )
     
-    question_data = AI_QUESTIONS_DB[question_id]
     return AIQuestionResponse(**question_data)
 
 @router.post("/submit-answer", response_model=AIAnswerResult)
@@ -293,7 +516,9 @@ async def submit_ai_answer(
     current_user: User = Depends(get_current_active_user)
 ):
     """Soumet une réponse textuelle pour correction par IA et sauvegarde dans une session"""
-    if submission.question_id not in AI_QUESTIONS_DB:
+    # Vérifier que la question existe dans la base de données
+    question_data = find_question_by_id_db(db, submission.question_id)
+    if not question_data:
         raise HTTPException(
             status_code=404,
             detail="Question not found"
@@ -311,8 +536,6 @@ async def submit_ai_answer(
             status_code=404,
             detail="Active AI quiz session not found"
         )
-    
-    question_data = AI_QUESTIONS_DB[submission.question_id]
     
     # Correction par IA
     result = ai_corrector.correct_answer(question_data, submission.user_answer)
@@ -395,16 +618,16 @@ async def complete_ai_quiz_session(
 @router.post("/ai-submit", response_model=AIAnswerResult)
 async def submit_ai_answer_legacy(
     submission: AIAnswerSubmission,
+    db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user)
 ):
     """Soumet une réponse textuelle pour correction par IA (legacy - sans session)"""
-    if submission.question_id not in AI_QUESTIONS_DB:
+    question_data = find_question_by_id_db(db, submission.question_id)
+    if not question_data:
         raise HTTPException(
             status_code=404,
             detail="Question not found"
         )
-    
-    question_data = AI_QUESTIONS_DB[submission.question_id]
     
     # Correction par IA
     result = ai_corrector.correct_answer(question_data, submission.user_answer)
@@ -412,7 +635,7 @@ async def submit_ai_answer_legacy(
     return AIAnswerResult(**result)
 
 @router.get("/ai-quiz/demo")
-async def get_demo_info():
+async def get_demo_info(db: Session = Depends(get_db)):
     """Informations sur le quiz IA (accessible sans authentification pour démo)"""
     return {
         "title": "Quiz IA avec Correction Automatique",
@@ -430,5 +653,31 @@ async def get_demo_info():
             "technical_bonus": "5 points par terme technique utilisé",
             "max_score_per_question": 100
         },
-        "total_questions": len(AI_QUESTIONS_DB)
+        "total_questions": count_total_questions_db(db)
     }
+
+@router.get("/categories/{category}/themes")
+async def get_category_themes(
+    category: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
+    """Récupère la liste des thèmes disponibles pour une catégorie depuis la DB"""
+    themes_data = get_themes_from_db(db, category)
+    
+    if not themes_data:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Category '{category}' not found or has no themes"
+        )
+    
+    return {"themes": themes_data}
+
+@router.get("/categories")
+async def get_categories(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
+    """Récupère la liste des catégories disponibles depuis la DB"""
+    categories_data = get_categories_from_db(db)
+    return {"categories": categories_data}

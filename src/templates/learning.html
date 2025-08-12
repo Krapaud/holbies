@@ -50,7 +50,7 @@
             <div class="mode-badge">Recommandé pour débuter</div>
         </div>
         
-        <div class="mode-card" data-mode="ai-quiz" onclick="redirectToQuiz('ai-quiz')">
+        <div class="mode-card" data-mode="pld" onclick="redirectToQuiz('pld')">
             <span class="mode-icon">🤖</span>
             <h3 class="mode-title">PLD (Peer Learning Day)</h3>
             <p class="mode-description">Réponses libres corrigées par intelligence artificielle</p>
@@ -69,6 +69,6 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ url_for_static('/js/learning.js') }}"></script>
+<script src="/static/js/learning.js"></script>
 {% endblock %}
 

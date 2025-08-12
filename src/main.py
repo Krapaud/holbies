@@ -14,7 +14,7 @@ import io
 
 from app.database import engine, get_db
 from app.models import Base
-from app.routers import auth, quiz, users, ai_quiz
+from app.routers import auth, quiz, users, ai_quiz, pld_admin
 from app.routers import performance
 from app.auth import get_current_user
 from sqlalchemy.orm import Session
@@ -67,7 +67,8 @@ def get_template_context(request: Request, **kwargs):
 app.include_router(auth.router, prefix="/api/auth", tags=["authentication"])
 app.include_router(quiz.router, prefix="/api/quiz", tags=["quiz"])
 app.include_router(users.router, prefix="/api/users", tags=["users"])
-app.include_router(ai_quiz.router, prefix="/api/ai-quiz", tags=["ai-quiz"])
+app.include_router(ai_quiz.router, prefix="/api/pld", tags=["pld"])
+app.include_router(pld_admin.router, prefix="/api/pld", tags=["pld-admin"])
 app.include_router(performance.router, prefix="/api/performance", tags=["performance"])
 
 # Route directe pour les stats du site (pour compatibilité frontend)
@@ -107,14 +108,14 @@ async def learning_page(request: Request):
     return templates.TemplateResponse("learning.html", get_template_context(request))
 
 @app.get("/dashboard", response_class=HTMLResponse)
-async def dashboard_page(request: Request):
-    await login_required(request)
-    return templates.TemplateResponse("dashboard.html", get_template_context(request))
+async def dashboard_redirect(request: Request):
+    """Redirection vers le profil utilisateur"""
+    return RedirectResponse(url="/profile", status_code=302)
 
-@app.get("/ai-quiz", response_class=HTMLResponse)
-async def ai_quiz_page(request: Request):
+@app.get("/pld", response_class=HTMLResponse)
+async def pld_page(request: Request):
     await login_required(request)
-    return templates.TemplateResponse("ai-quiz.html", get_template_context(request))
+    return templates.TemplateResponse("pld.html", get_template_context(request))
 
 @app.get("/admin", response_class=HTMLResponse)
 async def admin_redirect(request: Request):
@@ -133,7 +134,7 @@ async def profile_page(request: Request, db: Session = Depends(get_db)):
             return RedirectResponse(url="/login", status_code=302)
         
         # Récupérer l'utilisateur depuis la base de données
-        from app.models import User
+        from app.models import User, QuizSession, AIQuizSession
         user = db.query(User).filter(User.id == user_id).first()
         
         if not user:
@@ -141,7 +142,68 @@ async def profile_page(request: Request, db: Session = Depends(get_db)):
             request.session.clear()
             return RedirectResponse(url="/login", status_code=302)
         
+        # Calculer les statistiques réelles
+        # Quiz complétés
+        completed_quiz_sessions = db.query(QuizSession).filter(
+            QuizSession.user_id == user_id,
+            QuizSession.completed == True
+        ).count()
+        
+        completed_ai_quiz_sessions = db.query(AIQuizSession).filter(
+            AIQuizSession.user_id == user_id,
+            AIQuizSession.completed == True
+        ).count()
+        
+        total_quiz_completed = completed_quiz_sessions + completed_ai_quiz_sessions
+        
+        # Score moyen
+        all_sessions = db.query(QuizSession).filter(
+            QuizSession.user_id == user_id,
+            QuizSession.completed == True,
+            QuizSession.total_questions > 0
+        ).all()
+        
+        ai_sessions = db.query(AIQuizSession).filter(
+            AIQuizSession.user_id == user_id,
+            AIQuizSession.completed == True,
+            AIQuizSession.total_questions > 0
+        ).all()
+        
+        all_scores = []
+        for session in all_sessions:
+            score_percentage = (session.score / session.total_questions) * 100
+            all_scores.append(score_percentage)
+            
+        for session in ai_sessions:
+            score_percentage = (session.total_score / session.total_questions) * 100
+            all_scores.append(score_percentage)
+        
+        average_score = round(sum(all_scores) / len(all_scores)) if all_scores else 0
+        
+        # Série actuelle (nombre de quiz complétés cette semaine)
+        from datetime import datetime, timedelta
+        week_ago = datetime.now() - timedelta(days=7)
+        
+        current_streak = db.query(QuizSession).filter(
+            QuizSession.user_id == user_id,
+            QuizSession.completed == True,
+            QuizSession.completed_at >= week_ago
+        ).count()
+        
+        current_streak += db.query(AIQuizSession).filter(
+            AIQuizSession.user_id == user_id,
+            AIQuizSession.completed == True,
+            AIQuizSession.completed_at >= week_ago
+        ).count()
+        
+        # Ajouter les statistiques au contexte
         context = get_template_context(request, user=user)
+        context.update({
+            'total_quiz_completed': total_quiz_completed,
+            'average_score': average_score,
+            'current_streak': current_streak
+        })
+        
         return templates.TemplateResponse("profile.html", context)
         
     except Exception as e:
@@ -181,6 +243,45 @@ async def visualize_code(request: Request):
         sys.settrace(None)
     return JSONResponse({"trace": trace, "error": error, "output": output.getvalue()})
 
+@app.post("/api/sync-session")
+async def sync_session(request: Request, db: Session = Depends(get_db)):
+    """Synchronise la session utilisateur côté serveur"""
+    try:
+        # Récupérer les données de la requête
+        data = await request.json()
+        user_id = data.get("user_id")
+        username = data.get("username")
+        
+        if not user_id:
+            return JSONResponse({"error": "user_id manquant"}, status_code=400)
+        
+        # Vérifier que l'utilisateur existe en base
+        from app.models import User
+        user = db.query(User).filter(User.id == user_id).first()
+        
+        if not user:
+            return JSONResponse({"error": "Utilisateur introuvable"}, status_code=404)
+        
+        # Synchroniser la session
+        request.session["user_id"] = user.id
+        request.session["username"] = user.username
+        request.session["email"] = user.email
+        request.session["is_admin"] = user.is_admin
+        
+        return JSONResponse({
+            "success": True,
+            "message": "Session synchronisée",
+            "user": {
+                "id": user.id,
+                "username": user.username,
+                "email": user.email,
+                "is_admin": user.is_admin
+            }
+        })
+        
+    except Exception as e:
+        return JSONResponse({"error": str(e)}, status_code=500)
+
 # Routes d'authentification
 @app.post("/auth/login")
 async def login(request: Request, form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
@@ -202,8 +303,8 @@ async def login(request: Request, form_data: OAuth2PasswordRequestForm = Depends
     request.session["email"] = user.email
     request.session["is_admin"] = user.is_admin
     
-    # Rediriger vers dashboard
-    return RedirectResponse(url="/dashboard", status_code=302)
+    # Rediriger vers profil
+    return RedirectResponse(url="/profile", status_code=302)
 
 @app.get("/logout")
 async def logout(request: Request):

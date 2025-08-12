@@ -6,6 +6,9 @@ class AIQuizManager {
         this.results = [];
         this.totalScore = 0;
         this.maxTotalScore = 0;
+        this.selectedCategory = null;
+        this.selectedTheme = null;
+        this.currentSession = null;
         
         this.init();
     }
@@ -24,14 +27,10 @@ class AIQuizManager {
     }
 
     setupEventListeners() {
-        const startBtn = document.getElementById('start-ai-quiz-btn');
+        // Les event listeners pour les catégories sont gérés par les attributs onclick
         const submitBtn = document.getElementById('submit-ai-answer-btn');
         const nextBtn = document.getElementById('next-ai-question-btn');
-        const retakeBtn = document.getElementById('retake-ai-quiz-btn');
-
-        if (startBtn) {
-            startBtn.addEventListener('click', () => this.startQuiz());
-        }
+        const retakeBtn = document.getElementById('retake-pld-btn');
 
         if (submitBtn) {
             submitBtn.addEventListener('click', () => this.submitAnswer());
@@ -47,9 +46,19 @@ class AIQuizManager {
     }
 
     async loadQuestions() {
+        if (!this.selectedCategory) {
+            console.log('Aucune catégorie sélectionnée, attente de la sélection...');
+            return;
+        }
+        
         try {
-            this.questions = await window.holbiesApp.apiRequest('/api/ai-quiz/ai-questions');
-            console.log('AI Questions loaded:', this.questions.length);
+            let url = `/api/pld/ai-questions?category=${this.selectedCategory}`;
+            if (this.selectedTheme) {
+                url += `&theme=${this.selectedTheme}`;
+            }
+            
+            this.questions = await window.holbiesApp.apiRequest(url);
+            console.log(`Questions ${this.selectedCategory}${this.selectedTheme ? '/' + this.selectedTheme : ''} chargées:`, this.questions.length);
         } catch (error) {
             console.error('Error loading AI questions:', error);
             if (window.holbiesApp) {
@@ -58,34 +67,162 @@ class AIQuizManager {
         }
     }
 
-    async startQuiz() {
-        if (this.questions.length === 0) {
-            window.holbiesApp.showMessage('Aucune question disponible. Rechargez la page.', 'error');
-            return;
-        }
+    selectCategory(category) {
+        this.selectedCategory = category;
+        console.log('Catégorie sélectionnée:', category);
+        
+        // Mettre à jour l'interface
+        const cards = document.querySelectorAll('.category-card');
+        cards.forEach(card => {
+            card.classList.remove('selected');
+            if (card.getAttribute('data-category') === category) {
+                card.classList.add('selected');
+            }
+        });
+        
+        // Charger et afficher les thèmes pour cette catégorie
+        this.loadThemes();
+    }
 
+    async loadThemes() {
         try {
-            // Créer une nouvelle session AI Quiz
-            this.currentSession = await window.holbiesApp.apiRequest('/api/ai-quiz/start', {
-                method: 'POST'
+            const data = await window.holbiesApp.apiRequest(`/api/pld/categories/${this.selectedCategory}/themes`);
+            this.displayThemes(data.themes);
+        } catch (error) {
+            console.error('Erreur:', error);
+            if (window.holbiesApp) {
+                window.holbiesApp.showMessage('Erreur lors du chargement des thèmes: ' + error.message, 'error');
+            }
+        }
+    }
+
+    displayThemes(themes) {
+        const startScreen = document.getElementById('pld-start');
+        const themeScreen = document.getElementById('pld-theme-selection');
+        const categoryDisplay = document.getElementById('selected-category-display');
+        const themesGrid = document.getElementById('themes-grid');
+
+        // Mettre à jour l'affichage de la catégorie sélectionnée
+        categoryDisplay.textContent = this.selectedCategory.charAt(0).toUpperCase() + this.selectedCategory.slice(1);
+
+        // Vider la grille des thèmes
+        themesGrid.innerHTML = '';
+
+        // Créer les cartes de thème
+        themes.forEach((theme, index) => {
+            const themeCard = document.createElement('div');
+            themeCard.className = 'theme-card';
+            themeCard.setAttribute('data-theme', theme.name);
+            themeCard.onclick = () => this.selectTheme(theme.name);
+
+            // Choisir une icône appropriée selon le thème
+            let icon = '📝';
+            if (theme.name.includes('permission')) icon = '🔐';
+            else if (theme.name.includes('io')) icon = '💾';
+            else if (theme.name.includes('variable')) icon = '🔢';
+            else if (theme.name.includes('function')) icon = '⚙️';
+
+            themeCard.innerHTML = `
+                <div class="theme-icon">${icon}</div>
+                <div class="theme-name">${theme.display_name}</div>
+                <div class="theme-description">${theme.description}</div>
+                <div class="theme-stats">
+                    <span class="theme-question-count">${theme.question_count} questions</span>
+                    <span class="theme-difficulty">THÈME</span>
+                </div>
+            `;
+
+            // Animation d'apparition progressive
+            themeCard.style.animationDelay = `${(index + 1) * 0.1}s`;
+            themesGrid.appendChild(themeCard);
+        });
+
+        // Transition vers l'écran de sélection de thème
+        startScreen.classList.add('hidden');
+        themeScreen.classList.remove('hidden');
+    }
+
+    selectTheme(theme) {
+        this.selectedTheme = theme;
+        console.log('Thème sélectionné:', theme);
+        
+        // Mettre à jour l'interface
+        const cards = document.querySelectorAll('.theme-card');
+        cards.forEach(card => {
+            card.classList.remove('selected');
+            if (card.getAttribute('data-theme') === theme) {
+                card.classList.add('selected');
+            }
+        });
+        
+        // Charger les questions de ce thème
+        this.loadQuestions().then(() => {
+            // Démarrer automatiquement la session après chargement
+            setTimeout(() => {
+                this.startSession();
+            }, 500);
+        });
+    }
+
+    selectAllThemes() {
+        this.selectedTheme = null; // null signifie toute la catégorie
+        console.log('Toute la catégorie sélectionnée:', this.selectedCategory);
+        
+        // Charger toutes les questions de la catégorie
+        this.loadQuestions().then(() => {
+            setTimeout(() => {
+                this.startSession();
+            }, 500);
+        });
+    }
+
+    backToCategories() {
+        const startScreen = document.getElementById('pld-start');
+        const themeScreen = document.getElementById('pld-theme-selection');
+        
+        // Réinitialiser les sélections
+        this.selectedCategory = null;
+        this.selectedTheme = null;
+        
+        // Supprimer les sélections visuelles
+        document.querySelectorAll('.category-card').forEach(card => {
+            card.classList.remove('selected');
+        });
+        
+        // Retourner à l'écran de démarrage
+        themeScreen.classList.add('hidden');
+        startScreen.classList.remove('hidden');
+    }
+
+    async startSession() {
+        try {
+            const startScreen = document.getElementById('pld-start');
+            
+            this.currentSession = await window.holbiesApp.apiRequest('/api/pld/start', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ quiz_type: 'ai' })
             });
             
-            this.currentQuestionIndex = 0;
-            this.results = [];
-            this.totalScore = 0;
-            this.maxTotalScore = 0;
-
+            console.log('AI Quiz session started:', this.currentSession);
+            
+            // Switch to question screen
             this.showQuestion();
+            
         } catch (error) {
             console.error('Error starting AI quiz session:', error);
-            window.holbiesApp.showMessage('Erreur lors du démarrage du quiz', 'error');
+            if (window.holbiesApp) {
+                window.holbiesApp.showMessage('Erreur lors du démarrage de la session: ' + error.message, 'error');
+            }
         }
     }
 
     showQuestion() {
-        const startScreen = document.getElementById('ai-quiz-start');
-        const questionScreen = document.getElementById('ai-quiz-question');
-        const resultsScreen = document.getElementById('ai-quiz-results');
+        const startScreen = document.getElementById('pld-start');
+        const questionScreen = document.getElementById('pld-question');
+        const resultsScreen = document.getElementById('pld-results');
 
         // Hide other screens
         startScreen.classList.add('hidden');
@@ -143,7 +280,7 @@ class AIQuizManager {
 
             console.log('Submitting AI answer:', submission);
 
-            const result = await window.holbiesApp.apiRequest('/api/ai-quiz/submit-answer', {
+            const result = await window.holbiesApp.apiRequest('/api/pld/submit-answer', {
                 method: 'POST',
                 body: JSON.stringify(submission)
             });
@@ -255,13 +392,13 @@ class AIQuizManager {
     }
 
     async showFinalResults() {
-        const questionScreen = document.getElementById('ai-quiz-question');
-        const resultsScreen = document.getElementById('ai-quiz-results');
+        const questionScreen = document.getElementById('pld-question');
+        const resultsScreen = document.getElementById('pld-results');
         
         // Compléter la session sur le serveur
         if (this.currentSession) {
             try {
-                await window.holbiesApp.apiRequest(`/api/ai-quiz/complete?session_id=${this.currentSession.id}`, {
+                await window.holbiesApp.apiRequest(`/api/pld/complete?session_id=${this.currentSession.id}`, {
                     method: 'POST'
                 });
                 console.log('AI Quiz session completed successfully');
@@ -321,17 +458,22 @@ class AIQuizManager {
     }
 
     retakeQuiz() {
-        // Reset quiz state
+        // Reset state
         this.currentQuestionIndex = 0;
         this.results = [];
         this.totalScore = 0;
-        this.maxTotalScore = 0;
-        this.currentSession = null; // Reset session
+        this.selectedCategory = null;
+        
+        // Reset category selection
+        const cards = document.querySelectorAll('.category-card');
+        cards.forEach(card => {
+            card.classList.remove('selected');
+        });
 
         // Show start screen
-        const startScreen = document.getElementById('ai-quiz-start');
-        const questionScreen = document.getElementById('ai-quiz-question');
-        const resultsScreen = document.getElementById('ai-quiz-results');
+        const startScreen = document.getElementById('pld-start');
+        const questionScreen = document.getElementById('pld-question');
+        const resultsScreen = document.getElementById('pld-results');
 
         startScreen.classList.remove('hidden');
         questionScreen.classList.add('hidden');
@@ -361,6 +503,34 @@ class AIQuizManager {
             currentQuestionEl.textContent = this.currentQuestionIndex + 1;
             totalQuestionsEl.textContent = this.questions.length;
         }
+    }
+}
+
+// Fonction globale pour la sélection de catégorie (accessible depuis onclick)
+function selectCategory(category) {
+    if (window.aiQuizManager) {
+        window.aiQuizManager.selectCategory(category);
+    }
+}
+
+// Fonction globale pour la sélection de thème
+function selectTheme(theme) {
+    if (window.aiQuizManager) {
+        window.aiQuizManager.selectTheme(theme);
+    }
+}
+
+// Fonction globale pour sélectionner toute la catégorie
+function selectAllThemes() {
+    if (window.aiQuizManager) {
+        window.aiQuizManager.selectAllThemes();
+    }
+}
+
+// Fonction globale pour retourner aux catégories
+function backToCategories() {
+    if (window.aiQuizManager) {
+        window.aiQuizManager.backToCategories();
     }
 }
 
