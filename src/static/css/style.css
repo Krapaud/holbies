@@ -739,6 +739,15 @@ a:hover {
     justify-content: space-between;
     align-items: center;
     padding: 0 var(--spacing-lg);
+    gap: 2rem;
+}
+
+.nav-content-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    flex: 1;
+    justify-content: flex-end;
 }
 .nav-logo {
     display: flex;
@@ -888,6 +897,124 @@ a:hover {
     background: var(--primary-color);
     border-radius: 2px;
     transition: all 0.2s;
+}
+
+/* User Menu Styles */
+.user-menu-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.user-menu-trigger {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: rgba(225, 0, 60, 0.1);
+    border: 1px solid rgba(225, 0, 60, 0.3);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: var(--text-color);
+    font-family: var(--font-holberton);
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.user-menu-trigger:hover {
+    background: rgba(225, 0, 60, 0.2);
+    border-color: var(--primary-color);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(225, 0, 60, 0.3);
+}
+
+.user-name {
+    color: var(--primary-color);
+    font-weight: 600;
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.user-menu-icon {
+    color: var(--primary-color);
+    transition: transform 0.3s ease;
+}
+
+.user-menu-trigger.active .user-menu-icon {
+    transform: rotate(180deg);
+}
+
+.user-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 8px;
+    background: var(--background-color);
+    border: 1px solid rgba(225, 0, 60, 0.3);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    z-index: 1000;
+    min-width: 200px;
+}
+
+.user-dropdown.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.user-dropdown-content {
+    padding: 8px 0;
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    color: var(--text-color);
+    text-decoration: none;
+    font-family: var(--font-holberton);
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.dropdown-item:hover {
+    background: rgba(225, 0, 60, 0.1);
+    color: var(--primary-color);
+}
+
+.dropdown-item svg {
+    color: currentColor;
+    flex-shrink: 0;
+}
+
+.dropdown-divider {
+    height: 1px;
+    background: rgba(225, 0, 60, 0.2);
+    margin: 8px 16px;
+}
+
+.admin-only {
+    border-top: 1px solid rgba(225, 0, 60, 0.2);
+    padding-top: 8px;
+}
+
+.logout-item {
+    color: #ff6b6b !important;
+}
+
+.logout-item:hover {
+    background: rgba(255, 107, 107, 0.1) !important;
+    color: #ff4757 !important;
 }
 
 /* Buttons Holberton */
@@ -1200,10 +1327,13 @@ main {
     display: block; /* Simplifier le layout */
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none; /* Internet Explorer 10+ */
-    /* Isolation complète du scroll */
+    /* Isolation TOTALE du scroll pour éviter les conflits avec la page */
     contain: strict;
     isolation: isolate;
     overscroll-behavior: contain;
+    scroll-snap-type: none; /* Désactiver snap scroll */
+    transform: translateZ(0); /* Forcer une couche composite */
+    will-change: scroll-position; /* Optimiser les performances de scroll */
     margin: auto; /* Centrer dans le terminal */
 }
 
@@ -1817,6 +1947,40 @@ main {
     .hamburger-menu {
         display: block; /* Show hamburger on mobile */
     }
+    
+    /* User menu responsive adjustments */
+    .nav-content-wrapper {
+        flex-direction: column-reverse;
+        gap: 1rem;
+    }
+    
+    .user-menu-container {
+        position: static;
+        order: -1;
+    }
+    
+    .user-menu-trigger {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+    }
+    
+    .user-name {
+        max-width: 80px;
+    }
+    
+    .user-dropdown {
+        position: fixed;
+        top: auto;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: 0;
+        border-radius: 16px 16px 0 0;
+        min-width: auto;
+        max-height: 50vh;
+        overflow-y: auto;
+    }
+}
 }
 
 /* Font imports - assuming they are in static/fonts */

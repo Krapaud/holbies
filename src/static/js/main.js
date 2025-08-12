@@ -39,41 +39,98 @@ class HolbiesApp {
 
         // Update auth link based on login status
         this.updateAuthLink();
+        
+        // Setup user menu
+        this.setupUserMenu();
+    }
+
+    setupUserMenu() {
+        const userMenuTrigger = document.getElementById('user-menu-trigger');
+        const userDropdown = document.getElementById('user-dropdown');
+        const logoutItem = document.getElementById('logout-item');
+
+        if (userMenuTrigger && userDropdown) {
+            // Remove existing event listeners to prevent duplicates
+            userMenuTrigger.replaceWith(userMenuTrigger.cloneNode(true));
+            const newTrigger = document.getElementById('user-menu-trigger');
+            
+            // Toggle dropdown on click
+            newTrigger.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                newTrigger.classList.toggle('active');
+                userDropdown.classList.toggle('active');
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!newTrigger.contains(e.target) && !userDropdown.contains(e.target)) {
+                    newTrigger.classList.remove('active');
+                    userDropdown.classList.remove('active');
+                }
+            });
+
+            // Prevent dropdown from closing when clicking inside
+            userDropdown.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+        }
+
+        // Setup logout functionality
+        if (logoutItem) {
+            logoutItem.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.logout();
+            });
+        }
     }
 
     updateAuthLink() {
         const navMenu = document.getElementById('nav-menu');
-        if (!navMenu) return;
+        const userMenuContainer = document.getElementById('user-menu-container');
+        if (!navMenu || !userMenuContainer) return;
 
         // Update token from localStorage in case it changed
         this.token = localStorage.getItem('token') || localStorage.getItem('access_token');
 
-        // Clear existing navigation links
-        navMenu.innerHTML = '';
-
         if (this.token) {
-            // User is authenticated - show authenticated navigation
+            // User is authenticated - show user menu and authenticated navigation
             navMenu.innerHTML = `
                 <a href="/learning" class="nav-link">Learning Hub</a>
                 <a href="/tutor" class="nav-link">HLH Tutor</a>
                 <a href="/dashboard" class="nav-link">Dashboard</a>
-                <a href="#" class="nav-link" id="auth-link">Déconnexion</a>
             `;
             
-            // Add logout functionality
-            const authLink = document.getElementById('auth-link');
-            if (authLink) {
-                authLink.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    this.logout();
-                });
+            // Show user menu
+            userMenuContainer.style.display = 'flex';
+            
+            // Update user name (default to "Utilisateur" if user data not loaded yet)
+            const userNameElement = document.getElementById('user-name');
+            if (userNameElement) {
+                userNameElement.textContent = this.user ? this.user.username : 'Utilisateur';
             }
+            
+            // Show/hide admin menu based on user role (hide by default until user data is loaded)
+            const adminMenuItem = document.getElementById('admin-menu-item');
+            const adminDivider = document.getElementById('admin-divider');
+            if (adminMenuItem && adminDivider) {
+                if (this.user && this.user.is_admin) {
+                    adminMenuItem.style.display = 'flex';
+                    adminDivider.style.display = 'block';
+                } else {
+                    adminMenuItem.style.display = 'none';
+                    adminDivider.style.display = 'none';
+                }
+            }
+            
+            this.setupUserMenu();
         } else {
-            // User is not authenticated - show login/register links
+            // User is not authenticated - show login/register links and hide user menu
             navMenu.innerHTML = `
                 <a href="/login" class="nav-link">Connexion</a>
                 <a href="/register" class="nav-link">Inscription</a>
             `;
+            userMenuContainer.style.display = 'none';
         }
     }
 
@@ -89,6 +146,10 @@ class HolbiesApp {
 
             if (response.ok) {
                 this.user = await response.json();
+                
+                // Synchroniser la session côté serveur
+                await this.syncUserSession();
+                
                 this.updateUserInterface();
                 this.updateAuthLink(); // Force update navigation after successful auth check
             } else {
@@ -100,6 +161,29 @@ class HolbiesApp {
         }
     }
 
+    async syncUserSession() {
+        try {
+            // Appeler une route pour synchroniser la session avec l'utilisateur JWT
+            const response = await fetch('/api/sync-session', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${this.token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    user_id: this.user.id,
+                    username: this.user.username
+                })
+            });
+            
+            if (response.ok) {
+                console.log('Session synchronized');
+            }
+        } catch (error) {
+            console.error('Error syncing session:', error);
+        }
+    }
+
     updateUserInterface() {
         // Update user info if element exists
         const userInfo = document.getElementById('user-info');
@@ -108,6 +192,38 @@ class HolbiesApp {
         if (username && this.user) {
             username.textContent = this.user.username;
         }
+        
+        // Force mise à jour du nom utilisateur dans le menu
+        const userNameElement = document.getElementById('user-name');
+        if (userNameElement && this.user) {
+            userNameElement.textContent = this.user.username;
+        }
+        
+        // Update user menu with actual user data
+        this.updateUserMenu();
+    }
+
+    updateUserMenu() {
+        if (!this.user) return;
+        
+        // Update user name in menu
+        const userNameElement = document.getElementById('user-name');
+        if (userNameElement) {
+            userNameElement.textContent = this.user.username;
+        }
+        
+        // Show/hide admin menu based on user role
+        const adminMenuItem = document.getElementById('admin-menu-item');
+        const adminDivider = document.getElementById('admin-divider');
+        if (adminMenuItem && adminDivider) {
+            if (this.user.is_admin) {
+                adminMenuItem.style.display = 'flex';
+                adminDivider.style.display = 'block';
+            } else {
+                adminMenuItem.style.display = 'none';
+                adminDivider.style.display = 'none';
+            }
+        }
     }
 
     logout() {
@@ -115,6 +231,15 @@ class HolbiesApp {
         localStorage.removeItem('token');
         this.token = null;
         this.user = null;
+        
+        // Close user menu if open
+        const userMenuTrigger = document.getElementById('user-menu-trigger');
+        const userDropdown = document.getElementById('user-dropdown');
+        if (userMenuTrigger && userDropdown) {
+            userMenuTrigger.classList.remove('active');
+            userDropdown.classList.remove('active');
+        }
+        
         this.updateAuthLink(); // Update navigation immediately
         window.location.href = '/';
     }

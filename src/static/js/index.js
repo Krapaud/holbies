@@ -149,14 +149,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     heroCodeElement.appendChild(heroCursorElement);
                 heroCharIndex++;
                 
-                // Scroll vers le curseur pour qu'il soit visible en bas
+                // Scroll UNIQUEMENT dans le conteneur terminal, pas la page entière
                 if (heroCodeContainer && heroCursorElement) {
                     setTimeout(() => {
-                        heroCursorElement.scrollIntoView({ 
-                            behavior: 'auto', 
-                            block: 'end',
-                            inline: 'nearest'
-                        });
+                        // Calculer la position du curseur dans le conteneur seulement
+                        const containerRect = heroCodeContainer.getBoundingClientRect();
+                        const cursorRect = heroCursorElement.getBoundingClientRect();
+                        
+                        // Scroll seulement si le curseur sort du conteneur visible
+                        if (cursorRect.bottom > containerRect.bottom) {
+                            heroCodeContainer.scrollTop += (cursorRect.bottom - containerRect.bottom + 10);
+                        }
                     }, 10);
                 }                    setTimeout(typeHeroCode, 45);
                 } else {
@@ -166,14 +169,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 heroLineIndex++;
                 heroCharIndex = 0;
                 
-                // Scroll vers le curseur pour qu'il soit visible en bas
+                // Scroll UNIQUEMENT dans le conteneur terminal, pas la page entière
                 if (heroCodeContainer && heroCursorElement) {
                     setTimeout(() => {
-                        heroCursorElement.scrollIntoView({ 
-                            behavior: 'auto', 
-                            block: 'end',
-                            inline: 'nearest'
-                        });
+                        // Calculer la position du curseur dans le conteneur seulement
+                        const containerRect = heroCodeContainer.getBoundingClientRect();
+                        const cursorRect = heroCursorElement.getBoundingClientRect();
+                        
+                        // Scroll seulement si le curseur sort du conteneur visible
+                        if (cursorRect.bottom > containerRect.bottom) {
+                            heroCodeContainer.scrollTop += (cursorRect.bottom - containerRect.bottom + 10);
+                        }
                     }, 10);
                 }                    setTimeout(typeHeroCode, 600);
                 }

@@ -139,6 +139,31 @@ async function handleLogin(e) {
         if (response.ok) {
             localStorage.setItem('access_token', data.access_token);
             localStorage.setItem('token', data.access_token); // Pour compatibilité avec main.js
+            
+            // Récupérer les informations utilisateur et synchroniser la session
+            const userResponse = await fetch('/api/users/me', {
+                headers: {
+                    'Authorization': `Bearer ${data.access_token}`
+                }
+            });
+            
+            if (userResponse.ok) {
+                const userData = await userResponse.json();
+                
+                // Synchroniser la session côté serveur
+                await fetch('/api/users/sync-session', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${data.access_token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        user_id: userData.id,
+                        username: userData.username
+                    })
+                });
+            }
+            
             if (window.holbiesApp) {
                 window.holbiesApp.token = data.access_token;
                 // Force update navigation after successful login

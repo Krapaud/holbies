@@ -4,6 +4,7 @@ from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 from typing import List
+from pydantic import BaseModel
 
 from app.database import get_db
 from app.models import User
@@ -13,9 +14,43 @@ from app.auth import get_current_active_user
 router = APIRouter()
 templates = Jinja2Templates(directory="src/templates")
 
+class SyncSessionRequest(BaseModel):
+    user_id: int
+    username: str
+
+@router.post("/sync-session")
+async def sync_session(
+    request: Request, 
+    sync_data: SyncSessionRequest,
+    current_user: User = Depends(get_current_active_user)
+):
+    """Synchronise la session avec les informations de l'utilisateur JWT"""
+    try:
+        # Vérifier que l'utilisateur JWT correspond aux données envoyées
+        if current_user.id != sync_data.user_id or current_user.username != sync_data.username:
+            raise HTTPException(status_code=400, detail="Données utilisateur incohérentes")
+        
+        # Mettre à jour la session
+        request.session["user_id"] = current_user.id
+        request.session["username"] = current_user.username
+        request.session["is_admin"] = current_user.is_admin
+        
+        return {"status": "success", "message": "Session synchronisée"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erreur lors de la synchronisation: {str(e)}")
+
 @router.get("/me", response_model=UserSchema)
 async def read_users_me(current_user: User = Depends(get_current_active_user)):
     return current_user
+
+@router.get("/profile", response_class=HTMLResponse)
+async def user_profile(request: Request, current_user: User = Depends(get_current_active_user)):
+    """Page de profil utilisateur"""
+    context = {
+        "request": request,
+        "user": current_user
+    }
+    return templates.TemplateResponse("profile.html", context)
 
 @router.get("/", response_model=List[UserSchema])
 async def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db), current_user: User = Depends(get_current_active_user)):

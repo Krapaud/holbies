@@ -1,34 +1,45 @@
-FROM python:3.9-slim
+# Utiliser Python 3.11 comme image de base
+FROM python:3.11-slim
 
-# Set environment variables
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
-
-# Set work directory
+# Définir le répertoire de travail
 WORKDIR /app
 
-# Install system dependencies
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-        postgresql-client \
-        gcc \
-        python3-dev \
-        libpq-dev \
+# Installer les dépendances système nécessaires
+RUN apt-get update && apt-get install -y \
+    gcc \
+    libpq-dev \
+    postgresql-client \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Python dependencies
+# Copier les fichiers de requirements
 COPY config/requirements.txt .
+
+# Installer les dépendances Python
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy project
-COPY . .
+# Copier le code de l'application
+COPY src/ ./src/
+COPY config/ ./config/
+COPY deployment/wait-for-postgres.sh ./deployment/
 
-# Create non-root user
-RUN adduser --disabled-password --gecos '' appuser && chown -R appuser /app
+# Rendre le script wait-for-postgres exécutable
+RUN chmod +x ./deployment/wait-for-postgres.sh
+
+# Créer un lien symbolique pour que l'import app fonctionne
+RUN ln -sf /app/src/app /app/app
+
+# Créer un utilisateur non-root pour la sécurité
+RUN useradd --create-home --shell /bin/bash appuser && \
+    chown -R appuser:appuser /app
 USER appuser
 
-# Expose port
+# Exposer le port
 EXPOSE 8000
 
-# Run the application
-CMD ["python", "run.py"]
+# Variables d'environnement par défaut
+ENV PYTHONPATH=/app/src
+ENV HOST=0.0.0.0
+ENV PORT=8000
+
+# Commande de démarrage
+CMD ["python", "src/main.py"]

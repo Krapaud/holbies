@@ -78,3 +78,14 @@ python run.py
 # Or run directly
 python src/main.py
 ```
+
+## 🚀 Lancement avec Docker (recommandé)
+
+
+**Important :** Assurez-vous d'être dans le dossier racine du projet (là où se trouve ce README.md) avant de lancer la commande suivante :
+
+```bash
+docker-compose -f deployment/docker-compose.yml up --build -d
+```
+
+Cela démarre tous les services (web et base de données) en arrière-plan. Accédez ensuite à http://localhost:8000

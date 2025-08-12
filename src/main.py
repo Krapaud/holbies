@@ -17,6 +17,7 @@ from app.models import Base
 from app.routers import auth, quiz, users, ai_quiz
 from app.routers import performance
 from app.auth import get_current_user
+from sqlalchemy.orm import Session
 
 # Charger les variables d'environnement
 load_dotenv()
@@ -120,6 +121,40 @@ async def admin_redirect(request: Request):
     """Redirection vers le dashboard admin"""
     return RedirectResponse(url="/api/users/admin/dashboard", status_code=302)
 
+@app.get("/profile", response_class=HTMLResponse)
+async def profile_page(request: Request, db: Session = Depends(get_db)):
+    """Page de profil utilisateur"""
+    try:
+        # Récupérer l'utilisateur depuis la session uniquement
+        user_id = request.session.get("user_id")
+        
+        if not user_id:
+            # Pas d'utilisateur en session, rediriger vers login
+            return RedirectResponse(url="/login", status_code=302)
+        
+        # Récupérer l'utilisateur depuis la base de données
+        from app.models import User
+        user = db.query(User).filter(User.id == user_id).first()
+        
+        if not user:
+            # Utilisateur introuvable, nettoyer la session et rediriger
+            request.session.clear()
+            return RedirectResponse(url="/login", status_code=302)
+        
+        context = get_template_context(request, user=user)
+        return templates.TemplateResponse("profile.html", context)
+        
+    except Exception as e:
+        # En cas d'erreur, nettoyer la session et rediriger vers login
+        print(f"Erreur profile: {e}")  # Pour debug
+        request.session.clear()
+        return RedirectResponse(url="/login", status_code=302)
+
+@app.get("/admin", response_class=HTMLResponse)
+async def admin_redirect(request: Request):
+    """Redirection vers le dashboard admin"""
+    return RedirectResponse(url="/api/users/admin/dashboard", status_code=302)
+
 @app.post("/api/visualize")
 async def visualize_code(request: Request):
     data = await request.json()
@@ -146,23 +181,28 @@ async def visualize_code(request: Request):
         sys.settrace(None)
     return JSONResponse({"trace": trace, "error": error, "output": output.getvalue()})
 
-# Routes de gestion de session
-@app.post("/auth/login-demo")
-async def demo_login(request: Request):
-    """Route pour simuler une connexion (pour demo/test)"""
-    # Simuler une connexion avec des données fictives
-    request.session["user_id"] = 1
-    request.session["username"] = "Développeur"
-    request.session["email"] = "dev@holbies.com"
-    return RedirectResponse(url="/dashboard", status_code=302)
-
-@app.get("/auth/login-demo")
-async def demo_login_get(request: Request):
-    """Route GET pour simuler une connexion (pour demo/test)"""
-    # Simuler une connexion avec des données fictives
-    request.session["user_id"] = 1
-    request.session["username"] = "Développeur"
-    request.session["email"] = "dev@holbies.com"
+# Routes d'authentification
+@app.post("/auth/login")
+async def login(request: Request, form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+    """Route de connexion avec session"""
+    from app.auth import authenticate_user
+    from app.models import User
+    
+    # Authentifier l'utilisateur
+    user = authenticate_user(db, form_data.username, form_data.password)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Nom d'utilisateur ou mot de passe incorrect"
+        )
+    
+    # Créer la session
+    request.session["user_id"] = user.id
+    request.session["username"] = user.username
+    request.session["email"] = user.email
+    request.session["is_admin"] = user.is_admin
+    
+    # Rediriger vers dashboard
     return RedirectResponse(url="/dashboard", status_code=302)
 
 @app.get("/logout")
@@ -171,6 +211,29 @@ async def logout(request: Request):
     # Vider la session
     request.session.clear()
     return RedirectResponse(url="/", status_code=302)
+
+@app.get("/debug-session")
+async def debug_session(request: Request, db: Session = Depends(get_db)):
+    """Page de debug pour voir les informations de session"""
+    from app.models import User
+    
+    session_info = {
+        "session_data": dict(request.session),
+        "user_from_session": None
+    }
+    
+    user_id = request.session.get("user_id")
+    if user_id:
+        user = db.query(User).filter(User.id == user_id).first()
+        if user:
+            session_info["user_from_session"] = {
+                "id": user.id,
+                "username": user.username,
+                "email": user.email,
+                "is_admin": user.is_admin
+            }
+    
+    return JSONResponse(session_info)
 
 if __name__ == "__main__":
     uvicorn.run(
