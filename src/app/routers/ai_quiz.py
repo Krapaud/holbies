@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request, Response
 from sqlalchemy.orm import Session
 from sqlalchemy.sql import func
 from typing import List, Dict
@@ -11,7 +11,7 @@ from datetime import datetime
 from app.database import get_db
 from app.models import User, AIQuizSession, AIQuizAnswer, PLDCategory, PLDTheme, PLDQuestion
 from app.schemas import AIQuizSession as AIQuizSessionSchema, AIQuizAnswer as AIQuizAnswerSchema, AIQuizAnswerSubmission, AIQuizResult
-from app.auth import get_current_active_user
+from app.auth import get_current_active_user, get_current_user_from_session
 
 router = APIRouter()
 
@@ -299,8 +299,9 @@ async def start_ai_quiz_session(
 async def get_ai_questions(
     category: str = None,
     theme: str = None,
+    request: Request = None,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_active_user)
+    current_user: User = Depends(get_current_user_from_session)
 ):
     """Récupère la liste des questions pour le quiz IA par catégorie et/ou thème depuis la DB"""
     try:
@@ -494,24 +495,34 @@ async def get_demo_info(db: Session = Depends(get_db)):
 @router.get("/categories/{category}/themes")
 async def get_category_themes(
     category: str,
+    request: Request,
+    response: Response,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_active_user)
+    current_user: User = Depends(get_current_user_from_session)
 ):
     """Récupère la liste des thèmes disponibles pour une catégorie depuis la DB"""
-    themes_data = get_themes_from_db(db, category)
-    
-    if not themes_data:
+    # Vérifier que la catégorie existe
+    category_obj = db.query(PLDCategory).filter(PLDCategory.name == category).first()
+    if not category_obj:
         raise HTTPException(
             status_code=404,
-            detail=f"Category '{category}' not found or has no themes"
+            detail=f"Category '{category}' not found"
         )
+    
+    themes_data = get_themes_from_db(db, category)
+    
+    # Si la catégorie existe mais n'a pas de thèmes, retourner 204 No Content
+    if not themes_data or len(themes_data) == 0:
+        response.status_code = 204
+        return None
     
     return {"themes": themes_data}
 
 @router.get("/categories")
 async def get_categories(
+    request: Request,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_active_user)
+    current_user: User = Depends(get_current_user_from_session)
 ):
     """Récupère la liste des catégories disponibles depuis la DB"""
     categories_data = get_categories_from_db(db)

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PLD - Holbies Learning Hub</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Source+Code+Pro:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+</head>
+<body>
+    <div class="matrix-bg"></div>
+    
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="/" class="logo-link">
+                    <span class="logo-texts">
+                        <span class="logo-text">HOLBIES</span>
+                        <span class="logo-subtext">Learning Hub</span>
+                    </span>
+                    <img src="{{ url_for('static', path='/images/holberton-hero.png') }}" alt="Holberton" class="logo-img" />
+                </a>
+            </div>
+            <div class="nav-menu" id="nav-menu">
+                <a href="/" class="nav-link">Accueil</a>
+                <a href="/learning" class="nav-link">Learning Hub</a>
+                <a href="/tutor" class="nav-link">HLH Tutor</a>
+                <a href="/profile" class="nav-link">Dashboard</a>
+                {% if is_authenticated %}
+                    <span class="nav-user">👋 {{ username }}</span>
+                    <a href="/logout" class="nav-link" id="auth-link">Déconnexion</a>
+                {% else %}
+                    <a href="/login" class="nav-link" id="auth-link">Connexion</a>
+                {% endif %}
+            </div>
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="ai-quiz-container">
+            
+            <!-- Écran de démarrage -->
+            <section id="ai-quiz-start" class="quiz-section">
+                <div class="quiz-header">
+                    <h1 class="glitch" data-text="PLD">PLD</h1>
+                    <p class="quiz-subtitle">Peer Learning Day</p>
+                </div>
+                
+                <div class="ai-start-info">
+                    <h3>🧠 Comment fonctionne le PLD ?</h3>
+                    <ul>
+                        <li><strong>Réponses libres :</strong> Répondez avec vos propres mots en texte libre</li>
+                        <li><strong>Correction automatique :</strong> L'IA analyse votre réponse et la compare à la réponse attendue</li>
+                        <li><strong>Scoring intelligent :</strong> 70% pour la similarité, 30% pour l'usage de termes techniques</li>
+                        <li><strong>Bonus technique :</strong> +5 points par terme technique utilisé correctement</li>
+                        <li><strong>Feedback détaillé :</strong> Explication personnalisée de votre performance</li>
+                    </ul>
+                </div>
+                
+                <div class="quiz-actions" style="display: flex; justify-content: center; align-items: center; text-align: center; width: 100%; margin: 2rem 0;">
+                    <button id="start-ai-quiz-btn" class="btn btn-primary btn-large">
+                        <span>🚀 Commencer le PLD</span>
+                        <div class="btn-loading"></div>
+                    </button>
+                </div>
+                
+                <div class="quiz-stats">
+                    <div class="stat-item">
+                        <div class="stat-number" id="ai-total-questions">5</div>
+                        <div class="stat-label">Questions</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">100</div>
+                        <div class="stat-label">Points/Question</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">∞</div>
+                        <div class="stat-label">Apprentissage</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Écran de question avec layout amélioré -->
+            <section id="ai-quiz-question" class="quiz-section hidden">
+                <!-- Barre de progression et compteur reorganisés -->
+                <div class="quiz-progress-section">
+                    <div class="progress-container">
+                        <div id="ai-progress-fill" class="progress-fill"></div>
+                    </div>
+                    
+                    <div class="question-counter">
+                        Question <span id="ai-current-question">1</span> sur <span id="ai-total-questions">5</span>
+                    </div>
+                </div>
+                
+                <!-- Section de la question avec informations contextuelles -->
+                <div class="question-display-section">
+                    <div class="ai-question-header">
+                        <div class="question-difficulty">
+                            <span class="difficulty-label">Difficulté:</span> 
+                            <span id="ai-question-difficulty" class="difficulty-value">MEDIUM</span> 
+                            <span class="score-separator">|</span> 
+                            <span class="score-label">Score max:</span> 
+                            <span id="ai-question-score" class="score-value">100</span> points
+                        </div>
+                        <h2 id="ai-question-text">Question apparaîtra ici...</h2>
+                    </div>
+                    
+                    <div class="technical-terms-hint">
+                        <strong>Conseil :</strong> <span id="technical-terms-hint">Utilisez des termes techniques précis...</span>
+                    </div>
+                </div>
+                
+                <!-- Zone de réponse avec indicateurs visuels -->
+                <div class="answer-input-section">
+                    <div class="ai-answer-area">
+                        <label for="ai-user-answer">Votre réponse détaillée :</label>
+                        <div class="textarea-wrapper">
+                            <textarea 
+                                id="ai-user-answer" 
+                                class="ai-answer-textarea"
+                                placeholder="Rédigez votre réponse en utilisant des termes techniques appropriés. Plus votre réponse est précise et technique, plus votre score sera élevé..."
+                            ></textarea>
+                            <div class="character-counter">
+                                <span id="char-count">0</span> caractères
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="quiz-actions">
+                        <button id="submit-ai-answer-btn" class="btn btn-primary">
+                            <span>🤖 Soumettre pour Correction IA</span>
+                            <div class="btn-loading"></div>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Écran de résultats optimisé -->
+            <section id="ai-quiz-results" class="quiz-section hidden">
+                <div class="quiz-header">
+                    <h1>🎯 Résultats du PLD</h1>
+                </div>
+                
+                <!-- Section de score principal avec statistiques -->
+                <div class="results-overview">
+                    <div class="results-summary">
+                        <div class="score-display">
+                            <div class="score-main">
+                                <span id="ai-final-score">0/500</span> points
+                            </div>
+                            <div class="score-percentage">
+                                <span id="ai-final-percentage">0%</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Graphique de performance -->
+                    <div class="performance-chart">
+                        <div class="chart-title">Performance par Question</div>
+                        <div id="performance-bars" class="performance-bars">
+                            <!-- Généré dynamiquement -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Détails des résultats avec organisation améliorée -->
+                <div class="results-analysis">
+                    <div id="ai-results-details" class="results-details">
+                        <!-- Détails générés dynamiquement -->
+                    </div>
+                    
+                    <!-- Recommandations personnalisées -->
+                    <div class="recommendations-section">
+                        <h3>📚 Recommandations d'Amélioration</h3>
+                        <div id="ai-recommendations" class="recommendations-list">
+                            <!-- Généré dynamiquement selon les résultats -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="quiz-actions">
+                    <button id="retake-ai-quiz-btn" class="btn btn-secondary">
+                        <span>🔄 Refaire le PLD</span>
+                    </button>
+                    <a href="/quiz" class="btn btn-primary">
+                        <span>📝 Quiz</span>
+                    </a>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Modal de feedback -->
+    <div id="ai-answer-modal" class="ai-modal hidden">
+        <div class="ai-modal-content">
+            <h2 id="ai-modal-title">Résultat de la correction</h2>
+            <div id="ai-answer-feedback">
+                <!-- Contenu généré dynamiquement -->
+            </div>
+            <div class="modal-actions">
+                <button id="next-ai-question-btn" class="btn btn-primary">
+                    <span>Question Suivante</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2025 Holbies Learning Hub. PLD - Peer Learning Day.</p>
+            <p>Système d'évaluation basé sur l'intelligence artificielle</p>
+        </div>
+    </footer>
+
+    <script src="/static/js/main.js"></script>
+    <script src="/static/js/ai-quiz.js"></script>
+</body>
+</html>

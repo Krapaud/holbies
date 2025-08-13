@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PLD - Peer Learning Day</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='/css/style.css') }}">
+    
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+</head>
+<body>
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M19 3H5C3.9 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V5C21 3.9 20.1 3 19 3M12 7C13.66 7 15 8.34 15 10S13.66 13 12 13 9 11.66 9 10 10.34 7 12 7M18 18H6V16.5C6 14.5 10 13.5 12 13.5S18 14.5 18 16.5V18Z"/>
+                                    </svg> name="viewport                            <span class="category-icon">
+                                {% if                                                {% else %}
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor                            <div class="category-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 3C7.58 3 4 4.79 4 7V17C4 19.21 7.58 21 12 21S20 19.21 20 17V7C20 4.79 16.42 3 12 3Z"/>
+                                </svg>
+                            </div>>
+                                        <path d="M19 3H5C3.9 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V5C21 3.9 20.1 3 19 3M12 7C13.66 7 15 8.34 15 10S13.66 13 12 13 9 11.66 9 10 10.34 7 12 7M18 18H6V16.5C6 14.5 10 13.5 12 13.5S18 14.5 18 16.5V18Z"/>
+                                    </svg>                {% else %}
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor                                    <div class="category-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 3C7.58 3 4 4.79 4 7V17C4 19.21 7.58 21 12 21S20 19.21 20 17V7C20 4.79 16.42 3 12 3Z"/>
+                                </svg>
+                            </div>                       <div class="category-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 3C7.58 3 4 4.79 4 7V17C4 19.21 7.58 21 12 21S20 19.21 20 17V7C20 4.79 16.42 3 12 3Z"/>
+                                </svg>
+                            </div>                       <div class="category-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 3C7.58 3 4 4.79 4 7V17C4 19.21 7.58 21 12 21S20 19.21 20 17V7C20 4.79 16.42 3 12 3Z"/>
+                                </svg>
+                            </div>>
+                                        <path d="M19 3H5C3.9 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V5C21 3.9 20.1 3 19 3M12 7C13.66 7 15 8.34 15 10S13.66 13 12 13 9 11.66 9 10 10.34 7 12 7M18 18H6V16.5C6 14.5 10 13.5 12 13.5S18 14.5 18 16.5V18Z"/>
+                                    </svg>ategory.name.lower() == 'shell' %}
+                                    <svg width="20" height="20" vie                        <div class="category-card" data-category="sql" onclick="selectCategory('sql')">
+                            <div class="category-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 3C7.58 3 4 4.79 4 7V17C4 19.21 7.58 21 12 21S20 19.21 20 17V7C20 4.79 16.42 3 12 3Z"/>
+                                </svg>
+                            </div>
+                            <div class="category-name">SQL</div>
+                            <div class="category-description">Bases de données, requêtes</div>
+                        </div>"0 0 24 24" fill="currentColor">
+                                        <path d="M5.5 4L2 7.5L5.5 11L7 9.5L4.5 7L7 4.5L5.5 4ZM9 12V14H22V12H9Z"/>
+                                    </svg>
+                                {% elif category.name.lower() == 'c' %}
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M16.5 9.5C16.5 10.88 15.38 12 14 12C12.62 12 11.5 10.88 11.5 9.5C11.5 8.12 12.62 7 14 7C15.38 7 16.5 8.12 16.5 9.5M14 17C16.76 17 19 14.76 19 12C19 9.24 16.76 7 14 7S9 9.24 9 12C9 14.76 11.24 17 14 17M14 19C10.14 19 7 15.86 7 12C7 8.14 10.14 5 14 5S21 8.14 21 12C21 15.86 17.86 19 14 19M14 3C9.04 3 5 7.04 5 12C5 16.96 9.04 21 14 21S23 16.96 23 12C23 7.04 18.96 3 14 3Z"/>
+                                    </svg>
+                                {% elif category.name.lower() == 'python' %}
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M19.14 7.5C19.14 9.11 18.04 10.41 16.55 10.78V13.22C18.04 13.59 19.14 14.89 19.14 16.5C19.14 18.43 17.57 20 15.64 20H8.36C6.43 20 4.86 18.43 4.86 16.5C4.86 14.89 5.96 13.59 7.45 13.22V10.78C5.96 10.41 4.86 9.11 4.86 7.5C4.86 5.57 6.43 4 8.36 4H15.64C17.57 4 19.14 5.57 19.14 7.5Z"/>
+                                    </svg>
+                                {% elif category.name.lower() == 'javascript' %}
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M3 3H21V21H3V3M7.73 18.04C8.13 18.89 8.92 19.59 10.27 19.59C11.77 19.59 12.8 18.79 12.8 17.04V11.26H11.1V17C11.1 17.86 10.75 18.08 10.2 18.08C9.62 18.08 9.38 17.68 9.11 17.21L7.73 18.04M13.71 17.86C14.21 18.84 15.22 19.59 16.8 19.59C18.4 19.59 19.6 18.76 19.6 17.23C19.6 15.82 18.79 15.19 17.35 14.57L16.93 14.39C16.2 14.08 15.89 13.87 15.89 13.37C15.89 12.96 16.2 12.64 16.7 12.64C17.18 12.64 17.5 12.85 17.79 13.37L19.1 12.5C18.55 11.54 17.77 11.17 16.7 11.17C15.19 11.17 14.22 12.13 14.22 13.4C14.22 14.78 15.03 15.43 16.25 15.95L16.67 16.13C17.45 16.47 17.91 16.68 17.91 17.26C17.91 17.74 17.46 18.09 16.76 18.09C15.93 18.09 15.45 17.66 15.09 17.06L13.71 17.86Z"/>
+                                    </svg>
+                                {% elif category.name.lower() == 'sql' %}
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 3C7.58 3 4 4.79 4 7V17C4 19.21 7.58 21 12 21S20 19.21 20 17V7C20 4.79 16.42 3 12 3M18 17C18 17.5 15.87 19 12 19S6 17.5 6 17V14.77C7.61 15.55 9.72 16 12 16S16.39 15.55 18 14.77V17M18 12.45C16.7 13.4 14.42 14 12 14C9.58 14 7.3 13.4 6 12.45V9.64C7.47 10.47 9.61 11 12 11C14.39 11 16.53 10.47 18 9.64V12.45M12 9C8.13 9 6 7.5 6 7S8.13 5 12 5S18 6.5 18 7S15.87 9 12 9Z"/>
+                                    </svg>
+                                {% elif category.name.lower() == 'html' %}
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 17.56L16.07 16.43L16.62 10.33H9.38L9.2 8.3H16.8L17 6.31H7L7.56 12.32H14.45L14.22 14.9L12 15.5L9.78 14.9L9.64 13.24H7.64L7.93 16.43L12 17.56M4.07 3H19.93L18.5 19.3L12 21L5.5 19.3L4.07 3Z"/>
+                                    </svg>
+                                {% elif category.name.lower() == 'css' %}
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M5 3L4.35 6.34H17.94L17.5 8.5H3.92L3.26 11.83H16.85L16.09 15.64L10.61 17.45L5.86 15.64L6.19 14H2.85L2.06 18L9.91 21L18.96 18L20.16 11.97L20.4 10.76L21.94 3H5Z"/>
+                                    </svg>
+                                {% elif category.name.lower() == 'git' %}
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M2.6 10.59L8.38 4.8L10.07 6.5C9.83 7.35 10.22 8.28 11 8.73V14.27C10.22 14.72 9.83 15.65 10.07 16.5L8.38 18.2L2.6 12.41C1.93 11.75 1.93 10.65 2.6 10.59M21.4 10.59C22.07 11.26 22.07 12.35 21.4 13.01L15.62 18.8L14.93 18.12C14.08 19.04 12.66 19.04 11.81 18.19C10.96 17.34 10.96 15.92 11.81 15.07C12.66 14.22 14.08 14.22 14.93 15.07L15.62 4.8L21.4 10.59Z"/>
+                                    </svg>
+                                {% elif category.name.lower() == 'linux' %}
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M14.82 4.26L12.94 1.11C12.81.84 12.54.68 12.24.68S11.67.84 11.54 1.11L9.66 4.26C9.54 4.5 9.36 4.68 9.13 4.79L5.73 6.24C5.45 6.37 5.29 6.64 5.29 6.94S5.45 7.51 5.73 7.64L9.13 9.09C9.36 9.2 9.54 9.38 9.66 9.62L11.54 12.77C11.67 13.04 11.94 13.2 12.24 13.2S12.81 13.04 12.94 12.77L14.82 9.62C14.94 9.38 15.12 9.2 15.35 9.09L18.75 7.64C19.03 7.51 19.19 7.24 19.19 6.94S19.03 6.37 18.75 6.24L15.35 4.79C15.12 4.68 14.94 4.5 14.82 4.26Z"/>
+                                    </svg>
+                                {% elif category.name.lower() == 'docker' %}
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M13.98 11.08H16.12V13.22H13.98V11.08M14.12 10.32H15.88V9.96H14.12V10.32M13.98 9.24H16.12V11.04H13.98V9.24M13.3 10.64H13.66V10.32H13.3V10.64M13.66 11.4H13.98V11.08H13.66V11.4M12.86 11.4H13.22V11.08H12.86V11.4M12.86 11.04H13.22V10.68H12.86V11.04M12.86 10.32H13.22V9.96H12.86V10.32M12.5 11.4H12.86V11.08H12.5V11.4M12.5 10.68H12.86V10.32H12.5V10.68Z"/>
+                                    </svg>
+                                {% else %}
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M19 3H5C3.9 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V5C21 3.9 20.1 3 19 3M12 7C13.66 7 15 8.34 15 10S13.66 13 12 13 9 11.66 9 10 10.34 7 12 7M18 18H6V16.5C6 14.5 10 13.5 12 13.5S18 14.5 18 16.5V18Z"/>
+                                    </svg>
+                                {% endif %}
+                            </span>th=device-width, initial-scale=1.0">
+    <title>PLD - Holbies Learning Hub</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Source+Code+Pro:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+</head>
+<body>
+    <div class="matrix-bg"></div>
+    
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="/" class="logo-link">
+                    <span class="logo-texts">
+                        <span class="logo-text">HOLBIES</span>
+                        <span class="logo-subtext">Learning Hub</span>
+                    </span>
+                    <img src="/static/images/holberton-hero.png" alt="Holberton" class="logo-img" />
+                </a>
+            </div>
+            
+            <div class="nav-content-wrapper">
+                <nav class="nav-menu" id="nav-menu">
+                    <!-- Navigation will be dynamically populated by main.js -->
+                    <a href="/login" class="nav-link">Connexion</a>
+                    <a href="/register" class="nav-link">Inscription</a>
+                </nav>
+                
+                <!-- User Menu (will be shown/hidden by JavaScript) -->
+                <div class="user-menu-container" id="user-menu-container" style="display: none;">
+                    <div class="user-menu-trigger" id="user-menu-trigger">
+                        <span class="user-name" id="user-name">Utilisateur</span>
+                        <svg class="user-menu-icon" width="12" height="12" viewBox="0 0 12 12" fill="none">
+                            <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div class="user-dropdown" id="user-dropdown">
+                        <div class="user-dropdown-content">
+                            <a href="/profile" class="dropdown-item">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <polyline points="9,22 9,12 15,12 15,22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                Dashboard
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a href="/admin" class="dropdown-item admin-only" id="admin-menu-item" style="display: none;">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                    <path d="M12 2L2 7l10 5 10-5-10-5z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M2 17l10 5 10-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M2 12l10 5 10-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                Administration
+                            </a>
+                            <div class="dropdown-divider admin-only" id="admin-divider" style="display: none;"></div>
+                            <a href="#" class="dropdown-item logout-item" id="logout-item">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <polyline points="16,17 21,12 16,7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <line x1="21" y1="12" x2="9" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                Déconnexion
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="hamburger" id="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="pld-layout">
+            <!-- Sidebar de navigation à gauche -->
+            <aside class="pld-sidebar">
+                
+                <!-- Navigation des catégories -->
+                <div class="sidebar-section">
+                    <h3 class="sidebar-section-title">Catégories</h3>
+                    <div class="categories-menu" id="categories-menu">
+                        {% for category in categories %}
+                        <div class="category-menu-item" data-category="{{ category.name.lower() }}" onclick="window.aiQuizManager.selectCategorySidebar('{{ category.name.lower() }}')" title="{{ category.description }}">
+                            <span class="category-icon">
+                                {% if category.name.lower() == 'shell' %}
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M5.5 4L2 7.5L5.5 11L7 9.5L4.5 7L7 4.5L5.5 4ZM9 12V14H22V12H9Z"/>
+                                    </svg>
+                                {% elif category.name.lower() == 'c' %}
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M16.5 9.5C16.5 10.88 15.38 12 14 12C12.62 12 11.5 10.88 11.5 9.5C11.5 8.12 12.62 7 14 7C15.38 7 16.5 8.12 16.5 9.5Z"/>
+                                    </svg>
+                                {% elif category.name.lower() == 'python' %}
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M19.14 7.5C19.14 9.11 18.04 10.41 16.55 10.78V13.22C18.04 13.59 19.14 14.89 19.14 16.5C19.14 18.43 17.57 20 15.64 20H8.36C6.43 20 4.86 18.43 4.86 16.5C4.86 14.89 5.96 13.59 7.45 13.22V10.78C5.96 10.41 4.86 9.11 4.86 7.5C4.86 5.57 6.43 4 8.36 4H15.64C17.57 4 19.14 5.57 19.14 7.5Z"/>
+                                    </svg>
+                                {% elif category.name.lower() == 'javascript' %}
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M3 3H21V21H3V3M7.73 18.04C8.13 18.89 8.92 19.59 10.27 19.59C11.77 19.59 12.8 18.79 12.8 17.04V11.26H11.1V17C11.1 17.86 10.75 18.08 10.2 18.08C9.62 18.08 9.38 17.68 9.11 17.21L7.73 18.04M13.71 17.86C14.21 18.84 15.22 19.59 16.8 19.59C18.4 19.59 19.6 18.76 19.6 17.23C19.6 15.82 18.79 15.19 17.35 14.57L16.93 14.39C16.2 14.08 15.89 13.87 15.89 13.37C15.89 12.96 16.2 12.64 16.7 12.64C17.18 12.64 17.5 12.85 17.79 13.37L19.1 12.5C18.55 11.54 17.77 11.17 16.7 11.17C15.19 11.17 14.22 12.13 14.22 13.4C14.22 14.78 15.03 15.43 16.25 15.95L16.67 16.13C17.45 16.47 17.91 16.68 17.91 17.26C17.91 17.74 17.46 18.09 16.76 18.09C15.93 18.09 15.45 17.66 15.09 17.06L13.71 17.86Z"/>
+                                    </svg>
+                                {% elif category.name.lower() == 'sql' %}
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 3C7.58 3 4 4.79 4 7V17C4 19.21 7.58 21 12 21S20 19.21 20 17V7C20 4.79 16.42 3 12 3M18 17C18 17.5 15.87 19 12 19S6 17.5 6 17V14.77C7.61 15.55 9.72 16 12 16S16.39 15.55 18 14.77V17M18 12.45C16.7 13.4 14.42 14 12 14C9.58 14 7.3 13.4 6 12.45V9.64C7.47 10.47 9.61 11 12 11C14.39 11 16.53 10.47 18 9.64V12.45M12 9C8.13 9 6 7.5 6 7S8.13 5 12 5S18 6.5 18 7S15.87 9 12 9Z"/>
+                                    </svg>
+                                {% elif category.name.lower() == 'html' %}
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 17.56L16.07 16.43L16.62 10.33H9.38L9.2 8.3H16.8L17 6.31H7L7.56 12.32H14.45L14.22 14.9L12 15.5L9.78 14.9L9.64 13.24H7.64L7.93 16.43L12 17.56M4.07 3H19.93L18.5 19.3L12 21L5.5 19.3L4.07 3Z"/>
+                                    </svg>
+                                {% elif category.name.lower() == 'css' %}
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M5 3L4.35 6.34H17.94L17.5 8.5H3.92L3.26 11.83H16.85L16.09 15.64L10.61 17.45L5.86 15.64L6.19 14H2.85L2.06 18L9.91 21L18.96 18L20.16 11.97L20.4 10.76L21.94 3H5Z"/>
+                                    </svg>
+                                {% elif category.name.lower() == 'git' %}
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M2.6 10.59L8.38 4.8L10.07 6.5C9.83 7.35 10.22 8.28 11 8.73V14.27C10.22 14.72 9.83 15.65 10.07 16.5L8.38 18.2L2.6 12.41C1.93 11.75 1.93 10.65 2.6 10.59M21.4 10.59C22.07 11.26 22.07 12.35 21.4 13.01L15.62 18.8L14.93 18.12C14.08 19.04 12.66 19.04 11.81 18.19C10.96 17.34 10.96 15.92 11.81 15.07C12.66 14.22 14.08 14.22 14.93 15.07L15.62 4.8L21.4 10.59Z"/>
+                                    </svg>
+                                {% elif category.name.lower() == 'linux' %}
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M14.82 4.26L12.94 1.11C12.81.84 12.54.68 12.24.68S11.67.84 11.54 1.11L9.66 4.26C9.54 4.5 9.36 4.68 9.13 4.79L5.73 6.24C5.45 6.37 5.29 6.64 5.29 6.94S5.45 7.51 5.73 7.64L9.13 9.09C9.36 9.2 9.54 9.38 9.66 9.62L11.54 12.77C11.67 13.04 11.94 13.2 12.24 13.2S12.81 13.04 12.94 12.77L14.82 9.62C14.94 9.38 15.12 9.2 15.35 9.09L18.75 7.64C19.03 7.51 19.19 7.24 19.19 6.94S19.03 6.37 18.75 6.24L15.35 4.79C15.12 4.68 14.94 4.5 14.82 4.26Z"/>
+                                    </svg>
+                                {% elif category.name.lower() == 'docker' %}
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M13.98 11.08H16.12V13.22H13.98V11.08M14.12 10.32H15.88V9.96H14.12V10.32M13.98 9.24H16.12V11.04H13.98V9.24M13.3 10.64H13.66V10.32H13.3V10.64M13.66 11.4H13.98V11.08H13.66V11.4M12.86 11.4H13.22V11.08H12.86V11.4M12.86 11.04H13.22V10.68H12.86V11.04M12.86 10.32H13.22V9.96H12.86V10.32M12.5 11.4H12.86V11.08H12.5V11.4M12.5 10.68H12.86V10.32H12.5V10.68Z"/>
+                                    </svg>
+                                {% else %}�
+                                {% endif %}
+                            </span>
+                            <span class="category-name">{{ category.name }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <!-- Navigation des thèmes (affiché quand une catégorie est sélectionnée) -->
+                <div class="sidebar-section hidden" id="themes-section">
+                    <h3 class="sidebar-section-title">Thèmes</h3>
+                    <div class="back-button" onclick="backToCategories()">
+                        ← Retour aux catégories
+                    </div>
+                    <div class="themes-menu" id="themes-menu">
+                        <!-- Les thèmes seront chargés dynamiquement -->
+                    </div>
+                </div>
+                
+            </aside>
+            
+            <!-- Contenu principal à droite -->
+            <main class="pld-content">
+                <!-- Écran de démarrage -->
+                <section id="pld-start" class="pld-section active">
+                    <!-- En-tête principal avec le même style que Learning -->
+                    <div class="learning-header">
+                        <h1>Peer Learning Day</h1>
+                        <p class="learning-subtitle">Système d'évaluation par intelligence artificielle avec réponses libres</p>
+                    </div>
+                    
+                    <div class="ai-start-info">
+                        <h3>Comment fonctionne le PLD ?</h3>
+                        <ul>
+                            <li><strong>Réponses libres :</strong> Répondez avec vos propres mots en texte libre</li>
+                            <li><strong>Correction automatique :</strong> L'IA analyse votre réponse et la compare à la réponse attendue</li>
+                            <li><strong>Scoring intelligent :</strong> 70% pour la similarité, 30% pour l'usage de termes techniques</li>
+                            <li><strong>Bonus technique :</strong> +5 points par terme technique utilisé correctement</li>
+                            <li><strong>Feedback détaillé :</strong> Explication personnalisée de votre performance</li>
+                        </ul>
+                        
+                        <div class="start-instruction-container">
+                            <div class="start-instruction">
+                                <div class="instruction-content">
+                                    <h4 class="instruction-title">
+                                        <svg class="arrow-icon-inline" width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                            <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                        Commencez votre évaluation
+                                    </h4>
+                                    <p class="instruction-text">Sélectionnez une catégorie dans le menu de gauche pour débuter votre session PLD</p>
+                                </div>
+                                <div class="instruction-pulse"></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section pour l'affichage du thème sélectionné -->
+                <section id="pld-theme-selection" class="pld-section hidden">
+                    <div class="content-header">
+                        <h2 class="content-title">Sélection du thème</h2>
+                        <p class="content-description">
+                            Catégorie : <span id="selected-category-display"></span>
+                        </p>
+                    </div>
+                    
+                    <div class="theme-actions">
+                        <button class="action-button primary" onclick="selectAllThemes()">
+                            🎲 Toute la catégorie
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Section pour affichage des questions -->
+                <section id="pld-questions" class="pld-section hidden">
+                    <div class="content-header">
+                        <h2 class="content-title">Quiz</h2>
+                        <p class="content-description">
+                            Thème : <span id="selected-theme-display"></span>
+                        </p>
+                    </div>
+                    
+                    <div class="question-container">
+                        <!-- Contenu des questions dynamique -->
+                    </div>
+                </section>
+
+                <!-- Section pour les résultats -->
+                <section id="pld-results" class="pld-section hidden">
+                    <div class="content-header">
+                        <h2 class="content-title">Résultats</h2>
+                        <p class="content-description">
+                            Performance du quiz
+                        </p>
+                    </div>
+                    
+                    <div class="results-container">
+                        <!-- Contenu des résultats dynamique -->
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <!-- Reste de l'ancien template pour préservation temporaire -->
+        <div class="legacy-content" style="display: none;">
+            
+            <!-- Sections masquées temporairement -->
+            <div class="hidden-sections">
+                        
+                        <div class="category-card" data-category="c" onclick="selectCategory('c')">
+                            <div class="category-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M16.5 9.5C16.5 10.88 15.38 12 14 12C12.62 12 11.5 10.88 11.5 9.5C11.5 8.12 12.62 7 14 7C15.38 7 16.5 8.12 16.5 9.5Z"/>
+                                </svg>
+                            </div>
+                            <div class="category-name">C</div>
+                            <div class="category-description">Programmation système, pointeurs</div>
+                        </div>
+                        
+                        <div class="category-card" data-category="python" onclick="selectCategory('python')">
+                            <div class="category-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M19.14 7.5C19.14 9.11 18.04 10.41 16.55 10.78V13.22C18.04 13.59 19.14 14.89 19.14 16.5Z"/>
+                                </svg>
+                            </div>
+                            <div class="category-name">Python</div>
+                            <div class="category-description">Syntaxe, structures de données</div>
+                        </div>
+                        
+                        <div class="category-card" data-category="javascript" onclick="selectCategory('javascript')">
+                            <div class="category-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M3 3H21V21H3V3M7.73 18.04C8.13 18.89 8.92 19.59 10.27 19.59Z"/>
+                                </svg>
+                            </div>
+                            <div class="category-name">JavaScript</div>
+                            <div class="category-description">DOM, événements, async</div>
+                        </div>
+                        
+                        <div class="category-card" data-category="sql" onclick="selectCategory('sql')">
+                            <div class="category-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 3C7.58 3 4 4.79 4 7V17C4 19.21 7.58 21 12 21S20 19.21 20 17V7C20 4.79 16.42 3 12 3Z"/>
+                                </svg>
+                            </div>
+                            <div class="category-name">SQL</div>
+                            <div class="category-description">Bases de données, requêtes</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sélection de thème -->
+            <section id="pld-theme-selection" class="quiz-section hidden">
+                <div class="quiz-header">
+                    <h2 class="glitch">Choisissez un thème</h2>
+                    <p class="quiz-description">
+                        Catégorie sélectionnée : <span id="selected-category-display"></span>
+                    </p>
+                </div>
+                
+                <div class="theme-selector">
+                    <div class="back-button" onclick="backToCategories()">
+                        ← Retour aux catégories
+                    </div>
+                    <div id="themes-grid" class="themes-grid">
+                        <!-- Les thèmes seront chargés dynamiquement -->
+                    </div>
+                </div>
+                
+                <div class="theme-actions">
+                    <button class="action-button secondary" onclick="selectAllThemes()">
+                        🎲 Toute la catégorie
+                    </button>
+                </div>
+            </section>
+
+            <!-- Écran de question avec layout amélioré -->
+            <section id="pld-question" class="quiz-section hidden">
+                <!-- Barre de progression et compteur reorganisés -->
+                <div class="quiz-progress-section">
+                    <div class="progress-container">
+                        <div id="ai-progress-fill" class="progress-fill"></div>
+                    </div>
+                    
+                    <div class="question-counter">
+                        Question <span id="ai-current-question">1</span> sur <span id="ai-total-questions">5</span>
+                    </div>
+                </div>
+                
+                <!-- Section de la question avec informations contextuelles -->
+                <div class="question-display-section">
+                    <div class="ai-question-header">
+                        <div class="question-difficulty">
+                            <span class="difficulty-label">Difficulté:</span> 
+                            <span id="ai-question-difficulty" class="difficulty-value">MEDIUM</span> 
+                            <span class="score-separator">|</span> 
+                            <span class="score-label">Score max:</span> 
+                            <span id="ai-question-score" class="score-value">100</span> points
+                        </div>
+                        <h2 id="ai-question-text">Question apparaîtra ici...</h2>
+                    </div>
+                    
+                    <div class="technical-terms-hint">
+                        <strong>Conseil :</strong> <span id="technical-terms-hint">Utilisez des termes techniques précis...</span>
+                    </div>
+                </div>
+                
+                <!-- Zone de réponse avec indicateurs visuels -->
+                <div class="answer-input-section">
+                    <div class="ai-answer-area">
+                        <label for="ai-user-answer">Votre réponse détaillée :</label>
+                        <div class="textarea-wrapper">
+                            <textarea 
+                                id="ai-user-answer" 
+                                class="ai-answer-textarea"
+                                placeholder="Rédigez votre réponse en utilisant des termes techniques appropriés. Plus votre réponse est précise et technique, plus votre score sera élevé..."
+                            ></textarea>
+                            <div class="character-counter">
+                                <span id="char-count">0</span> caractères
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="quiz-actions">
+                        <button id="submit-ai-answer-btn" class="btn btn-primary">
+                            <span>🤖 Soumettre pour Correction IA</span>
+                            <div class="btn-loading"></div>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Écran de résultats optimisé -->
+            <section id="pld-results" class="quiz-section hidden">
+                <div class="quiz-header">
+                    <h1>Résultats du PLD</h1>
+                </div>
+                
+                <!-- Section de score principal avec statistiques -->
+                <div class="results-overview">
+                    <div class="results-summary">
+                        <div class="score-display">
+                            <div class="score-main">
+                                <span id="ai-final-score">0/500</span> points
+                            </div>
+                            <div class="score-percentage">
+                                <span id="ai-final-percentage">0%</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Graphique de performance -->
+                    <div class="performance-chart">
+                        <div class="chart-title">Performance par Question</div>
+                        <div id="performance-bars" class="performance-bars">
+                            <!-- Généré dynamiquement -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Détails des résultats avec organisation améliorée -->
+                <div class="results-analysis">
+                    <div id="ai-results-details" class="results-details">
+                        <!-- Détails générés dynamiquement -->
+                    </div>
+                    
+                    <!-- Recommandations personnalisées -->
+                    <div class="recommendations-section">
+                        <h3>📚 Recommandations d'Amélioration</h3>
+                        <div id="ai-recommendations" class="recommendations-list">
+                            <!-- Généré dynamiquement selon les résultats -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="quiz-actions">
+                    <button id="retake-pld-btn" class="btn btn-secondary">
+                        <span>🔄 Refaire le PLD</span>
+                    </button>
+                    <a href="/quiz" class="btn btn-primary">
+                        <span>Quiz</span>
+                    </a>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Modal de feedback -->
+    <div id="ai-answer-modal" class="ai-modal hidden">
+        <div class="ai-modal-content">
+            <h2 id="ai-modal-title">Résultat de la correction</h2>
+            <div id="ai-answer-feedback">
+                <!-- Contenu généré dynamiquement -->
+            </div>
+            <div class="modal-actions">
+                <button id="next-ai-question-btn" class="btn btn-primary">
+                    <span>Question Suivante</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2025 Holbies Learning Hub. PLD - Peer Learning Day.</p>
+            <p>Système d'évaluation basé sur l'intelligence artificielle</p>
+        </div>
+    </footer>
+
+    <script src="/static/js/main.js"></script>
+    <script src="/static/js/main.js"></script>
+    <script src="/static/js/pld.js"></script>
+</body>
+</html>

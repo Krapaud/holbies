@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Toast Simple</title>
+    <link rel="stylesheet" href="http://localhost:8000/static/css/toast.css">
+</head>
+<body>
+    <h1>Test Toast</h1>
+    <button onclick="testToast()">Tester Toast</button>
+    <button onclick="testConsole()">Tester Console</button>
+    
+    <script src="http://localhost:8000/static/js/toast.js"></script>
+    <script>
+        function testToast() {
+            console.log('Test toast déclenché');
+            console.log('showInfo exists:', typeof showInfo);
+            console.log('showError exists:', typeof showError);
+            
+            if (typeof showInfo === 'function') {
+                showInfo('Test toast info');
+                console.log('Toast info appelé');
+            } else {
+                console.error('showInfo n\'est pas disponible');
+            }
+        }
+        
+        function testConsole() {
+            console.log('=== DEBUG TOAST ===');
+            console.log('window.ToastManager:', window.ToastManager);
+            console.log('window.showInfo:', window.showInfo);
+            console.log('window.showError:', window.showError);
+            console.log('window.showSuccess:', window.showSuccess);
+            console.log('window.showWarning:', window.showWarning);
+            
+            // Vérifier les éléments DOM
+            const toastContainer = document.getElementById('toast-container');
+            console.log('Toast container:', toastContainer);
+            
+            if (toastContainer) {
+                console.log('Container style:', window.getComputedStyle(toastContainer));
+            }
+        }
+        
+        // Auto-test au chargement
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Page chargée, test automatique...');
+            setTimeout(testConsole, 1000);
+            setTimeout(testToast, 2000);
+        });
+    </script>
+</body>
+</html>

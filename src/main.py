@@ -13,7 +13,7 @@ import traceback
 import io
 
 from app.database import engine, get_db
-from app.models import Base
+from app.models import Base, PLDCategory, PLDTheme, PLDQuestion
 from app.routers import auth, quiz, users, ai_quiz, pld_admin
 from app.routers import performance
 from app.auth import get_current_user
@@ -115,7 +115,31 @@ async def dashboard_redirect(request: Request):
 @app.get("/pld", response_class=HTMLResponse)
 async def pld_page(request: Request):
     await login_required(request)
-    return templates.TemplateResponse("pld.html", get_template_context(request))
+    
+    # Récupérer les catégories PLD avec le nombre de questions par catégorie
+    db = next(get_db())
+    try:
+        categories_data = []
+        categories = db.query(PLDCategory).order_by(PLDCategory.name).all()
+        
+        for category in categories:
+            # Compter le nombre total de questions dans cette catégorie
+            question_count = db.query(PLDQuestion).join(PLDTheme).filter(
+                PLDTheme.category_id == category.id
+            ).count()
+            
+            categories_data.append({
+                'id': category.id,
+                'name': category.name,
+                'description': category.description,
+                'question_count': question_count
+            })
+    finally:
+        db.close()
+    
+    context = get_template_context(request)
+    context['categories'] = categories_data
+    return templates.TemplateResponse("pld.html", context)
 
 @app.get("/admin", response_class=HTMLResponse)
 async def admin_redirect(request: Request):

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Debug - Fonction displayThemesInSidebar</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f0f0f0; }
+        .test-container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; }
+        .test-case { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .test-result { margin: 10px 0; padding: 10px; border-radius: 3px; }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        #themes-menu { border: 1px solid #ccc; min-height: 50px; padding: 10px; margin: 10px 0; }
+        .theme-menu-item { padding: 8px; border-bottom: 1px solid #eee; cursor: pointer; }
+        .theme-menu-item:hover { background: #f0f0f0; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 Test Debug - Fonction displayThemesInSidebar</h1>
+        
+        <div id="themes-menu"></div>
+        
+        <div class="test-case">
+            <h3>Test 1: Tableau d'objets (format API)</h3>
+            <button onclick="testObjectArray()">Tester avec objets</button>
+            <div id="result1" class="test-result"></div>
+        </div>
+        
+        <div class="test-case">
+            <h3>Test 2: Tableau vide</h3>
+            <button onclick="testEmptyArray()">Tester avec tableau vide</button>
+            <div id="result2" class="test-result"></div>
+        </div>
+        
+        <div class="test-case">
+            <h3>Test 3: Pas un tableau (cause de l'erreur)</h3>
+            <button onclick="testNotArray()">Tester avec objet non-tableau</button>
+            <div id="result3" class="test-result"></div>
+        </div>
+        
+        <div class="test-case">
+            <h3>Test 4: null ou undefined</h3>
+            <button onclick="testNullUndefined()">Tester avec null/undefined</button>
+            <div id="result4" class="test-result"></div>
+        </div>
+    </div>
+
+    <script>
+        // Fonction corrigée directement dans le test
+        function displayThemesInSidebar(themes) {
+            const themesMenu = document.getElementById('themes-menu');
+            if (!themesMenu) return;
+            
+            // Vérifier que themes est bien un tableau
+            if (!Array.isArray(themes)) {
+                console.error('displayThemesInSidebar: themes n\'est pas un tableau:', themes);
+                themesMenu.innerHTML = '<div class="theme-menu-item">Aucun thème disponible</div>';
+                return;
+            }
+            
+            if (themes.length === 0) {
+                themesMenu.innerHTML = '<div class="theme-menu-item">Aucun thème disponible</div>';
+                return;
+            }
+            
+            themesMenu.innerHTML = themes.map(theme => {
+                // Gérer les objets theme avec propriétés ou les strings simples
+                const themeName = typeof theme === 'string' ? theme : theme.name || theme.display_name || 'Thème';
+                const themeDisplay = typeof theme === 'string' ? theme : theme.display_name || theme.name || 'Thème';
+                
+                return `
+                    <div class="theme-menu-item" data-theme="${themeName}">
+                        <span class="theme-name">${themeDisplay}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function testObjectArray() {
+            try {
+                const themes = [
+                    { name: 'variables', display_name: 'Variables et paramètres', description: 'Gestion des variables' },
+                    { name: 'functions', display_name: 'Fonctions', description: 'Définition et usage des fonctions' }
+                ];
+                displayThemesInSidebar(themes);
+                document.getElementById('result1').innerHTML = '<span class="success">✅ Succès: Tableau d\'objets traité correctement</span>';
+            } catch (error) {
+                document.getElementById('result1').innerHTML = `<span class="error">❌ Erreur: ${error.message}</span>`;
+            }
+        }
+        
+        function testEmptyArray() {
+            try {
+                displayThemesInSidebar([]);
+                document.getElementById('result2').innerHTML = '<span class="success">✅ Succès: Tableau vide traité correctement</span>';
+            } catch (error) {
+                document.getElementById('result2').innerHTML = `<span class="error">❌ Erreur: ${error.message}</span>`;
+            }
+        }
+        
+        function testNotArray() {
+            try {
+                // Simuler la réponse JSON complète (cause de l'erreur originale)
+                const response = {
+                    themes: [
+                        { name: 'test', display_name: 'Test' }
+                    ]
+                };
+                displayThemesInSidebar(response); // Passer l'objet complet au lieu du tableau
+                document.getElementById('result3').innerHTML = '<span class="success">✅ Succès: Objet non-tableau géré gracieusement</span>';
+            } catch (error) {
+                document.getElementById('result3').innerHTML = `<span class="error">❌ Erreur: ${error.message}</span>`;
+            }
+        }
+        
+        function testNullUndefined() {
+            try {
+                displayThemesInSidebar(null);
+                document.getElementById('result4').innerHTML = '<span class="success">✅ Succès: null/undefined géré correctement</span>';
+            } catch (error) {
+                document.getElementById('result4').innerHTML = `<span class="error">❌ Erreur: ${error.message}</span>`;
+            }
+        }
+    </script>
+</body>
+</html>

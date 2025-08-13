@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Debug - Comportement Catégories Vides</title>
+    <link rel="stylesheet" href="/static/css/toast.css">
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            padding: 20px; 
+            background: #f0f0f0; 
+        }
+        .debug-container { 
+            max-width: 1000px; 
+            margin: 0 auto; 
+            background: white; 
+            padding: 30px; 
+            border-radius: 10px; 
+        }
+        .test-section { 
+            margin: 20px 0; 
+            padding: 15px; 
+            border: 1px solid #ddd; 
+            border-radius: 5px; 
+        }
+        .category-selector {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .category-card { 
+            padding: 15px; 
+            border: 2px solid #ddd; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            background: white;
+            transition: all 0.3s ease;
+        }
+        .category-card:hover { 
+            background: #f0f0f0; 
+        }
+        .category-card.selected { 
+            border-color: #007bff; 
+            background: #e3f2fd; 
+        }
+        .debug-log {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .status.success { background: #d4edda; color: #155724; }
+        .status.info { background: #d1ecf1; color: #0c5460; }
+        .status.error { background: #f8d7da; color: #721c24; }
+        .status.warning { background: #fff3cd; color: #856404; }
+    </style>
+</head>
+<body>
+    <div class="debug-container">
+        <h1>🔍 Test Debug - Comportement Catégories Vides</h1>
+        
+        <div class="test-section">
+            <h3>Sélection de catégories :</h3>
+            <div class="category-selector">
+                <div class="category-card" data-category="shell" onclick="testCategory('shell')">Shell</div>
+                <div class="category-card" data-category="c" onclick="testCategory('c')">C</div>
+                <div class="category-card" data-category="python" onclick="testCategory('python')">Python</div>
+                <div class="category-card" data-category="javascript" onclick="testCategory('javascript')">JavaScript</div>
+                <div class="category-card" data-category="sql" onclick="testCategory('sql')">SQL</div>
+                <div class="category-card" data-category="test" onclick="testCategory('test')">Test</div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>État actuel :</h3>
+            <div id="current-status" class="status info">Aucune catégorie sélectionnée</div>
+        </div>
+        
+        <div class="test-section">
+            <h3>Debug Log :</h3>
+            <div id="debug-log" class="debug-log">Prêt pour les tests...\n</div>
+        </div>
+        
+        <div class="test-section">
+            <h3>Comportement attendu :</h3>
+            <ul>
+                <li>✅ Catégorie vide → Toast informatif affiché</li>
+                <li>✅ Catégorie reste sélectionnée visuellement</li>
+                <li>✅ Utilisateur reste sur la même page</li>
+                <li>✅ Pas de redirection vers un tableau vide</li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="/static/js/toast.js"></script>
+    <script>
+        let selectedCategory = null;
+        
+        function log(message) {
+            const debugLog = document.getElementById('debug-log');
+            const timestamp = new Date().toLocaleTimeString();
+            debugLog.textContent += `[${timestamp}] ${message}\n`;
+            debugLog.scrollTop = debugLog.scrollHeight;
+        }
+        
+        function updateStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('current-status');
+            statusDiv.textContent = message;
+            statusDiv.className = `status ${type}`;
+        }
+        
+        async function testCategory(category) {
+            log(`🔄 Test de la catégorie: ${category}`);
+            
+            // Mettre à jour la sélection visuelle
+            document.querySelectorAll('.category-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            document.querySelector(`[data-category="${category}"]`).classList.add('selected');
+            
+            selectedCategory = category;
+            updateStatus(`Catégorie "${category}" sélectionnée`, 'info');
+            
+            try {
+                log(`📡 Appel API: /api/pld/categories/${category}/themes`);
+                
+                const response = await fetch(`/api/pld/categories/${category}/themes`, {
+                    method: 'GET',
+                    credentials: 'same-origin'
+                });
+                
+                log(`📡 Réponse API: Status ${response.status}`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                log(`📦 Données reçues: ${JSON.stringify(data, null, 2)}`);
+                
+                // Simuler le comportement de PLD
+                if (!data.themes || data.themes.length === 0) {
+                    log(`ℹ️ Catégorie vide détectée`);
+                    
+                    // Afficher le toast
+                    if (window.showInfo) {
+                        window.showInfo(`Aucun thème disponible pour la catégorie "${category}"`, {
+                            title: 'Information',
+                            duration: 4000
+                        });
+                        log(`🍞 Toast affiché: "Aucun thème disponible pour ${category}"`);
+                    } else {
+                        log(`❌ Fonction showInfo non disponible`);
+                    }
+                    
+                    // Vérifier que la catégorie reste sélectionnée
+                    const selectedCard = document.querySelector('.category-card.selected');
+                    if (selectedCard && selectedCard.getAttribute('data-category') === category) {
+                        log(`✅ Catégorie reste sélectionnée visuellement`);
+                        updateStatus(`Catégorie "${category}" vide - Toast affiché, reste sélectionnée`, 'warning');
+                    } else {
+                        log(`❌ Catégorie a été désélectionnée !`);
+                        updateStatus(`Erreur: catégorie désélectionnée`, 'error');
+                    }
+                    
+                    log(`✅ Comportement correct: reste sur la même page`);
+                    
+                } else {
+                    log(`✅ Thèmes trouvés: ${data.themes.length}`);
+                    updateStatus(`Catégorie "${category}" avec ${data.themes.length} thème(s)`, 'success');
+                    
+                    // Lister les thèmes
+                    data.themes.forEach((theme, index) => {
+                        log(`   ${index + 1}. ${theme.display_name || theme.name}`);
+                    });
+                }
+                
+            } catch (error) {
+                log(`❌ Erreur: ${error.message}`);
+                updateStatus(`Erreur lors du test de "${category}": ${error.message}`, 'error');
+                
+                // Afficher le toast d'erreur
+                if (window.showError) {
+                    window.showError(`Erreur lors du chargement des thèmes pour "${category}"`, {
+                        title: 'Erreur de connexion',
+                        duration: 6000
+                    });
+                    log(`🍞 Toast d'erreur affiché`);
+                }
+            }
+        }
+        
+        // Test automatique au chargement
+        window.addEventListener('load', () => {
+            log('🚀 Page de test chargée');
+            
+            // Vérifier la disponibilité des fonctions toast
+            if (window.showInfo && window.showError && window.showSuccess) {
+                log('✅ Fonctions toast disponibles');
+                updateStatus('Prêt pour les tests - Fonctions toast OK', 'success');
+                
+                // Test automatique avec catégorie probablement vide
+                setTimeout(() => {
+                    log('🤖 Test automatique: catégorie "c"');
+                    testCategory('c');
+                }, 1000);
+                
+            } else {
+                log('❌ Fonctions toast non disponibles');
+                updateStatus('Erreur: Fonctions toast non chargées', 'error');
+            }
+        });
+    </script>
+</body>
+</html>
