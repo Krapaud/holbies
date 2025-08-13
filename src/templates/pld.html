@@ -62,7 +62,7 @@
                     <h3 class="sidebar-section-title" style="text-align: center; font-weight: 700; font-size: 1.2rem; margin-bottom: 1.5rem; color: var(--text-color); text-transform: uppercase; letter-spacing: 1px;">Catégories</h3>
                     <div class="categories-menu" id="categories-menu">
                         {% for category in categories %}
-                        <div class="category-menu-item" data-category="{{ category.name.lower() }}" onclick="selectCategory('{{ category.name.lower() }}')" title="{{ category.description }}">
+                        <div class="category-menu-item" data-category="{{ category.name.lower() }}" title="{{ category.description }}">
                             <span class="category-icon">{{ category.name[0].upper() }}</span>
                             <span class="category-name">{{ category.name }}</span>
                         </div>
@@ -73,7 +73,7 @@
                 <!-- Navigation des thèmes (affiché quand une catégorie est sélectionnée) -->
                 <div class="sidebar-section hidden" id="themes-section">
                     <h3 class="sidebar-section-title" style="text-align: center; font-weight: 700; font-size: 1.2rem; margin-bottom: 1.5rem; color: var(--text-color); text-transform: uppercase; letter-spacing: 1px;">Thèmes</h3>
-                    <div class="back-button" onclick="backToCategories()">
+                    <div class="back-button">
                         ← Retour aux catégories
                     </div>
                     <div class="themes-menu" id="themes-menu">
@@ -207,8 +207,8 @@
                         </div>
                         
                         <div class="results-actions">
-                            <button onclick="restartQuiz()" class="btn-primary">Recommencer</button>
-                            <button onclick="goToStart()" class="btn-secondary">Retour à l'accueil</button>
+                            <button class="btn-primary" data-action="restart">Recommencer</button>
+                            <button class="btn-secondary" data-action="home">Retour à l'accueil</button>
                         </div>
                     </div>
                 </section>
@@ -221,25 +221,25 @@
             <!-- Sections masquées temporairement -->
             <div class="hidden-sections">
                         
-                        <div class="category-card" data-category="c" onclick="selectCategory('c')">
+                        <div class="category-card" data-category="c">
                             <div class="category-icon">C</div>
                             <div class="category-name">C</div>
                             <div class="category-description">Programmation système, pointeurs</div>
                         </div>
                         
-                        <div class="category-card" data-category="python" onclick="selectCategory('python')">
+                        <div class="category-card" data-category="python">
                             <div class="category-icon">PY</div>
                             <div class="category-name">Python</div>
                             <div class="category-description">Syntaxe, structures de données</div>
                         </div>
                         
-                        <div class="category-card" data-category="javascript" onclick="selectCategory('javascript')">
+                        <div class="category-card" data-category="javascript">
                             <div class="category-icon">JS</div>
                             <div class="category-name">JavaScript</div>
                             <div class="category-description">DOM, événements, async</div>
                         </div>
                         
-                        <div class="category-card" data-category="sql" onclick="selectCategory('sql')">
+                        <div class="category-card" data-category="sql">
                             <div class="category-icon">SQL</div>
                             <div class="category-name">SQL</div>
                             <div class="category-description">Bases de données, requêtes</div>
@@ -253,7 +253,7 @@
                 <h2>Sélection de catégorie</h2>
                 <div class="basic-categories">
                     {% for category in categories %}
-                    <div class="basic-category-item" onclick="selectCategory('{{ category.name.lower() }}')">
+                    <div class="basic-category-item">
                         <span>{{ category.name }}</span>
                     </div>
                     {% endfor %}
@@ -274,102 +274,5 @@
     <script src="{{ url_for('static', path='/js/toast.js') }}"></script>
     <script src="{{ url_for('static', path='/js/main.js') }}"></script>
     <script src="{{ url_for('static', path='/js/pld.js') }}"></script>
-    <script>
-        // Fonction helper sûre pour la sélection de catégorie avec limite de retry
-        function selectCategory(categoryName, retryCount = 0) {
-            const MAX_RETRIES = 10; // Réduire à 1 seconde max
-            
-            // Vérifier d'abord si l'instance globale existe
-            if (window.aiQuizManager && typeof window.aiQuizManager.selectCategorySidebar === 'function') {
-                console.log(`✅ Sélection catégorie: ${categoryName}`);
-                window.aiQuizManager.selectCategorySidebar(categoryName);
-                return;
-            }
-            
-            // Si pas d'instance globale, essayer de créer une instance temporaire
-            if (typeof AIQuizManager !== 'undefined' && window.holbiesApp) {
-                try {
-                    if (!window.aiQuizManager) {
-                        console.log('🔄 Création d\'instance AIQuizManager pour sélection...');
-                        window.aiQuizManager = new AIQuizManager();
-                    }
-                    
-                    if (window.aiQuizManager && typeof window.aiQuizManager.selectCategorySidebar === 'function') {
-                        console.log(`✅ Sélection catégorie (instance créée): ${categoryName}`);
-                        window.aiQuizManager.selectCategorySidebar(categoryName);
-                        return;
-                    }
-                } catch (error) {
-                    console.error('❌ Erreur création instance temporaire:', error);
-                }
-            }
-            
-            // En dernier recours, retry avec limite
-            if (retryCount < MAX_RETRIES) {
-                console.log(`⏳ AIQuizManager pas prêt, retry ${retryCount + 1}/${MAX_RETRIES}...`);
-                setTimeout(() => selectCategory(categoryName, retryCount + 1), 100);
-            } else {
-                console.error('❌ Impossible de sélectionner la catégorie après 1 seconde');
-                console.log('🔍 État:', {
-                    'window.aiQuizManager': !!window.aiQuizManager,
-                    'typeof AIQuizManager': typeof AIQuizManager,
-                    'window.holbiesApp': !!window.holbiesApp
-                });
-            }
-        }
-        
-        // Attendre que holbiesApp soit initialisé avant de créer aiQuizManager
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 DOM Content Loaded - Initialisation PLD...');
-            
-            // Fonction d'initialisation
-            function initAIQuizManager() {
-                // S'assurer que holbiesApp existe
-                if (!window.holbiesApp) {
-                    console.log('📦 Création de HolbiesApp...');
-                    window.holbiesApp = new HolbiesApp();
-                }
-                
-                // Vérifier l'état des dépendances
-                console.log('🔍 Vérification des dépendances:');
-                console.log('  - window.holbiesApp:', !!window.holbiesApp);
-                console.log('  - typeof AIQuizManager:', typeof AIQuizManager);
-                console.log('  - window.AIQuizManager:', !!window.AIQuizManager);
-                
-                try {
-                    console.log('🧪 Tentative d\'initialisation d\'AIQuizManager...');
-                    
-                    if (typeof AIQuizManager !== 'undefined' && AIQuizManager) {
-                        window.aiQuizManager = new AIQuizManager();
-                        console.log('✅ PLD: aiQuizManager initialisé');
-                        console.log('🔧 Méthodes disponibles:', Object.getOwnPropertyNames(Object.getPrototypeOf(window.aiQuizManager)));
-                        
-                        // Marquer comme initialisé
-                        window.aiQuizManagerReady = true;
-                        
-                        return true;
-                    } else {
-                        console.error('❌ Classe AIQuizManager non disponible');
-                        console.log('Available classes:', Object.getOwnPropertyNames(window).filter(name => name.includes('Quiz')));
-                        console.log('Global objects:', Object.getOwnPropertyNames(window).filter(name => name[0] === name[0].toUpperCase()).slice(0, 10));
-                        return false;
-                    }
-                } catch (error) {
-                    console.error('❌ Erreur lors de l\'initialisation d\'aiQuizManager:', error);
-                    console.error('Stack:', error.stack);
-                    return false;
-                }
-            }
-            
-            // Essayer d'initialiser immédiatement
-            if (!initAIQuizManager()) {
-                // Si ça échoue, essayer avec un petit délai
-                setTimeout(() => {
-                    console.log('🔄 Retry d\'initialisation...');
-                    initAIQuizManager();
-                }, 100);
-            }
-        });
-    </script>
 </body>
 </html>
