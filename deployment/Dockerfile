@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y \
 # Copier les fichiers de requirements
 COPY config/requirements.txt .
 
-# Installer les dépendances Python
+# Installer les dépendances Python (inclut Hugging Face Transformers pour IA)
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copier le code de l'application

@@ -14,7 +14,7 @@ import io
 
 from app.database import engine, get_db
 from app.models import Base, PLDCategory, PLDTheme, PLDQuestion
-from app.routers import auth, quiz, users, ai_quiz, pld_admin
+from app.routers import auth, quiz, users, ai_quiz, pld_admin, pld
 from app.routers import performance
 from app.auth import get_current_user
 from sqlalchemy.orm import Session
@@ -67,6 +67,7 @@ def get_template_context(request: Request, **kwargs):
 app.include_router(auth.router, prefix="/api/auth", tags=["authentication"])
 app.include_router(quiz.router, prefix="/api/quiz", tags=["quiz"])
 app.include_router(users.router, prefix="/api/users", tags=["users"])
+app.include_router(pld.router, prefix="/api", tags=["pld-public"])  # Nouveau router PLD public
 app.include_router(ai_quiz.router, prefix="/api/pld", tags=["pld"])
 app.include_router(pld_admin.router, prefix="/api/pld", tags=["pld-admin"])
 app.include_router(performance.router, prefix="/api/performance", tags=["performance"])

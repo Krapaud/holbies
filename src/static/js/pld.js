@@ -28,11 +28,10 @@ class AIQuizManager {
 
     setupEventListeners() {
         // Les event listeners pour les catégories sont gérés par les attributs onclick
-        const submitBtn = document.getElementById('submit-ai-answer-btn');
-        const nextBtn = document.getElementById('next-ai-question-btn');
+        const submitBtn = document.getElementById('submit-answer');
+        const nextBtn = document.getElementById('next-question');
         const retakeBtn = document.getElementById('retake-pld-btn');
-        const answerTextarea = document.getElementById('ai-user-answer');
-        const charCounter = document.getElementById('char-count');
+        const answerTextarea = document.getElementById('user-answer');
 
         if (submitBtn) {
             submitBtn.addEventListener('click', () => this.submitAnswer());
@@ -46,21 +45,24 @@ class AIQuizManager {
             retakeBtn.addEventListener('click', () => this.retakeQuiz());
         }
 
-        // Compteur de caractères avec feedback visuel
-        if (answerTextarea && charCounter) {
+        // Compteur de caractères avec feedback visuel (si élément présent)
+        if (answerTextarea) {
             answerTextarea.addEventListener('input', () => {
                 const count = answerTextarea.value.length;
-                charCounter.textContent = count;
-                
-                // Feedback visuel basé sur la longueur
-                if (count < 50) {
-                    charCounter.style.color = '#ff6b6b'; // Rouge - trop court
-                } else if (count < 100) {
-                    charCounter.style.color = '#ffa726'; // Orange - court
-                } else if (count < 300) {
-                    charCounter.style.color = '#66bb6a'; // Vert - bien
-                } else {
-                    charCounter.style.color = '#42a5f5'; // Bleu - détaillé
+                const charCounter = document.getElementById('char-count');
+                if (charCounter) {
+                    charCounter.textContent = count;
+                    
+                    // Feedback visuel basé sur la longueur
+                    if (count < 50) {
+                        charCounter.style.color = '#ff6b6b'; // Rouge - trop court
+                    } else if (count < 100) {
+                        charCounter.style.color = '#ffa726'; // Orange - court
+                    } else if (count < 300) {
+                        charCounter.style.color = '#66bb6a'; // Vert - bien
+                    } else {
+                        charCounter.style.color = '#42a5f5'; // Bleu - détaillé
+                    }
                 }
             });
         }
@@ -72,10 +74,17 @@ class AIQuizManager {
         }
         
         try {
-            const url = `/api/ai/questions/${this.selectedCategory}${this.selectedTheme ? '/' + this.selectedTheme : ''}`;
-            const response = await fetch(url);
-            this.questions = await response.json();
+            const url = `/api/pld/questions/${this.selectedCategory}${this.selectedTheme ? '/' + this.selectedTheme : ''}`;
+            const response = await window.holbiesApp.apiRequest(url, {
+                method: 'GET'
+            });
+            
+            this.questions = response.questions || response;
+            
+            console.log('Questions chargées:', this.questions.length);
+            
         } catch (error) {
+            console.error('Erreur chargement questions:', error);
             showError('Erreur lors du chargement des questions');
         }
     }
@@ -101,14 +110,12 @@ class AIQuizManager {
 
     async loadThemes() {
         try {
-            const response = await fetch(`/api/pld/categories/${this.selectedCategory}/themes`, {
-                method: 'GET',
-                credentials: 'same-origin'
+            const response = await window.holbiesApp.apiRequest(`/api/pld/categories/${this.selectedCategory}/themes`, {
+                method: 'GET'
             });
             
-            // Gérer spécifiquement le cas de catégorie vide (204 No Content)
-            if (response.status === 204) {
-                
+            // Si la réponse est vide ou null, gérer comme une catégorie vide
+            if (!response || !response.themes || response.themes.length === 0) {
                 // Messages personnalisés selon la catégorie
                 const categoryMessages = {
                     'c': 'Aucun thème C/C++ disponible pour le moment. Cette section sera bientôt enrichie !',
@@ -130,12 +137,7 @@ class AIQuizManager {
                 return;
             }
             
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}`);
-            }
-            
-            const data = await response.json();
-            this.displayThemes(data.themes);
+            this.displayThemes(response.themes);
         } catch (error) {
             // Messages d'erreur contextuels
             let errorMessage = 'Impossible de charger les thèmes pour le moment.';
@@ -216,16 +218,29 @@ class AIQuizManager {
     }
 
     selectTheme(theme) {
+        console.log('selectTheme appelé avec:', theme);
         showInfo(`Préparation du quiz "${theme}"...`);
         
         this.selectedTheme = theme;
         
-        // Logique pour commencer le quiz
-        // (à implémenter selon vos besoins)
-        
-        setTimeout(() => {
-            showSuccess(`Quiz "${theme}" prêt ! Bonne chance !`);
-        }, 1500);
+        // Charger les questions pour ce thème spécifique
+        this.loadQuestions().then(() => {
+            console.log('Questions chargées:', this.questions.length, 'questions');
+            if (this.questions && this.questions.length > 0) {
+                // Démarrer la session après chargement des questions
+                setTimeout(() => {
+                    showSuccess(`Quiz "${theme}" prêt ! ${this.questions.length} questions chargées.`);
+                    console.log('Démarrage de la session...');
+                    this.startSession();
+                }, 1000);
+            } else {
+                console.log('Aucune question trouvée pour le thème');
+                showError(`Aucune question trouvée pour le thème "${theme}"`);
+            }
+        }).catch(error => {
+            console.error('Erreur lors du chargement:', error);
+            showError(`Erreur lors du chargement du thème "${theme}"`);
+        });
     }
 
     selectAllThemes() {
@@ -260,21 +275,25 @@ class AIQuizManager {
     }
 
     async startSession() {
+        console.log('startSession() appelée');
         try {
-            const startScreen = document.getElementById('pld-start');
-            
+            console.log('Appel API /api/pld/start...');
             this.currentSession = await window.holbiesApp.apiRequest('/api/pld/start', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ quiz_type: 'ai' })
+                body: JSON.stringify({})
             });
             
+            console.log('Session créée:', this.currentSession);
+            
             // Switch to question screen
+            console.log('Affichage de la première question...');
             this.showQuestion();
             
         } catch (error) {
+            console.error('Erreur lors du démarrage de session:', error);
             if (window.holbiesApp) {
                 window.holbiesApp.showMessage('Erreur lors du démarrage de la session: ' + error.message, 'error');
             }
@@ -282,51 +301,79 @@ class AIQuizManager {
     }
 
     showQuestion() {
+        console.log('showQuestion() appelée, currentQuestionIndex:', this.currentQuestionIndex);
+        console.log('Questions disponibles:', this.questions.length);
+        
         const startScreen = document.getElementById('pld-start');
-        const questionScreen = document.getElementById('pld-question');
+        const themeScreen = document.getElementById('pld-themes');
+        const questionScreen = document.getElementById('pld-quiz');
         const resultsScreen = document.getElementById('pld-results');
+
+        console.log('Éléments trouvés:', {
+            startScreen: !!startScreen,
+            themeScreen: !!themeScreen,
+            questionScreen: !!questionScreen,
+            resultsScreen: !!resultsScreen
+        });
 
         // Hide other screens
         startScreen.classList.add('hidden');
+        if (themeScreen) themeScreen.classList.add('hidden');
         resultsScreen.classList.add('hidden');
         questionScreen.classList.remove('hidden');
 
         const question = this.questions[this.currentQuestionIndex];
+        console.log('Question courante:', question);
         
         // Update question content
-        document.getElementById('ai-question-text').textContent = question.question_text;
-        document.getElementById('ai-question-difficulty').textContent = question.difficulty.toUpperCase();
-        document.getElementById('ai-question-score').textContent = question.max_score;
+        const questionTitle = document.getElementById('question-title');
+        const questionText = document.getElementById('question-text');
         
-        // Display technical terms hint
-        const termsHint = document.getElementById('technical-terms-hint');
-        termsHint.textContent = `Termes techniques à utiliser : ${question.technical_terms.join(', ')}`;
+        if (questionTitle) {
+            questionTitle.textContent = `Question ${this.currentQuestionIndex + 1}`;
+        }
+        if (questionText) {
+            questionText.textContent = question.question_text;
+        }
         
         // Clear previous answer
-        document.getElementById('ai-user-answer').value = '';
+        const userAnswer = document.getElementById('user-answer');
+        if (userAnswer) {
+            userAnswer.value = '';
+        }
         
         // Update progress
         this.updateProgress();
         
         // Update question counter
         this.updateQuestionCounter();
+        
+        console.log('Question affichée avec succès');
     }
 
     async submitAnswer() {
-        const answerTextarea = document.getElementById('ai-user-answer');
+        const answerTextarea = document.getElementById('user-answer');
         const userAnswer = answerTextarea.value.trim();
 
         if (!userAnswer) {
-            window.holbiesApp.showMessage('Veuillez saisir une réponse avant de continuer.', 'error');
+            if (window.holbiesApp) {
+                window.holbiesApp.showMessage('Veuillez saisir une réponse avant de continuer.', 'error');
+            } else {
+                alert('Veuillez saisir une réponse avant de continuer.');
+            }
             return;
         }
 
         if (!this.currentSession) {
-            window.holbiesApp.showMessage('Aucune session active. Redémarrez le quiz.', 'error');
+            if (window.holbiesApp) {
+                window.holbiesApp.showMessage('Aucune session active. Redémarrez le quiz.', 'error');
+            } else {
+                alert('Aucune session active. Redémarrez le quiz.');
+            }
             return;
         }
 
-        const submitBtn = document.getElementById('submit-ai-answer-btn');
+        const submitBtn = document.getElementById('submit-answer');
         if (window.holbiesApp) {
             window.holbiesApp.showLoading(submitBtn);
         }
@@ -350,12 +397,14 @@ class AIQuizManager {
             this.totalScore += result.score;
             this.maxTotalScore += result.max_score;
 
-            // Show feedback
+            // Show feedback (for now, just continue to next question)
             this.showAnswerFeedback(result, question);
 
         } catch (error) {
             if (window.holbiesApp) {
                 window.holbiesApp.showMessage('Erreur lors de la soumission: ' + error.message, 'error');
+            } else {
+                alert('Erreur lors de la soumission: ' + error.message);
             }
         } finally {
             if (window.holbiesApp) {
@@ -365,111 +414,159 @@ class AIQuizManager {
     }
 
     showAnswerFeedback(result, question) {
-        const modal = document.getElementById('ai-answer-modal');
-        const modalTitle = document.getElementById('ai-modal-title');
-        const answerFeedback = document.getElementById('ai-answer-feedback');
-        const nextBtn = document.getElementById('next-ai-question-btn');
-
-        // Set title based on score with emoji
-        const percentage = result.percentage;
-        if (percentage >= 90) {
-            modalTitle.innerHTML = '🏆 Excellente réponse !';
-        } else if (percentage >= 75) {
-            modalTitle.innerHTML = '👍 Très bonne réponse !';
-        } else if (percentage >= 60) {
-            modalTitle.innerHTML = '📚 Bonne réponse';
-        } else if (percentage >= 40) {
-            modalTitle.innerHTML = '💪 Réponse partiellement correcte';
-        } else {
-            modalTitle.innerHTML = '📖 Réponse à améliorer';
+        // Afficher l'écran de feedback avec les détails
+        const questionScreen = document.getElementById('pld-quiz');
+        const feedbackScreen = document.getElementById('pld-feedback');
+        
+        // Cacher l'écran de question, afficher le feedback
+        questionScreen.classList.add('hidden');
+        feedbackScreen.classList.remove('hidden');
+        
+        // Remplir les informations de feedback
+        const userAnswerDisplay = document.getElementById('user-answer-display');
+        const questionScore = document.getElementById('question-score');
+        const feedbackText = document.getElementById('feedback-text');
+        const expectedAnswer = document.getElementById('expected-answer');
+        
+        if (userAnswerDisplay) {
+            userAnswerDisplay.textContent = document.getElementById('user-answer').value;
         }
-
-        // Create structured feedback with better visual organization
-        answerFeedback.innerHTML = `
-            <!-- Section des scores principale -->
-            <div class="feedback-score-section">
-                <div class="score-item">
-                    <span class="score-value">${Math.round(result.score)}</span>
-                    <span class="score-label">Points obtenus</span>
-                </div>
-                <div class="score-item">
-                    <span class="score-value">${Math.round(result.percentage)}%</span>
-                    <span class="score-label">Performance</span>
-                </div>
-                <div class="score-item">
-                    <span class="score-value">${Math.round(result.similarity)}</span>
-                    <span class="score-label">Similarité</span>
-                </div>
-                <div class="score-item">
-                    <span class="score-value">+${result.technical_bonus || 0}</span>
-                    <span class="score-label">Bonus Tech.</span>
-                </div>
-            </div>
-            
-            <!-- Section feedback principal -->
-            <div class="feedback-details-section">
-                <h4>🤖 Analyse IA</h4>
-                <p style="color: var(--text-secondary); line-height: 1.6;">${result.feedback}</p>
-            </div>
-            
-            ${result.technical_terms_found && result.technical_terms_found.length > 0 ? `
-                <div class="feedback-details-section">
-                    <h4>✅ Termes techniques détectés</h4>
-                    <div class="technical-terms-found">
-                        ${result.technical_terms_found.map(term => 
-                            `<span class="technical-term">${term}</span>`
-                        ).join('')}
+        
+        if (questionScore) {
+            questionScore.textContent = `${result.score}/${result.max_score}`;
+        }
+        
+        if (feedbackText) {
+            // Utiliser le feedback IA intelligent si disponible
+            if (result.ai_feedback) {
+                const percentage = result.percentage || 0;
+                
+                // Déterminer l'emoji et la classe selon le score
+                let scoreEmoji = '📊';
+                let scoreClass = '';
+                if (percentage >= 90) {
+                    scoreEmoji = '🏆';
+                    scoreClass = 'high-score';
+                } else if (percentage >= 75) {
+                    scoreEmoji = '🎯';
+                    scoreClass = 'good-score';
+                } else if (percentage >= 50) {
+                    scoreEmoji = '📈';
+                    scoreClass = 'average-score';
+                } else {
+                    scoreEmoji = '💪';
+                    scoreClass = 'low-score';
+                }
+                
+                feedbackText.innerHTML = `
+                    <div class="ai-feedback-intelligent">
+                        <div class="score-summary ${scoreClass}">
+                            <h4>${scoreEmoji} Résultat: ${result.score}/${result.max_score} points (${result.percentage}%)</h4>
+                        </div>
+                        
+                        <div class="feedback-section">
+                            <h5>🤖 Analyse IA</h5>
+                            <p>${result.ai_feedback.feedback_principal || 'Analyse en cours...'}</p>
+                        </div>
+                        
+                        <div class="feedback-section points-forts">
+                            <h5>✅ Points forts</h5>
+                            <p>${result.ai_feedback.points_forts || 'Effort visible dans votre réponse'}</p>
+                        </div>
+                        
+                        <div class="feedback-section points-amelioration">
+                            <h5>💡 Points d'amélioration</h5>
+                            <p>${result.ai_feedback.points_amelioration || 'Continuez à étudier ce concept'}</p>
+                        </div>
+                        
+                        <div class="feedback-section conseils">
+                            <h5>🔧 Conseils techniques</h5>
+                            <p>${result.ai_feedback.conseils_techniques || 'Pratiquez davantage ce type de questions'}</p>
+                        </div>
+                        
+                        <div class="feedback-section encouragement">
+                            <h5>🎯 Encouragement</h5>
+                            <p>${result.ai_feedback.encouragement || 'Continuez vos efforts !'}</p>
+                        </div>
                     </div>
-                </div>
-            ` : ''}
-            
-            <div class="feedback-details-section">
-                <h4>📖 Réponse attendue</h4>
-                <p style="color: var(--text-secondary); line-height: 1.6; background: rgba(0,0,0,0.3); padding: var(--spacing-md); border-radius: var(--border-radius); border-left: 3px solid var(--primary-color);">
-                    ${question.expected_answer}
-                </p>
-            </div>
-            
-            ${result.detailed_explanation ? `
-                <div class="feedback-details-section">
-                    <h4>🔍 Explication détaillée</h4>
-                    <p style="color: var(--text-secondary); line-height: 1.6;">
-                        ${result.detailed_explanation}
-                    </p>
-                </div>
-            ` : ''}
-            
-            <div class="feedback-details-section">
-                <h4>🎯 Termes clés à retenir</h4>
-                <div class="technical-terms-found">
-                    ${question.technical_terms.map(term => 
-                        `<span class="technical-term" style="opacity: ${result.technical_terms_found.includes(term) ? '1' : '0.5'}">${term}</span>`
-                    ).join('')}
-                </div>
-                <p style="font-size: 0.9rem; color: var(--text-secondary); margin-top: var(--spacing-sm);">
-                    <i>Les termes en surbrillance ont été détectés dans votre réponse</i>
-                </p>
-            </div>
-        `;
-
-        // Update next button text
-        if (this.currentQuestionIndex >= this.questions.length - 1) {
-            nextBtn.innerHTML = '<span>🎯 Voir les Résultats Finaux</span>';
-        } else {
-            nextBtn.innerHTML = '<span>➡️ Question Suivante</span>';
+                `;
+                
+                // Ajouter des animations séquentielles
+                setTimeout(() => {
+                    const sections = feedbackText.querySelectorAll('.feedback-section');
+                    sections.forEach((section, index) => {
+                        section.style.animationDelay = `${index * 0.1}s`;
+                        section.classList.add('animate-in');
+                    });
+                }, 100);
+                
+                // Effet confettis pour très bonnes réponses
+                if (percentage >= 85) {
+                    this.showConfettiEffect();
+                }
+                
+            } else {
+                // Fallback si pas de feedback IA avec style amélioré
+                feedbackText.innerHTML = `
+                    <div class="ai-feedback-intelligent">
+                        <div class="score-summary">
+                            <h4>📊 Score obtenu: ${result.score}/${result.max_score} points (${result.percentage}%)</h4>
+                        </div>
+                        <div class="feedback-section">
+                            <h5>📝 Feedback</h5>
+                            <p>${result.feedback}</p>
+                        </div>
+                    </div>
+                `;
+            }
         }
-
-        // Show modal
-        modal.classList.remove('hidden');
-    }
-
-    closeModal() {
-        const modal = document.getElementById('ai-answer-modal');
-        modal.classList.add('hidden');
+        
+        if (expectedAnswer) {
+            // Maintenant on peut soit cacher la réponse attendue, soit la montrer de manière moins prominente
+            expectedAnswer.innerHTML = `
+                <details>
+                    <summary>📖 Voir la réponse de référence</summary>
+                    <div class="reference-answer">
+                        ${result.expected_answer}
+                    </div>
+                </details>
+            `;
+        }
+        
+        // Afficher un message de performance avec plus de variété
+        if (window.holbiesApp) {
+            const percentage = result.percentage || 0;
+            let message = '';
+            let type = 'info';
+            
+            if (percentage >= 90) {
+                message = `🏆 Performance exceptionnelle ! Score: ${result.score}/${result.max_score}`;
+                type = 'success';
+            } else if (percentage >= 75) {
+                message = `🎯 Très bonne réponse ! Score: ${result.score}/${result.max_score}`;
+                type = 'success';
+            } else if (percentage >= 60) {
+                message = `👍 Bonne réponse ! Score: ${result.score}/${result.max_score}`;
+                type = 'success';
+            } else if (percentage >= 40) {
+                message = `📚 Réponse partielle. Score: ${result.score}/${result.max_score}`;
+                type = 'warning';
+            } else {
+                message = `💪 Continuez vos efforts ! Score: ${result.score}/${result.max_score}`;
+                type = 'warning';
+            }
+            
+            window.holbiesApp.showMessage(message, type);
+        }
     }
 
     nextQuestion() {
-        this.closeModal();
+        // Cacher l'écran de feedback
+        const feedbackScreen = document.getElementById('pld-feedback');
+        if (feedbackScreen) {
+            feedbackScreen.classList.add('hidden');
+        }
+        
         this.currentQuestionIndex++;
 
         if (this.currentQuestionIndex >= this.questions.length) {
@@ -480,7 +577,8 @@ class AIQuizManager {
     }
 
     async showFinalResults() {
-        const questionScreen = document.getElementById('pld-question');
+        const questionScreen = document.getElementById('pld-quiz');
+        const feedbackScreen = document.getElementById('pld-feedback');
         const resultsScreen = document.getElementById('pld-results');
         
         // Compléter la session sur le serveur
@@ -491,53 +589,54 @@ class AIQuizManager {
                 });
             } catch (error) {
                 // Continue with displaying results even if completion fails
+                console.log('Could not complete session on server:', error);
             }
         }
         
-        // Hide question screen, show results
+        // Hide other screens, show results
         questionScreen.classList.add('hidden');
+        if (feedbackScreen) feedbackScreen.classList.add('hidden');
         resultsScreen.classList.remove('hidden');
 
         // Calculate final statistics
         const averageScore = this.totalScore / this.maxTotalScore * 100;
         
         // Update results display
-        document.getElementById('ai-final-score').textContent = `${this.totalScore.toFixed(1)}/${this.maxTotalScore}`;
-        document.getElementById('ai-final-percentage').textContent = `${averageScore.toFixed(1)}%`;
+        document.getElementById('final-score').textContent = `${this.totalScore.toFixed(1)}/${this.maxTotalScore}`;
         
         // Generate detailed results
-        const resultsDetails = document.getElementById('ai-results-details');
-        let detailsHTML = '<h3>Détail par question :</h3>';
-        
-        this.results.forEach((result, index) => {
-            const question = this.questions[index];
-            detailsHTML += `
-                <div class="ai-result-item">
-                    <h4>Question ${index + 1} : ${question.difficulty}</h4>
-                    <p><strong>Score :</strong> ${result.score}/${result.max_score} (${result.percentage}%)</p>
-                    <p><strong>Similarité :</strong> ${result.similarity}%</p>
-                    ${result.technical_terms_found.length > 0 ? 
-                        `<p><strong>Termes techniques :</strong> ${result.technical_terms_found.join(', ')}</p>` : ''}
-                </div>
-            `;
-        });
-        
-        // Add performance message
-        detailsHTML += `<div class="ai-performance-message">`;
-        if (averageScore >= 90) {
-            detailsHTML += '<p class="text-success">🏆 Performance exceptionnelle ! Vous maîtrisez parfaitement ces concepts.</p>';
-        } else if (averageScore >= 75) {
-            detailsHTML += '<p class="text-success">👍 Très bonne performance ! Quelques détails à peaufiner.</p>';
-        } else if (averageScore >= 60) {
-            detailsHTML += '<p class="text-warning">📚 Bonne base ! Continuez à étudier pour améliorer la précision.</p>';
-        } else if (averageScore >= 40) {
-            detailsHTML += '<p class="text-warning">💪 Effort appréciable ! Travaillez davantage les termes techniques.</p>';
-        } else {
-            detailsHTML += '<p class="text-danger">📖 Il est temps de revoir les concepts fondamentaux !</p>';
+        const resultsDetails = document.getElementById('results-summary');
+        if (resultsDetails) {
+            let detailsHTML = '<h3>Détail par question :</h3>';
+            
+            this.results.forEach((result, index) => {
+                const question = this.questions[index];
+                detailsHTML += `
+                    <div class="result-item">
+                        <h4>Question ${index + 1}</h4>
+                        <p><strong>Score :</strong> ${result.score}/${result.max_score} (${result.percentage}%)</p>
+                        <p><strong>Feedback :</strong> ${result.feedback}</p>
+                    </div>
+                `;
+            });
+            
+            // Add performance message
+            detailsHTML += `<div class="performance-message">`;
+            if (averageScore >= 90) {
+                detailsHTML += '<p class="text-success">🏆 Performance exceptionnelle ! Vous maîtrisez parfaitement ces concepts.</p>';
+            } else if (averageScore >= 75) {
+                detailsHTML += '<p class="text-success">👍 Très bonne performance ! Quelques détails à peaufiner.</p>';
+            } else if (averageScore >= 60) {
+                detailsHTML += '<p class="text-warning">📚 Bonne base ! Continuez à étudier pour améliorer la précision.</p>';
+            } else if (averageScore >= 40) {
+                detailsHTML += '<p class="text-warning">💪 Effort appréciable ! Travaillez davantage les termes techniques.</p>';
+            } else {
+                detailsHTML += '<p class="text-danger">📖 Il est temps de revoir les concepts fondamentaux !</p>';
+            }
+            detailsHTML += '</div>';
+            
+            resultsDetails.innerHTML = detailsHTML;
         }
-        detailsHTML += '</div>';
-        
-        resultsDetails.innerHTML = detailsHTML;
         
         // Update progress to 100%
         this.updateProgress(100);
@@ -548,7 +647,9 @@ class AIQuizManager {
         this.currentQuestionIndex = 0;
         this.results = [];
         this.totalScore = 0;
+        this.maxTotalScore = 0;
         this.selectedCategory = null;
+        this.selectedTheme = null;
         
         // Reset category selection
         const cards = document.querySelectorAll('.category-card');
@@ -558,11 +659,15 @@ class AIQuizManager {
 
         // Show start screen
         const startScreen = document.getElementById('pld-start');
-        const questionScreen = document.getElementById('pld-question');
+        const questionScreen = document.getElementById('pld-quiz');
+        const themeScreen = document.getElementById('pld-themes');
+        const feedbackScreen = document.getElementById('pld-feedback');
         const resultsScreen = document.getElementById('pld-results');
 
         startScreen.classList.remove('hidden');
         questionScreen.classList.add('hidden');
+        if (themeScreen) themeScreen.classList.add('hidden');
+        if (feedbackScreen) feedbackScreen.classList.add('hidden');
         resultsScreen.classList.add('hidden');
 
         // Reset progress
@@ -571,24 +676,69 @@ class AIQuizManager {
     }
 
     updateProgress(percentage = null) {
-        const progressFill = document.getElementById('ai-progress-fill');
+        const progressFill = document.getElementById('progress-fill');
         
-        if (percentage !== null) {
-            progressFill.style.width = `${percentage}%`;
-        } else {
-            const progress = ((this.currentQuestionIndex + 1) / this.questions.length) * 100;
-            progressFill.style.width = `${progress}%`;
+        if (progressFill) {
+            if (percentage !== null) {
+                progressFill.style.width = `${percentage}%`;
+            } else {
+                const progress = ((this.currentQuestionIndex + 1) / this.questions.length) * 100;
+                progressFill.style.width = `${progress}%`;
+            }
         }
     }
 
     updateQuestionCounter() {
-        const currentQuestionEl = document.getElementById('ai-current-question');
-        const totalQuestionsEl = document.getElementById('ai-total-questions');
+        const currentQuestionEl = document.getElementById('current-question');
+        const totalQuestionsEl = document.getElementById('total-questions');
 
         if (currentQuestionEl && totalQuestionsEl) {
             currentQuestionEl.textContent = this.currentQuestionIndex + 1;
             totalQuestionsEl.textContent = this.questions.length;
         }
+    }
+
+    // Effet confettis pour les excellents scores
+    showConfettiEffect() {
+        const confettiContainer = document.createElement('div');
+        confettiContainer.className = 'confetti-container';
+        confettiContainer.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10000;
+        `;
+        
+        // Créer plusieurs confettis
+        for (let i = 0; i < 30; i++) {
+            const confetti = document.createElement('div');
+            confetti.style.cssText = `
+                position: absolute;
+                width: 10px;
+                height: 10px;
+                background: ${this.getRandomColor()};
+                top: -10px;
+                left: ${Math.random() * 100}%;
+                animation: confettiDrop ${2 + Math.random() * 3}s linear forwards;
+                transform: rotate(${Math.random() * 360}deg);
+            `;
+            confettiContainer.appendChild(confetti);
+        }
+        
+        document.body.appendChild(confettiContainer);
+        
+        // Nettoyer après l'animation
+        setTimeout(() => {
+            document.body.removeChild(confettiContainer);
+        }, 5000);
+    }
+    
+    getRandomColor() {
+        const colors = ['#FFD700', '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD', '#98D8C8'];
+        return colors[Math.floor(Math.random() * colors.length)];
     }
 }
 
