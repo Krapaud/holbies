@@ -24,7 +24,12 @@ document.addEventListener('DOMContentLoaded', function() {
         card.style.cursor = 'pointer';
         
         // Add click event listener (en plus de l'onclick HTML)
-        card.addEventListener('click', function() {
+        card.addEventListener('click', function(event) {
+            // Éviter les clics sur les boutons d'action
+            if (event.target.closest('.mode-actions')) {
+                return;
+            }
+            
             const mode = this.getAttribute('data-mode');
             console.log('Click détecté sur carte avec mode:', mode);
             redirectToQuiz(mode);

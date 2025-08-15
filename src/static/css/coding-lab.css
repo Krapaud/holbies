@@ -1,35 +1,19 @@
 /* ===============================================
-   CODING LAB - STYLE MODERNE INSPIRÉ DE CODDY.TECH
+   CODING LAB - STYLE MODERNE UTILISANT LE THÈME PRINCIPAL
    =============================================== */
 
-:root {
-    --primary-color: #00ff41;
-    --secondary-color: #0066cc;
-    --accent-color: #ff6b35;
-    --background-dark: #0a0a0f;
-    --background-card: #1a1a25;
-    --background-panel: #2a2a35;
-    --text-primary: #ffffff;
-    --text-secondary: #b0b0b0;
-    --text-muted: #666666;
-    --border-color: rgba(0, 255, 65, 0.2);
-    --success-color: #00ff41;
-    --error-color: #ff4757;
-    --warning-color: #ffa502;
-    --shadow-glow: 0 0 20px rgba(0, 255, 65, 0.3);
-}
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: var(--background-dark);
-    color: var(--text-primary);
-    overflow-x: hidden;
+/* Variables spécifiques au Coding Lab utilisant le thème principal */
+.coding-lab-container {
+    --coding-lab-secondary: #0066cc;
+    --coding-lab-background-card: var(--surface-color);
+    --coding-lab-background-panel: var(--background-color);
+    --coding-lab-text-secondary: #b0b0b0;
+    --coding-lab-text-muted: #666666;
+    --coding-lab-border: rgba(225, 0, 60, 0.2);
+    --coding-lab-success: var(--accent-color);
+    --coding-lab-error: #ff4757;
+    --coding-lab-warning: #ffa502;
+    --coding-lab-shadow: 0 0 20px rgba(225, 0, 60, 0.3);
 }
 
 /* ===============================================
@@ -37,6 +21,17 @@ body {
    =============================================== */
 
 .coding-lab-container {
+    --coding-lab-secondary: #0066cc;
+    --coding-lab-background-card: var(--surface-color);
+    --coding-lab-background-panel: var(--background-color);
+    --coding-lab-text-secondary: #b0b0b0;
+    --coding-lab-text-muted: #666666;
+    --coding-lab-border: rgba(225, 0, 60, 0.2);
+    --coding-lab-success: var(--accent-color);
+    --coding-lab-error: #ff4757;
+    --coding-lab-warning: #ffa502;
+    --coding-lab-shadow: 0 0 20px rgba(225, 0, 60, 0.3);
+    
     display: grid;
     grid-template-columns: 320px 1fr;
     height: 100vh;
@@ -48,8 +43,8 @@ body {
    =============================================== */
 
 .sidebar {
-    background: linear-gradient(180deg, var(--background-card) 0%, var(--background-dark) 100%);
-    border-right: 1px solid var(--border-color);
+    background: linear-gradient(180deg, var(--coding-lab-background-card) 0%, var(--coding-lab-background-panel) 100%);
+    border-right: 1px solid var(--coding-lab-border);
     display: flex;
     flex-direction: column;
     position: relative;
@@ -69,7 +64,7 @@ body {
 
 .sidebar-header {
     padding: 2rem 1.5rem 1.5rem;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--coding-lab-border);
     background: rgba(0, 0, 0, 0.3);
 }
 
@@ -85,7 +80,7 @@ body {
 
 .progress-indicator {
     background: rgba(0, 255, 65, 0.1);
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--coding-lab-border);
     border-radius: 20px;
     padding: 0.5rem 1rem;
     font-size: 0.9rem;
@@ -100,8 +95,8 @@ body {
 }
 
 .exercise-item {
-    background: var(--background-panel);
-    border: 1px solid var(--border-color);
+    background: var(--coding-lab-background-panel);
+    border: 1px solid var(--coding-lab-border);
     border-radius: 12px;
     padding: 1rem;
     margin-bottom: 0.75rem;
@@ -113,18 +108,18 @@ body {
 .exercise-item:hover {
     border-color: var(--primary-color);
     transform: translateX(5px);
-    box-shadow: var(--shadow-glow);
+    box-shadow: var(--coding-lab-shadow);
 }
 
 .exercise-item.active {
     background: rgba(0, 255, 65, 0.1);
     border-color: var(--primary-color);
-    box-shadow: var(--shadow-glow);
+    box-shadow: var(--coding-lab-shadow);
 }
 
 .exercise-item.completed {
     background: rgba(0, 255, 65, 0.05);
-    border-color: var(--success-color);
+    border-color: var(--coding-lab-success);
 }
 
 .exercise-item.completed::before {
@@ -132,7 +127,7 @@ body {
     position: absolute;
     top: 0.5rem;
     right: 0.5rem;
-    color: var(--success-color);
+    color: var(--coding-lab-success);
     font-weight: bold;
     font-size: 1.2rem;
 }
@@ -140,7 +135,7 @@ body {
 .exercise-title {
     font-weight: 600;
     margin-bottom: 0.5rem;
-    color: var(--text-primary);
+    color: var(--text-color);
 }
 
 .exercise-meta {
@@ -148,7 +143,7 @@ body {
     justify-content: space-between;
     align-items: center;
     font-size: 0.8rem;
-    color: var(--text-secondary);
+    color: var(--coding-lab-text-secondary);
 }
 
 .difficulty {
@@ -159,13 +154,13 @@ body {
     text-transform: uppercase;
 }
 
-.difficulty.easy { background: rgba(0, 255, 65, 0.2); color: var(--success-color); }
-.difficulty.medium { background: rgba(255, 165, 2, 0.2); color: var(--warning-color); }
-.difficulty.hard { background: rgba(255, 71, 87, 0.2); color: var(--error-color); }
+.difficulty.easy { background: rgba(0, 255, 65, 0.2); color: var(--coding-lab-success); }
+.difficulty.medium { background: rgba(255, 165, 2, 0.2); color: var(--coding-lab-warning); }
+.difficulty.hard { background: rgba(255, 71, 87, 0.2); color: var(--coding-lab-error); }
 
 .sidebar-footer {
     padding: 1rem;
-    border-top: 1px solid var(--border-color);
+    border-top: 1px solid var(--coding-lab-border);
 }
 
 /* ===============================================
@@ -179,8 +174,8 @@ body {
 }
 
 .exercise-header {
-    background: var(--background-card);
-    border-bottom: 1px solid var(--border-color);
+    background: var(--coding-lab-background-card);
+    border-bottom: 1px solid var(--coding-lab-border);
     padding: 1.5rem 2rem;
     display: flex;
     justify-content: space-between;
@@ -191,7 +186,7 @@ body {
     font-size: 1.8rem;
     font-weight: 700;
     margin-bottom: 0.5rem;
-    color: var(--text-primary);
+    color: var(--text-color);
 }
 
 .exercise-meta {
@@ -205,10 +200,10 @@ body {
     align-items: center;
     gap: 0.3rem;
     font-size: 0.9rem;
-    color: var(--text-secondary);
+    color: var(--coding-lab-text-secondary);
 }
 
-.time-estimate { color: var(--warning-color); }
+.time-estimate { color: var(--coding-lab-warning); }
 .points { color: var(--primary-color); }
 
 .exercise-actions {
@@ -228,16 +223,16 @@ body {
 }
 
 .instruction-panel {
-    background: var(--background-card);
-    border-bottom: 1px solid var(--border-color);
+    background: var(--coding-lab-background-card);
+    border-bottom: 1px solid var(--coding-lab-border);
     max-height: 30vh;
     overflow-y: auto;
 }
 
 .panel-header {
-    background: var(--background-panel);
+    background: var(--coding-lab-background-panel);
     padding: 1rem 1.5rem;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--coding-lab-border);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -255,7 +250,7 @@ body {
 .collapse-btn {
     background: none;
     border: none;
-    color: var(--text-secondary);
+    color: var(--coding-lab-text-secondary);
     font-size: 1rem;
     cursor: pointer;
     transition: transform 0.3s ease;
@@ -276,7 +271,7 @@ body {
 
 .requirements {
     background: rgba(0, 255, 65, 0.05);
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--coding-lab-border);
     border-radius: 8px;
     padding: 1rem;
 }
@@ -312,7 +307,7 @@ body {
     flex: 1;
     display: flex;
     flex-direction: column;
-    background: var(--background-dark);
+    background: var(--coding-lab-background-panel);
 }
 
 .editor-controls {
@@ -322,9 +317,9 @@ body {
 }
 
 #language-select {
-    background: var(--background-panel);
-    border: 1px solid var(--border-color);
-    color: var(--text-primary);
+    background: var(--coding-lab-background-panel);
+    border: 1px solid var(--coding-lab-border);
+    color: var(--text-color);
     padding: 0.4rem 0.8rem;
     border-radius: 6px;
     font-size: 0.85rem;
@@ -355,8 +350,8 @@ body {
    =============================================== */
 
 .result-panel {
-    background: var(--background-card);
-    border-top: 1px solid var(--border-color);
+    background: var(--coding-lab-background-card);
+    border-top: 1px solid var(--coding-lab-border);
     height: 250px;
     display: flex;
     flex-direction: column;
@@ -369,14 +364,14 @@ body {
 
 .tabs {
     display: flex;
-    background: var(--background-panel);
-    border-bottom: 1px solid var(--border-color);
+    background: var(--coding-lab-background-panel);
+    border-bottom: 1px solid var(--coding-lab-border);
 }
 
 .tab-btn {
     background: none;
     border: none;
-    color: var(--text-secondary);
+    color: var(--coding-lab-text-secondary);
     padding: 0.75rem 1.5rem;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -422,8 +417,8 @@ body {
 }
 
 .test-case {
-    background: var(--background-panel);
-    border: 1px solid var(--border-color);
+    background: var(--coding-lab-background-panel);
+    border: 1px solid var(--coding-lab-border);
     border-radius: 6px;
     padding: 1rem;
     display: flex;
@@ -432,12 +427,12 @@ body {
 }
 
 .test-case.passed {
-    border-color: var(--success-color);
+    border-color: var(--coding-lab-success);
     background: rgba(0, 255, 65, 0.05);
 }
 
 .test-case.failed {
-    border-color: var(--error-color);
+    border-color: var(--coding-lab-error);
     background: rgba(255, 71, 87, 0.05);
 }
 
@@ -445,8 +440,8 @@ body {
     font-weight: 600;
 }
 
-.test-status.passed { color: var(--success-color); }
-.test-status.failed { color: var(--error-color); }
+.test-status.passed { color: var(--coding-lab-success); }
+.test-status.failed { color: var(--coding-lab-error); }
 
 /* ===============================================
    BOUTONS
@@ -481,15 +476,15 @@ body {
 }
 
 .btn-success {
-    background: linear-gradient(135deg, var(--success-color), #00aa2e);
+    background: linear-gradient(135deg, var(--coding-lab-success), #00aa2e);
     color: #000;
     box-shadow: 0 4px 15px rgba(0, 255, 65, 0.3);
 }
 
 .btn-outline {
     background: transparent;
-    border: 1px solid var(--border-color);
-    color: var(--text-primary);
+    border: 1px solid var(--coding-lab-border);
+    color: var(--text-color);
 }
 
 .btn-outline:hover {
@@ -499,13 +494,13 @@ body {
 }
 
 .btn-secondary {
-    background: var(--background-panel);
-    border: 1px solid var(--border-color);
-    color: var(--text-primary);
+    background: var(--coding-lab-background-panel);
+    border: 1px solid var(--coding-lab-border);
+    color: var(--text-color);
 }
 
 .btn-warning {
-    background: linear-gradient(135deg, var(--warning-color), #e67e22);
+    background: linear-gradient(135deg, var(--coding-lab-warning), #e67e22);
     color: #000;
 }
 
@@ -551,8 +546,8 @@ body {
 }
 
 .modal-content {
-    background: var(--background-card);
-    border: 1px solid var(--border-color);
+    background: var(--coding-lab-background-card);
+    border: 1px solid var(--coding-lab-border);
     border-radius: 12px;
     max-width: 500px;
     width: 90%;
@@ -566,9 +561,9 @@ body {
 }
 
 .modal-header {
-    background: var(--background-panel);
+    background: var(--coding-lab-background-panel);
     padding: 1.5rem;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--coding-lab-border);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -585,7 +580,7 @@ body {
 .modal-close {
     background: none;
     border: none;
-    color: var(--text-secondary);
+    color: var(--coding-lab-text-secondary);
     font-size: 1.5rem;
     cursor: pointer;
     padding: 0.25rem;
@@ -594,7 +589,7 @@ body {
 }
 
 .modal-close:hover {
-    color: var(--error-color);
+    color: var(--coding-lab-error);
     background: rgba(255, 71, 87, 0.1);
 }
 
@@ -603,9 +598,9 @@ body {
 }
 
 .modal-footer {
-    background: var(--background-panel);
+    background: var(--coding-lab-background-panel);
     padding: 1rem 1.5rem;
-    border-top: 1px solid var(--border-color);
+    border-top: 1px solid var(--coding-lab-border);
     display: flex;
     justify-content: flex-end;
     gap: 0.75rem;
@@ -613,7 +608,7 @@ body {
 
 .solution-warning {
     background: rgba(255, 165, 2, 0.1);
-    border: 1px solid var(--warning-color);
+    border: 1px solid var(--coding-lab-warning);
     border-radius: 8px;
     padding: 1rem;
     margin-bottom: 1.5rem;
@@ -623,7 +618,7 @@ body {
 }
 
 .solution-warning i {
-    color: var(--warning-color);
+    color: var(--coding-lab-warning);
     font-size: 1.2rem;
 }
 
@@ -636,8 +631,8 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: linear-gradient(135deg, var(--background-card), var(--background-panel));
-    border: 2px solid var(--success-color);
+    background: linear-gradient(135deg, var(--coding-lab-background-card), var(--coding-lab-background-panel));
+    border: 2px solid var(--coding-lab-success);
     border-radius: 16px;
     padding: 2rem;
     text-align: center;
@@ -653,19 +648,19 @@ body {
 
 .notification-content i {
     font-size: 3rem;
-    color: var(--success-color);
+    color: var(--coding-lab-success);
     margin-bottom: 1rem;
     animation: bounce 1s ease-in-out;
 }
 
 .notification-content h3 {
-    color: var(--success-color);
+    color: var(--coding-lab-success);
     font-size: 1.5rem;
     margin-bottom: 0.5rem;
 }
 
 .notification-content p {
-    color: var(--text-secondary);
+    color: var(--coding-lab-text-secondary);
     margin-bottom: 1.5rem;
 }
 
@@ -723,7 +718,7 @@ body {
         height: auto;
         max-height: 40vh;
         border-right: none;
-        border-bottom: 1px solid var(--border-color);
+        border-bottom: 1px solid var(--coding-lab-border);
     }
     
     .exercise-header {
@@ -783,11 +778,11 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-    background: var(--background-dark);
+    background: var(--coding-lab-background-panel);
 }
 
 ::-webkit-scrollbar-thumb {
-    background: var(--border-color);
+    background: var(--coding-lab-border);
     border-radius: 4px;
 }
 
@@ -826,19 +821,19 @@ textarea:focus {
 }
 
 .text-muted {
-    color: var(--text-muted);
+    color: var(--coding-lab-text-muted);
 }
 
 .text-success {
-    color: var(--success-color);
+    color: var(--coding-lab-success);
 }
 
 .text-error {
-    color: var(--error-color);
+    color: var(--coding-lab-error);
 }
 
 .text-warning {
-    color: var(--warning-color);
+    color: var(--coding-lab-warning);
 }
 
 .mt-1 { margin-top: 0.5rem; }
