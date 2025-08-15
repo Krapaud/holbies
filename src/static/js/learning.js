@@ -77,6 +77,9 @@ function redirectToQuiz(mode) {
         } else if (mode === 'pld') {
             console.log('Redirection vers /pld');
             window.location.href = '/pld';
+        } else if (mode === 'coding-lab') {
+            console.log('Redirection vers /coding-lab');
+            window.location.href = '/coding-lab';
         }
     }, 500);
 }

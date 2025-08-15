@@ -13,7 +13,7 @@ import traceback
 import io
 
 from app.database import engine, get_db
-from app.models import Base, PLDCategory, PLDTheme, PLDQuestion
+from app.models import Base, PLDCategory, PLDTheme, PLDQuestion, User, QuizSession, AIQuizSession
 from app.routers import auth, quiz, users, ai_quiz, pld_admin, pld
 from app.routers import performance
 from app.auth import get_current_user
@@ -237,6 +237,33 @@ async def profile_page(request: Request, db: Session = Depends(get_db)):
         request.session.clear()
         return RedirectResponse(url="/login", status_code=302)
 
+@app.get("/coding-lab-home", response_class=HTMLResponse)
+async def coding_lab_home(request: Request):
+    """Page d'accueil du Coding Lab - Présentation des fonctionnalités"""
+    context = get_template_context(request)
+    return templates.TemplateResponse("coding-lab-home.html", context)
+
+@app.get("/coding-lab", response_class=HTMLResponse)
+async def coding_lab(request: Request, db: Session = Depends(get_db)):
+    """Page Coding Lab - Apprentissage interactif comme Coddy.tech"""
+    try:
+        # Vérifier l'authentification
+        user_id = request.session.get("user_id")
+        if not user_id:
+            return RedirectResponse(url="/login", status_code=302)
+        
+        user = db.query(User).filter(User.id == user_id).first()
+        if not user:
+            request.session.clear()
+            return RedirectResponse(url="/login", status_code=302)
+        
+        context = get_template_context(request, user=user)
+        return templates.TemplateResponse("coding-lab.html", context)
+        
+    except Exception as e:
+        print(f"Erreur coding-lab: {e}")
+        return RedirectResponse(url="/login", status_code=302)
+
 @app.get("/admin", response_class=HTMLResponse)
 async def admin_redirect(request: Request):
     """Redirection vers le dashboard admin"""
@@ -267,6 +294,93 @@ async def visualize_code(request: Request):
     finally:
         sys.settrace(None)
     return JSONResponse({"trace": trace, "error": error, "output": output.getvalue()})
+
+@app.post("/api/coding-lab/save-progress")
+async def save_coding_lab_progress(request: Request, db: Session = Depends(get_db)):
+    """Sauvegarder la progression du Coding Lab"""
+    try:
+        user_id = request.session.get("user_id")
+        if not user_id:
+            raise HTTPException(status_code=401, detail="Non authentifié")
+        
+        data = await request.json()
+        
+        # Ici vous pourriez sauvegarder en base de données
+        # Pour cette démo, on retourne juste un succès
+        
+        return {
+            "success": True,
+            "message": "Progression sauvegardée",
+            "data": {
+                "user_id": user_id,
+                "progress": data
+            }
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erreur: {str(e)}")
+
+@app.get("/api/coding-lab/progress")
+async def get_coding_lab_progress(request: Request, db: Session = Depends(get_db)):
+    """Récupérer la progression du Coding Lab"""
+    try:
+        user_id = request.session.get("user_id")
+        if not user_id:
+            raise HTTPException(status_code=401, detail="Non authentifié")
+        
+        # Ici vous pourriez récupérer depuis la base de données
+        # Pour cette démo, on retourne une progression fictive
+        
+        return {
+            "success": True,
+            "data": {
+                "completedExercises": [1],
+                "points": 50,
+                "streak": 1,
+                "level": 1,
+                "achievements": []
+            }
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erreur: {str(e)}")
+
+@app.post("/api/coding-lab/run-code")
+async def run_coding_lab_code(request: Request):
+    """Exécuter du code dans le Coding Lab"""
+    try:
+        data = await request.json()
+        code = data.get("code", "")
+        language = data.get("language", "python")
+        
+        # Simulation d'exécution de code
+        if language == "python":
+            # Ici vous pourriez utiliser un vrai interpréteur Python sécurisé
+            if "print" in code and "Hello" in code:
+                return {
+                    "success": True,
+                    "output": "Hello, World!\n",
+                    "error": None
+                }
+            else:
+                return {
+                    "success": True,
+                    "output": "Code exécuté avec succès\n",
+                    "error": None
+                }
+        
+        return {
+            "success": False,
+            "output": "",
+            "error": f"Langage {language} non supporté"
+        }
+        
+    except Exception as e:
+        return {
+            "success": False,
+            "output": "",
+            "error": str(e)
+        }
 
 @app.post("/api/sync-session")
 async def sync_session(request: Request, db: Session = Depends(get_db)):

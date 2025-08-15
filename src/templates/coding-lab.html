@@ -1,0 +1,1011 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="/static/css/coding-lab.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+{% endblock %}
+
+{% block content %}
+<div class="coding-lab-container">
+    <!-- Sidebar avec exercices -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2><i class="fas fa-code"></i> Coding Lab</h2>
+            <div class="progress-indicator">
+                <span id="current-exercise">1</span> / <span id="total-exercises">10</span>
+            </div>
+        </div>
+        
+        <div class="exercise-list" id="exercise-list">
+            <!-- Liste des exercices générée dynamiquement -->
+        </div>
+        
+        <div class="sidebar-footer">
+            <button class="btn btn-secondary btn-block" id="reset-progress">
+                <i class="fas fa-undo"></i> Recommencer
+            </button>
+        </div>
+    </div>
+    
+    <!-- Zone principale -->
+    <div class="main-content">
+        <!-- En-tête de l'exercice -->
+        <div class="exercise-header">
+            <div class="exercise-info">
+                <h1 id="exercise-title">Variables et Types</h1>
+                <div class="exercise-meta">
+                    <span class="difficulty easy" id="exercise-difficulty">Débutant</span>
+                    <span class="time-estimate" id="time-estimate">
+                        <i class="fas fa-clock"></i> 5 min
+                    </span>
+                    <span class="points" id="exercise-points">
+                        <i class="fas fa-star"></i> 50 pts
+                    </span>
+                </div>
+            </div>
+            <div class="exercise-actions">
+                <button class="btn btn-outline" id="hint-btn">
+                    <i class="fas fa-lightbulb"></i> Indice
+                </button>
+                <button class="btn btn-outline" id="solution-btn">
+                    <i class="fas fa-eye"></i> Solution
+                </button>
+            </div>
+        </div>
+        
+        <!-- Zone d'exercice -->
+        <div class="exercise-workspace">
+            <!-- Instructions -->
+            <div class="instruction-panel">
+                <div class="panel-header">
+                    <h3><i class="fas fa-book-open"></i> Instructions</h3>
+                    <button class="collapse-btn" data-target="instructions">
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                </div>
+                <div class="panel-content" id="instructions">
+                    <div id="exercise-description">
+                        <h4>🎯 Objectif</h4>
+                        <p>Apprendre à créer et utiliser des variables en Python.</p>
+                        
+                        <h4>📋 Instructions</h4>
+                        <ol>
+                            <li>Créez une variable <code>nom</code> avec votre nom</li>
+                            <li>Créez une variable <code>age</code> avec votre âge</li>
+                            <li>Créez une variable <code>ville</code> avec votre ville</li>
+                            <li>Affichez ces informations avec des messages formatés</li>
+                        </ol>
+                    </div>
+                    <div class="requirements" id="requirements">
+                        <h4><i class="fas fa-check-circle"></i> Exigences</h4>
+                        <ul>
+                            <li>Utiliser au moins 3 variables</li>
+                            <li>Utiliser print() pour afficher</li>
+                            <li>Utiliser des f-strings pour le formatage</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Éditeur de code -->
+            <div class="code-panel">
+                <div class="panel-header">
+                    <h3><i class="fas fa-terminal"></i> Éditeur de Code</h3>
+                    <div class="editor-controls">
+                        <select id="language-select">
+                            <option value="python">Python</option>
+                            <option value="javascript">JavaScript</option>
+                            <option value="html">HTML</option>
+                            <option value="css">CSS</option>
+                        </select>
+                        <button class="btn btn-sm" id="format-code">
+                            <i class="fas fa-align-left"></i> Format
+                        </button>
+                    </div>
+                </div>
+                <div class="panel-content">
+                    <textarea id="code-editor" placeholder="# Écrivez votre code Python ici...
+
+nom = 'Votre nom'
+age = 25
+ville = 'Votre ville'
+
+print(f'Bonjour, je m\'appelle {nom}')
+print(f'J\'ai {age} ans')
+print(f'J\'habite à {ville}')
+
+# Bonus: Calculez votre année de naissance
+annee_actuelle = 2025
+annee_naissance = annee_actuelle - age
+print(f'Je suis né(e) en {annee_naissance}')"></textarea>
+                </div>
+            </div>
+            
+            <!-- Zone de test et résultats -->
+            <div class="result-panel">
+                <div class="panel-header">
+                    <h3><i class="fas fa-play-circle"></i> Test & Résultats</h3>
+                    <div class="test-controls">
+                        <button class="btn btn-primary" id="run-code">
+                            <i class="fas fa-play"></i> Exécuter
+                        </button>
+                        <button class="btn btn-success" id="submit-code">
+                            <i class="fas fa-check"></i> Valider
+                        </button>
+                    </div>
+                </div>
+                <div class="panel-content">
+                    <div class="tabs">
+                        <button class="tab-btn active" data-tab="output">Sortie</button>
+                        <button class="tab-btn" data-tab="tests">Tests</button>
+                        <button class="tab-btn" data-tab="console">Console</button>
+                    </div>
+                    
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="output">
+                            <pre id="code-output">Cliquez sur "Exécuter" pour voir la sortie de votre code.</pre>
+                        </div>
+                        <div class="tab-pane" id="tests">
+                            <div id="test-results">
+                                <!-- Résultats des tests automatiques -->
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="console">
+                            <div id="console-output">
+                                <!-- Messages de debug et erreurs -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal d'indice -->
+<div class="modal hidden" id="hint-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><i class="fas fa-lightbulb"></i> Indice</h3>
+            <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div id="hint-content">
+                <!-- Contenu de l'indice -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de solution -->
+<div class="modal hidden" id="solution-modal">
+    <div class="modal-content modal-large">
+        <div class="modal-header">
+            <h3><i class="fas fa-eye"></i> Solution</h3>
+            <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="solution-warning">
+                <i class="fas fa-exclamation-triangle"></i>
+                <p>Attention ! Consulter la solution réduira vos points pour cet exercice.</p>
+            </div>
+            <div id="solution-content">
+                <!-- Code de la solution -->
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-warning" id="show-solution">Afficher la solution</button>
+        </div>
+    </div>
+</div>
+
+<!-- Notification de succès -->
+<div class="success-notification hidden" id="success-notification">
+    <div class="notification-content">
+        <i class="fas fa-trophy"></i>
+        <h3>Exercice réussi !</h3>
+        <p>Vous avez gagné <span id="earned-points">50</span> points !</p>
+        <button class="btn btn-primary" id="next-exercise">Exercice suivant</button>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for_static('/js/coding-lab-config.js') }}"></script>
+<script src="{{ url_for_static('/js/coding-lab.js') }}"></script>
+{% endblock %}
+
+.lab-header {
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(0, 255, 65, 0.2);
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.lab-title {
+    color: #00ff41;
+    font-size: 1.5rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.lab-progress {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: #ffffff;
+}
+
+.progress-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(0, 255, 65, 0.1);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    border: 1px solid rgba(0, 255, 65, 0.3);
+}
+
+.lab-main {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    height: calc(100vh - 80px);
+}
+
+/* Section instructions (gauche) */
+.instructions-panel {
+    background: rgba(0, 0, 0, 0.9);
+    border-right: 1px solid rgba(0, 255, 65, 0.2);
+    overflow-y: auto;
+    padding: 2rem;
+}
+
+.lesson-step {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: rgba(0, 255, 65, 0.05);
+    border-radius: 12px;
+    border: 1px solid rgba(0, 255, 65, 0.2);
+}
+
+.step-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.step-number {
+    background: linear-gradient(45deg, #00ff41, #00cc33);
+    color: #000;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.step-title {
+    color: #00ff41;
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin: 0;
+}
+
+.step-content {
+    color: #ffffff;
+    line-height: 1.6;
+}
+
+.step-content p {
+    margin-bottom: 1rem;
+}
+
+.code-hint {
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(0, 255, 65, 0.3);
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1rem 0;
+    font-family: 'Courier New', monospace;
+    color: #00ff41;
+    font-size: 0.9rem;
+}
+
+/* Section code éditeur (droite) */
+.code-panel {
+    background: #1a1a1a;
+    display: flex;
+    flex-direction: column;
+}
+
+.editor-header {
+    background: rgba(0, 0, 0, 0.8);
+    border-bottom: 1px solid rgba(0, 255, 65, 0.2);
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.editor-tabs {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.editor-tab {
+    background: rgba(0, 255, 65, 0.1);
+    border: 1px solid rgba(0, 255, 65, 0.3);
+    color: #00ff41;
+    padding: 0.5rem 1rem;
+    border-radius: 8px 8px 0 0;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.editor-tab.active {
+    background: rgba(0, 255, 65, 0.2);
+    border-bottom: 1px solid #1a1a1a;
+}
+
+.editor-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.run-button {
+    background: linear-gradient(45deg, #00ff41, #00cc33);
+    color: #000;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.run-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 255, 65, 0.3);
+}
+
+.hint-button {
+    background: rgba(255, 170, 68, 0.2);
+    border: 1px solid rgba(255, 170, 68, 0.4);
+    color: #ffaa44;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    font-weight: bold;
+}
+
+.hint-button:hover {
+    background: rgba(255, 170, 68, 0.3);
+    transform: translateY(-2px);
+}
+
+.reset-button {
+    background: rgba(255, 68, 68, 0.2);
+    border: 1px solid rgba(255, 68, 68, 0.4);
+    color: #ff4444;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    font-weight: bold;
+}
+
+.reset-button:hover {
+    background: rgba(255, 68, 68, 0.3);
+    transform: translateY(-2px);
+}
+
+.code-editor {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.editor-content {
+    flex: 1;
+    background: #1a1a1a;
+    color: #ffffff;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    border: none;
+    outline: none;
+    padding: 1.5rem;
+    resize: none;
+    line-height: 1.5;
+}
+
+.output-panel {
+    height: 200px;
+    background: #000;
+    border-top: 1px solid rgba(0, 255, 65, 0.2);
+    overflow-y: auto;
+    padding: 1rem;
+    font-family: 'Courier New', monospace;
+    color: #00ff41;
+    font-size: 0.9rem;
+}
+
+.output-header {
+    color: #00ff41;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Navigation entre exercices */
+.lesson-navigation {
+    background: rgba(0, 0, 0, 0.9);
+    border-top: 1px solid rgba(0, 255, 65, 0.2);
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-button {
+    background: rgba(0, 255, 65, 0.1);
+    border: 1px solid rgba(0, 255, 65, 0.3);
+    color: #00ff41;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.nav-button:hover {
+    background: rgba(0, 255, 65, 0.2);
+    transform: translateY(-2px);
+}
+
+.nav-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.lesson-info {
+    text-align: center;
+    color: #ffffff;
+}
+
+/* Système de feedback */
+.feedback-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.95);
+    border: 2px solid #00ff41;
+    border-radius: 12px;
+    padding: 2rem;
+    max-width: 500px;
+    width: 90%;
+    z-index: 1000;
+    text-align: center;
+}
+
+.feedback-popup.hidden {
+    display: none;
+}
+
+.feedback-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.feedback-title {
+    color: #00ff41;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.feedback-message {
+    color: #ffffff;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+.feedback-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .lab-main {
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr 1fr;
+    }
+    
+    .lab-header {
+        padding: 1rem;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .instructions-panel {
+        padding: 1rem;
+        border-right: none;
+        border-bottom: 1px solid rgba(0, 255, 65, 0.2);
+    }
+}
+
+/* Animations */
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(0, 255, 65, 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(0, 255, 65, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(0, 255, 65, 0); }
+}
+
+.run-button {
+    animation: pulse 2s infinite;
+}
+
+.step-number {
+    animation: pulse 3s infinite;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="coding-lab">
+    <!-- Header -->
+    <header class="lab-header">
+        <div class="lab-title">
+            <i class="fas fa-code"></i>
+            Coding Lab - Holbies
+        </div>
+        <div class="lab-progress">
+            <div class="progress-indicator">
+                <i class="fas fa-trophy"></i>
+                <span>Niveau 1</span>
+            </div>
+            <div class="progress-indicator">
+                <i class="fas fa-fire"></i>
+                <span id="streak-counter">3 jours</span>
+            </div>
+            <div class="progress-indicator">
+                <i class="fas fa-star"></i>
+                <span id="points-counter">1250 pts</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main content -->
+    <main class="lab-main">
+        <!-- Instructions Panel -->
+        <div class="instructions-panel">
+            <div class="lesson-step">
+                <div class="step-header">
+                    <div class="step-number">1</div>
+                    <h2 class="step-title">Introduction aux Variables Python</h2>
+                </div>
+                <div class="step-content">
+                    <p>Bienvenue dans votre premier exercice de programmation ! Vous allez apprendre à créer et utiliser des variables en Python.</p>
+                    
+                    <p><strong>Objectif :</strong> Créer une variable pour stocker votre nom et l'afficher.</p>
+                    
+                    <div class="code-hint">
+# Exemple de code
+nom = "Votre nom ici"
+print(f"Bonjour {nom}!")
+                    </div>
+                    
+                    <p><strong>Instructions :</strong></p>
+                    <ol>
+                        <li>Créez une variable <code>nom</code> avec votre nom</li>
+                        <li>Créez une variable <code>age</code> avec votre âge</li>
+                        <li>Affichez un message de présentation</li>
+                        <li>Cliquez sur "Exécuter" pour tester votre code</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="lesson-step">
+                <div class="step-header">
+                    <div class="step-number">2</div>
+                    <h2 class="step-title">Bonus : Calculs avec les variables</h2>
+                </div>
+                <div class="step-content">
+                    <p>Maintenant, ajoutez du calcul à votre programme !</p>
+                    
+                    <div class="code-hint">
+# Calculez l'année de naissance
+annee_actuelle = 2025
+annee_naissance = annee_actuelle - age
+print(f"Vous êtes né(e) en {annee_naissance}")
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Code Panel -->
+        <div class="code-panel">
+            <div class="editor-header">
+                <div class="editor-tabs">
+                    <div class="editor-tab active">main.py</div>
+                    <div class="editor-tab">test.py</div>
+                </div>
+                <div class="editor-actions">
+                    <button class="run-button" onclick="runCode()">
+                        <i class="fas fa-play"></i>
+                        Exécuter
+                    </button>
+                    <button class="hint-button" onclick="giveHint()" title="Obtenir un indice">
+                        <i class="fas fa-lightbulb"></i>
+                        Indice
+                    </button>
+                    <button class="reset-button" onclick="resetCode()" title="Réinitialiser le code">
+                        <i class="fas fa-undo"></i>
+                        Reset
+                    </button>
+                </div>
+            </div>
+
+            <div class="code-editor">
+                <textarea class="editor-content" id="code-editor" placeholder="# Écrivez votre code Python ici...
+# Exemple pour commencer :
+
+nom = &quot;Votre nom&quot;
+age = 25
+
+print(f&quot;Bonjour {nom}!&quot;)
+print(f&quot;Vous avez {age} ans&quot;)
+
+# Complétez le code selon les instructions..."></textarea>
+            </div>
+
+            <div class="output-panel">
+                <div class="output-header">
+                    <i class="fas fa-terminal"></i>
+                    Sortie du programme
+                </div>
+                <div id="output-content">
+Cliquez sur "Exécuter" pour voir le résultat de votre code...
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Navigation -->
+    <nav class="lesson-navigation">
+        <button class="nav-button" disabled>
+            <i class="fas fa-arrow-left"></i>
+            Exercice précédent
+        </button>
+        
+        <div class="lesson-info">
+            <strong>Exercice 1/10 : Variables Python</strong><br>
+            <small>Temps estimé : 5-10 minutes</small>
+        </div>
+        
+        <button class="nav-button" id="next-exercise" onclick="nextExercise()">
+            Exercice suivant
+            <i class="fas fa-arrow-right"></i>
+        </button>
+    </nav>
+</div>
+
+<!-- Feedback Popup -->
+<div class="feedback-popup hidden" id="feedback-popup">
+    <div class="feedback-icon" id="feedback-icon">🎉</div>
+    <div class="feedback-title" id="feedback-title">Excellent travail !</div>
+    <div class="feedback-message" id="feedback-message">
+        Vous avez réussi cet exercice ! Votre code fonctionne parfaitement.
+    </div>
+    <div class="feedback-actions">
+        <button class="nav-button" onclick="hideFeedback()">Continuer</button>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/code-editor.js"></script>
+<script>
+// Système de coding lab inspiré de Coddy.tech
+class CodingLab {
+    constructor() {
+        this.currentLesson = 1;
+        this.totalLessons = 10;
+        this.userProgress = {
+            streak: 3,
+            points: 1250,
+            level: 1
+        };
+        this.exercises = [
+            {
+                id: 1,
+                title: "Variables Python",
+                description: "Apprendre les bases des variables",
+                requirements: ['nom =', 'age =', 'print(', 'annee_naissance'],
+                solution: `nom = "Alice"
+age = 25
+print(f"Bonjour {nom}!")
+print(f"Vous avez {age} ans")
+annee_actuelle = 2025
+annee_naissance = annee_actuelle - age
+print(f"Vous êtes né(e) en {annee_naissance}")`
+            }
+        ];
+    }
+
+    init() {
+        this.setupEditor();
+        this.loadExercise(1);
+        console.log("🚀 Coding Lab initialisé");
+    }
+
+    setupEditor() {
+        console.log("Configuration de l'éditeur...");
+        // L'éditeur est configuré par code-editor.js
+    }
+
+    runCode() {
+        const code = document.getElementById('code-editor').value;
+        const output = document.getElementById('output-content');
+        
+        // Animation de chargement
+        output.innerHTML = '<div style="display: flex; align-items: center; gap: 10px; color: #00ff41;"><i class="fas fa-spinner fa-spin"></i> Exécution du code...</div>';
+        
+        setTimeout(() => {
+            try {
+                // Utiliser le simulateur Python amélioré
+                const result = window.pythonSimulator.execute(code);
+                
+                if (result.success) {
+                    output.innerHTML = `<div style="color: #00ff41;">${result.output || 'Programme exécuté avec succès (aucune sortie)'}</div>`;
+                    
+                    // Vérifier si le code est correct
+                    if (this.checkSolution(code)) {
+                        this.showFeedback('success', 'Excellent ! 🎉', 'Votre code fonctionne parfaitement ! Vous maîtrisez les variables Python.');
+                        this.updateProgress();
+                    } else {
+                        this.showFeedback('hint', 'Bon début ! 💡', 'Votre code fonctionne, mais assurez-vous d\'inclure tous les éléments demandés dans les instructions.');
+                    }
+                } else {
+                    output.innerHTML = `<div style="color: #ff4444;">❌ Erreur: ${result.error}</div>`;
+                    if (result.errors.length > 0) {
+                        output.innerHTML += `<div style="color: #ffaa44; margin-top: 10px;">Détails:\n${result.errors.join('\n')}</div>`;
+                    }
+                }
+                
+                // Afficher les variables créées
+                if (Object.keys(result.variables).length > 0) {
+                    output.innerHTML += `<div style="color: #88cc88; margin-top: 15px; border-top: 1px solid rgba(0,255,65,0.3); padding-top: 10px;">📋 Variables créées:\n${Object.entries(result.variables).map(([key, value]) => `${key} = ${JSON.stringify(value)}`).join('\n')}</div>`;
+                }
+                
+            } catch (error) {
+                output.innerHTML = `<div style="color: #ff4444;">❌ Erreur système: ${error.message}</div>`;
+            }
+        }, 800);
+    }
+
+    checkSolution(code) {
+        const currentExercise = this.exercises[this.currentLesson - 1];
+        if (!currentExercise) return false;
+        
+        // Vérifier si le code contient tous les éléments requis
+        return currentExercise.requirements.every(requirement => 
+            code.toLowerCase().includes(requirement.toLowerCase())
+        );
+    }
+
+    showFeedback(type, title, message) {
+        const popup = document.getElementById('feedback-popup');
+        const icon = document.getElementById('feedback-icon');
+        const titleEl = document.getElementById('feedback-title');
+        const messageEl = document.getElementById('feedback-message');
+        
+        const icons = {
+            success: '🎉',
+            error: '❌',
+            hint: '💡',
+            warning: '⚠️'
+        };
+        
+        const colors = {
+            success: '#00ff41',
+            error: '#ff4444',
+            hint: '#ffaa44',
+            warning: '#ff8800'
+        };
+        
+        icon.textContent = icons[type] || icons.success;
+        titleEl.textContent = title;
+        titleEl.style.color = colors[type] || colors.success;
+        messageEl.textContent = message;
+        
+        popup.classList.remove('hidden');
+        
+        // Animation d'entrée
+        popup.style.transform = 'translate(-50%, -50%) scale(0.8)';
+        popup.style.opacity = '0';
+        
+        setTimeout(() => {
+            popup.style.transition = 'all 0.3s ease';
+            popup.style.transform = 'translate(-50%, -50%) scale(1)';
+            popup.style.opacity = '1';
+        }, 100);
+    }
+
+    hideFeedback() {
+        const popup = document.getElementById('feedback-popup');
+        popup.style.transform = 'translate(-50%, -50%) scale(0.8)';
+        popup.style.opacity = '0';
+        
+        setTimeout(() => {
+            popup.classList.add('hidden');
+            popup.style.transition = '';
+        }, 300);
+    }
+
+    updateProgress() {
+        this.userProgress.points += 50;
+        document.getElementById('points-counter').textContent = `${this.userProgress.points} pts`;
+        
+        // Animation des points
+        const pointsEl = document.getElementById('points-counter');
+        pointsEl.style.animation = 'pulse 0.8s ease-in-out';
+        setTimeout(() => {
+            pointsEl.style.animation = '';
+        }, 800);
+        
+        // Débloquer le bouton suivant
+        const nextBtn = document.getElementById('next-exercise');
+        if (nextBtn) {
+            nextBtn.disabled = false;
+            nextBtn.style.opacity = '1';
+            nextBtn.style.cursor = 'pointer';
+        }
+    }
+
+    nextExercise() {
+        if (this.currentLesson < this.totalLessons) {
+            this.currentLesson++;
+            this.loadExercise(this.currentLesson);
+        } else {
+            this.showFeedback('success', 'Félicitations ! 🏆', 'Vous avez terminé tous les exercices du Coding Lab !');
+        }
+    }
+
+    loadExercise(exerciseId) {
+        console.log(`Chargement de l'exercice ${exerciseId}`);
+        
+        // Mettre à jour les informations de l'exercice
+        const lessonInfo = document.querySelector('.lesson-info strong');
+        if (lessonInfo) {
+            lessonInfo.textContent = `Exercice ${exerciseId}/${this.totalLessons} : Variables Python`;
+        }
+        
+        // Réinitialiser le bouton suivant
+        const nextBtn = document.getElementById('next-exercise');
+        if (nextBtn && exerciseId > 1) {
+            nextBtn.disabled = true;
+            nextBtn.style.opacity = '0.5';
+            nextBtn.style.cursor = 'not-allowed';
+        }
+        
+        // Animation de chargement
+        const editor = document.getElementById('code-editor');
+        if (editor) {
+            editor.style.opacity = '0.5';
+            setTimeout(() => {
+                editor.style.opacity = '1';
+            }, 300);
+        }
+    }
+
+    // Méthodes utilitaires
+    giveHint() {
+        const hints = [
+            "💡 N'oubliez pas d'utiliser f-strings pour formater vos chaînes !",
+            "💡 Pensez à calculer l'année de naissance avec une soustraction.",
+            "💡 Utilisez des noms de variables descriptifs.",
+            "💡 Testez votre code étape par étape en ajoutant des print()."
+        ];
+        
+        const randomHint = hints[Math.floor(Math.random() * hints.length)];
+        this.showFeedback('hint', 'Indice', randomHint);
+    }
+
+    resetCode() {
+        const editor = document.getElementById('code-editor');
+        const output = document.getElementById('output-content');
+        
+        if (editor) {
+            editor.value = `# Écrivez votre code Python ici...
+# Exemple pour commencer :
+
+nom = "Votre nom"
+age = 25
+
+print(f"Bonjour {nom}!")
+print(f"Vous avez {age} ans")
+
+# Complétez le code selon les instructions...`;
+        }
+        
+        if (output) {
+            output.innerHTML = 'Cliquez sur "Exécuter" pour voir le résultat de votre code...';
+        }
+        
+        this.showFeedback('hint', 'Code réinitialisé', 'Vous pouvez recommencer l\'exercice.');
+    }
+}
+
+// Fonctions globales
+function runCode() {
+    if (window.codingLab) {
+        window.codingLab.runCode();
+    }
+}
+
+function nextExercise() {
+    if (window.codingLab) {
+        window.codingLab.nextExercise();
+    }
+}
+
+function hideFeedback() {
+    if (window.codingLab) {
+        window.codingLab.hideFeedback();
+    }
+}
+
+function giveHint() {
+    if (window.codingLab) {
+        window.codingLab.giveHint();
+    }
+}
+
+function resetCode() {
+    if (window.codingLab) {
+        window.codingLab.resetCode();
+    }
+}
+
+// Initialisation
+document.addEventListener('DOMContentLoaded', function() {
+    // Attendre que l'éditeur soit initialisé
+    setTimeout(() => {
+        window.codingLab = new CodingLab();
+        window.codingLab.init();
+    }, 500);
+});
+</script>
+{% endblock %}
