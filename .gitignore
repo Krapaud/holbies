@@ -24,8 +24,107 @@ conda-env/
 Pipfile.lock
 poetry.lock
 
-# Restriction : n'utiliser que le dossier venv/ comme environnement Python
-.venv/*.sql
+# ========================================
+# PROJECT HOLBIES - .gitignore
+# ========================================
+
+# ⚠️ DOCKER ONLY PROJECT ⚠️
+# Ce projet utilise UNIQUEMENT Docker
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+
+# Environnements virtuels (non utilisés avec Docker)
+env/
+venv/
+.env
+.venv/
+ENV/
+env.bak/
+venv.bak/
+.virtualenv/
+Pipfile.lock
+poetry.lock
+
+# Variables d'environnement sensibles
+.env
+.env.local
+.env.development
+.env.production
+config/.env
+deployment/.env
+
+# Base de données
+*.sqlite3
+*.db
+*.sqlite
+holbies_student.db
+test.db
+
+# Logs
+*.log
+logs/
+
+# Tests et fichiers temporaires
+temp_files/
+test_*
+validate_*
+diagnostic_*
+*session*.txt
+cookies*.txt
+fix_*.py
+cleanup_*.py
+
+# Cache et builds
+.pytest_cache/
+.mypy_cache/
+.cache/
+node_modules/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+*~
+
+# Docker volumes et données
+postgres_data/
+docker-volumes/
+
+# Migrations (générées automatiquement)
+alembic/versions/*.py
+!alembic/versions/__init__.py
+
+# Backup et dumps
+*.dump
+*.sql.backup
+backup/
+
+# Documentation builds
+docs/_build/
+site/
+
+# Terraform (pour GCP)
+deployment/gcp/terraform/*.tfstate*
+deployment/gcp/terraform/.terraform/
+deployment/gcp/terraform/terraform.tfvars
+
+# Scripts utiles à garder
+!check_docker_config.sh
+!Makefile
+!README_DOCKER.md
+!DOCKER_ONLY_RESTRICTION.md*.sql
 *.dump
 
 # Temporary editor/project files
