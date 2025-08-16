@@ -1,0 +1,95 @@
+/* ===============================================
+   LAYOUT - HEADER ET EN-TÊTE
+   =============================================== */
+
+/* En-tête principal du site */
+.site-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: var(--background-color);
+    border-bottom: 2px solid var(--primary-color);
+    box-shadow: 0 2px 12px var(--shadow-color);
+    backdrop-filter: blur(10px);
+}
+
+/* Contenu de l'en-tête */
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Zone du logo */
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* Zone des actions utilisateur */
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* Banner de notification */
+.header-banner {
+    background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+    color: white;
+    text-align: center;
+    padding: 0.5rem;
+    font-size: 0.9rem;
+    position: relative;
+}
+
+.banner-close {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 0.25rem;
+    border-radius: 50%;
+    transition: background 0.3s ease;
+}
+
+.banner-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Responsive header */
+@media (max-width: 768px) {
+    .header-content {
+        padding: 0.75rem 1rem;
+    }
+    
+    .logo-area {
+        flex: 1;
+    }
+}
+
+/* Header mobile toggle */
+.mobile-header-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--text-color);
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+}
+
+@media (max-width: 768px) {
+    .mobile-header-toggle {
+        display: block;
+    }
+}

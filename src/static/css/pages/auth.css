@@ -1,0 +1,318 @@
+/* ===============================================
+   PAGES - AUTHENTIFICATION COMPLÈTE
+   =============================================== */
+
+/* AUTHENTICATION STYLES */
+.auth-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+    padding: var(--spacing-xl) 0;
+}
+
+.auth-container {
+    display: flex;
+    width: 100%;
+    max-width: 900px;
+    background-color: var(--surface-color);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px var(--shadow-color);
+    overflow: hidden;
+    align-items: stretch;
+}
+
+.auth-card {
+    flex: 1;
+    padding: var(--spacing-xl);
+}
+
+.auth-header {
+    text-align: center;
+    margin-bottom: var(--spacing-lg);
+}
+
+.auth-title {
+    font-size: 2.5em;
+    color: var(--primary-color);
+    margin-bottom: 0.2em;
+}
+
+.auth-subtitle {
+    font-size: 1.1em;
+    color: var(--text-color);
+    opacity: 0.8;
+}
+
+/* Forms */
+.form-group {
+    margin-bottom: var(--spacing-md);
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: var(--spacing-xs);
+    font-weight: bold;
+    color: var(--text-color);
+}
+
+/* Full width button for auth forms */
+.btn-full {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: var(--spacing-lg) auto 0 auto;
+}
+
+/* Center button container in auth forms */
+.auth-card form {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.auth-card form button,
+.auth-card form .btn {
+    align-self: center;
+    min-width: 200px;
+}
+
+.auth-footer {
+    text-align: center;
+    margin-top: var(--spacing-lg);
+    font-size: 0.9em;
+}
+
+.auth-footer a {
+    font-weight: bold;
+}
+
+/* Auth Visual Panel */
+.auth-visual {
+    flex: 1;
+    background-color: #181818;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: var(--spacing-md);
+    overflow: hidden;
+    position: relative;
+    box-sizing: border-box;
+    border-radius: 12px;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.6);
+    max-width: 420px;
+    margin: 0 auto;
+    height: auto;
+    min-height: 500px;
+}
+
+.auth-visual pre {
+    margin: 0;
+    font-family: 'Courier New', Courier, monospace;
+    color: #0f0;
+    font-size: 16px;
+    white-space: pre-wrap;
+    word-break: break-all;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+}
+
+/* Animation container for typewriter effect */
+#code-animation-container, 
+#hero-code-animation-container {
+    width: 100% !important;
+    height: 100% !important;
+    max-height: 100% !important;
+    min-height: 100% !important;
+    overflow: hidden !important;
+    padding: var(--spacing-md);
+    box-sizing: border-box !important;
+    display: block !important;
+    position: relative !important;
+}
+
+/* Specific for auth-visual - adaptive version */
+.auth-visual #code-animation-container {
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 100% !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+    display: block !important;
+    position: relative !important;
+}
+
+/* Pre-code container that can scroll without visible scrollbar */
+#code-animation-container pre,
+#hero-code-animation-container pre,
+.auth-visual #code-animation-container pre {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 100% !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+    scroll-behavior: smooth !important;
+    font-family: 'Courier New', Courier, monospace !important;
+    color: #0f0 !important;
+    font-size: clamp(10px, 1.2vw, 14px) !important;
+    white-space: pre-wrap !important;
+    word-wrap: break-word !important;
+    line-height: 1.4 !important;
+    box-sizing: border-box !important;
+    flex-shrink: 0 !important;
+    flex-grow: 0 !important;
+}
+
+/* Specific styles for hero (fixed size) */
+#hero-code-animation-container pre {
+    max-height: 100% !important;
+}
+
+/* Specific styles for auth-visual (adaptive) */
+.auth-visual #code-animation-container pre {
+    max-height: none !important;
+}
+
+/* Hide webkit scrollbars */
+#code-animation-container pre::-webkit-scrollbar,
+#hero-code-animation-container pre::-webkit-scrollbar,
+.auth-visual #code-animation-container pre::-webkit-scrollbar {
+    width: 0px !important;
+    height: 0px !important;
+    background: transparent !important;
+    display: none !important;
+}
+
+#code-animation-container pre::-webkit-scrollbar-track,
+#hero-code-animation-container pre::-webkit-scrollbar-track,
+.auth-visual #code-animation-container pre::-webkit-scrollbar-track {
+    background: transparent !important;
+    display: none !important;
+}
+
+#code-animation-container pre::-webkit-scrollbar-thumb,
+#hero-code-animation-container pre::-webkit-scrollbar-thumb,
+.auth-visual #code-animation-container pre::-webkit-scrollbar-thumb {
+    background: transparent !important;
+    display: none !important;
+}
+
+/* Code and cursor */
+#code-animation-container code,
+#hero-code-animation-container code,
+.auth-visual #code-animation-container code {
+    display: block !important;
+    line-height: 1.4 !important;
+    font-size: inherit !important;
+    color: #0f0 !important;
+    width: 100% !important;
+}
+
+#code-animation-container .cursor,
+#hero-code-animation-container .cursor,
+.auth-visual #code-animation-container .cursor {
+    display: inline-block !important;
+    background-color: #0f0 !important;
+    width: 8px !important;
+    height: 1.2em !important;
+    animation: blink 1s step-end infinite !important;
+}
+
+@keyframes blink {
+    from, to { background-color: transparent; }
+    50% { background-color: #0f0; }
+}
+
+/* Password Strength Indicator */
+.password-strength-container {
+    margin-top: 10px;
+    height: auto;
+    opacity: 1;
+    transition: opacity 0.4s ease-in-out, height 0.4s ease-in-out;
+    overflow: hidden;
+}
+
+.password-strength-container.is-hidden {
+    opacity: 0;
+    height: 0;
+}
+
+.password-strength-bar-container {
+    width: 100%;
+    height: 8px;
+    background-color: var(--background-color);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.password-strength-bar {
+    height: 100%;
+    width: 0%;
+    border-radius: 4px;
+    transition: width 0.4s ease-in-out, background-color 0.4s ease-in-out;
+}
+
+.password-strength-text {
+    margin-top: 6px;
+    font-size: 0.85em;
+    text-align: right;
+    color: var(--text-color);
+    transition: color 0.4s ease-in-out;
+}
+
+/* Strength Levels */
+.password-strength-bar.is-weak {
+    width: 25%;
+    background-color: #ff4757;
+}
+
+.password-strength-bar.is-fair {
+    width: 50%;
+    background-color: #ffa502;
+}
+
+.password-strength-bar.is-good {
+    width: 75%;
+    background-color: #3742fa;
+}
+
+.password-strength-bar.is-strong {
+    width: 100%;
+    background-color: #2ed573;
+}
+
+.password-strength-text.is-weak {
+    color: #ff4757;
+}
+
+.password-strength-text.is-fair {
+    color: #ffa502;
+}
+
+.password-strength-text.is-good {
+    color: #3742fa;
+}
+
+.password-strength-text.is-strong {
+    color: #2ed573;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .auth-container {
+        flex-direction: column;
+    }
+    .auth-visual {
+        display: none;
+    }
+}

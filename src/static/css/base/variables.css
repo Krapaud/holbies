@@ -1,0 +1,74 @@
+/* ================================
+   VARIABLES CSS ET CONFIGURATION DE BASE
+   ================================ */
+
+:root {
+    /* Dark Theme Colors */
+    --primary-color-dark: #E1003C;
+    --background-color-dark: #292627;
+    --text-color-dark: #F1F2F2; /* Light grey for text on dark background */
+    --border-color-dark: #555; /* A slightly lighter border for dark theme */
+    --surface-color-dark: #3A3A3A; /* A slightly lighter background for blocks/cards in dark theme */
+    --shadow-color-dark: rgba(0, 0, 0, 0.4);
+    --accent-color-dark: #FF4D6D; /* A brighter red for subtle accents */
+    --gradient-start-dark: #292627;
+    --gradient-end-dark: #1A1819;
+
+    /* Light Theme Colors */
+    --primary-color-light: #E1003C;
+    --background-color-light: #F1F2F2;
+    --text-color-light: #292627; /* Dark grey for text on light background */
+    --border-color-light: #CCC; /* A slightly darker border for light theme */
+    --surface-color-light: #FFFFFF; /* White background for blocks/cards in light theme */
+    --shadow-color-light: rgba(0, 0, 0, 0.1);
+    --accent-color-light: #CC0033; /* A slightly darker red for subtle accents */
+    --gradient-start-light: #F1F2F2;
+    --gradient-end-light: #E0E0E0;
+
+    /* Default to Dark Theme */
+    --primary-color: var(--primary-color-dark);
+    --background-color: var(--background-color-dark);
+    --text-color: var(--text-color-dark);
+    --border-color: var(--border-color-dark);
+    --surface-color: var(--surface-color-dark);
+    --shadow-color: var(--shadow-color-dark);
+    --accent-color: var(--accent-color-dark);
+    --gradient-start: var(--gradient-start-dark);
+    --gradient-end: var(--gradient-end-dark);
+
+    /* General UI elements */
+    --button-hover-darken: #C0002F;
+    --focus-outline-color: rgba(225, 0, 60, 0.6);
+
+    /* Spacing variables */
+    --spacing-xs: 5px;
+    --spacing-sm: 10px;
+    --spacing-md: 20px;
+    --spacing-lg: 30px;
+    --spacing-xl: 50px;
+    --spacing-xxl: 80px;
+
+    /* Fonts */
+    --font-holberton: 'AktivGrotesk-Regular', 'Montserrat', Arial, sans-serif;
+    --font-holberton-bold: 'AktivGrotesk-Bold', 'Montserrat', Arial, sans-serif;
+
+    /* Additional variables */
+    --border-radius: 12px;
+    --text-secondary: rgba(241, 242, 242, 0.8);
+    --text-primary: #F1F2F2;
+    --bg-color: #292627;
+    --secondary-color: #FF4D6D;
+}
+
+/* Light Theme Override */
+[data-theme='light'] {
+    --primary-color: var(--primary-color-light);
+    --background-color: var(--background-color-light);
+    --text-color: var(--text-color-light);
+    --border-color: var(--border-color-light);
+    --surface-color: var(--surface-color-light);
+    --shadow-color: var(--shadow-color-light);
+    --accent-color: var(--accent-color-light);
+    --gradient-start: var(--gradient-start-light);
+    --gradient-end: var(--gradient-end-light);
+}

@@ -1,0 +1,322 @@
+/* ===============================================
+   CARDS - COMPOSANTS DE CARTES RÉUTILISABLES
+   =============================================== */
+
+/* Carte de base */
+.card {
+    background: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: 0 4px 20px var(--shadow-color);
+    transition: all 0.3s ease;
+    overflow: hidden;
+    position: relative;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px var(--shadow-color);
+}
+
+/* En-tête de carte */
+.card-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    background: rgba(225, 0, 60, 0.05);
+}
+
+.card-title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.card-subtitle {
+    margin: 0.5rem 0 0 0;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+/* Corps de carte */
+.card-body {
+    padding: 1.5rem;
+}
+
+.card-text {
+    color: var(--text-color);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+/* Pied de carte */
+.card-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--border-color);
+    background: var(--background-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Variantes de cartes */
+.card-feature {
+    text-align: center;
+    padding: 2rem;
+    background: linear-gradient(135deg, var(--surface-color), var(--background-color));
+}
+
+.card-feature:hover {
+    border-color: var(--primary-color);
+}
+
+.card-feature .icon {
+    font-size: 3rem;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.card-stat {
+    text-align: center;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    color: white;
+    border: none;
+}
+
+.card-stat .number {
+    font-size: 2.5rem;
+    font-weight: 800;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.card-stat .label {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+/* Carte avec image */
+.card-image {
+    position: relative;
+}
+
+.card-image img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.card-image-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(0,0,0,0.8));
+    color: white;
+    padding: 1rem;
+}
+
+/* Carte interactive */
+.card-interactive {
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.card-interactive::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(225,0,60,0.1), transparent);
+    transition: left 0.5s ease;
+}
+
+.card-interactive:hover::before {
+    left: 100%;
+}
+
+/* Cartes en grille */
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    margin: 2rem 0;
+}
+
+.cards-grid-2 {
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+}
+
+.cards-grid-3 {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+/* Badge sur carte */
+.card-badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: var(--primary-color);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    z-index: 2;
+}
+
+.card-badge.success {
+    background: var(--accent-color);
+}
+
+.card-badge.warning {
+    background: #ff9800;
+}
+
+.card-badge.danger {
+    background: #f44336;
+}
+
+/* Carte compacte */
+.card-compact {
+    padding: 1rem;
+    box-shadow: 0 2px 10px var(--shadow-color);
+}
+
+.card-compact .card-header,
+.card-compact .card-body,
+.card-compact .card-footer {
+    padding: 0.75rem;
+}
+
+/* Carte de profil utilisateur */
+.card-profile {
+    text-align: center;
+    background: linear-gradient(135deg, var(--surface-color), var(--background-color));
+}
+
+.card-profile .avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin: 0 auto 1rem;
+    border: 3px solid var(--primary-color);
+    display: block;
+}
+
+.card-profile .name {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+}
+
+.card-profile .role {
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+}
+
+/* Carte de progression */
+.card-progress {
+    position: relative;
+}
+
+.progress-bar {
+    height: 4px;
+    background: var(--border-color);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 1rem;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+    border-radius: 2px;
+    transition: width 0.3s ease;
+}
+
+/* États de carte */
+.card-loading {
+    position: relative;
+    pointer-events: none;
+}
+
+.card-loading::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card-disabled {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* Animation d'apparition des cartes */
+.card-animate {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: cardFadeIn 0.5s ease forwards;
+}
+
+@keyframes cardFadeIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card-animate:nth-child(1) { animation-delay: 0.1s; }
+.card-animate:nth-child(2) { animation-delay: 0.2s; }
+.card-animate:nth-child(3) { animation-delay: 0.3s; }
+.card-animate:nth-child(4) { animation-delay: 0.4s; }
+
+/* Responsive */
+@media (max-width: 768px) {
+    .cards-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .card-header,
+    .card-body,
+    .card-footer {
+        padding: 1rem;
+    }
+    
+    .card-feature {
+        padding: 1.5rem;
+    }
+    
+    .card-badge {
+        top: 0.5rem;
+        right: 0.5rem;
+    }
+}
+
+/* Mode sombre */
+@media (prefers-color-scheme: dark) {
+    .card {
+        border-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .card-header {
+        background: rgba(225, 0, 60, 0.1);
+    }
+    
+    .card-footer {
+        background: rgba(0, 0, 0, 0.2);
+    }
+}

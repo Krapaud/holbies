@@ -1,0 +1,191 @@
+/* ================================
+   COMPOSANTS UI - BOUTONS ET FORMULAIRES
+   ================================ */
+
+/* Buttons Holberton */
+button, .button, .btn, .btn-primary, .btn-secondary {
+    background: var(--primary-color);
+    color: var(--background-color-light);
+    padding: 0.9em 1.8em;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.05em;
+    font-weight: bold;
+    font-family: var(--font-holberton-bold);
+    transition: background 0.2s, color 0.2s, transform 0.1s, box-shadow 0.2s;
+    box-shadow: 0 4px 12px var(--shadow-color);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    position: relative;
+}
+
+/* Button content centering */
+button span, .btn span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Loading indicator */
+.btn-loading {
+    display: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid transparent;
+    border-top: 2px solid currentColor;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+@keyframes spin {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* When loading, hide text and show spinner */
+button.loading span, .btn.loading span {
+    opacity: 0;
+}
+
+button.loading .btn-loading, .btn.loading .btn-loading {
+    display: block;
+}
+
+button:hover, .button:hover, .btn:hover, .btn-primary:hover {
+    background: var(--button-hover-darken);
+    color: var(--background-color-light);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px var(--shadow-color);
+}
+
+.btn-secondary {
+    background: transparent;
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
+}
+
+.btn-secondary:hover {
+    background: var(--primary-color);
+    color: var(--background-color-light);
+}
+
+/* Full width button for auth forms */
+.btn-full {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: var(--spacing-lg) auto 0 auto;
+}
+
+.btn-large {
+    padding: 1.5rem 3rem;
+    font-size: 1.3rem;
+}
+
+/* Forms */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea {
+    width: 100%;
+    padding: 0.9em;
+    margin-bottom: 1.2em;
+    border: 1px solid var(--border-color);
+    background-color: var(--background-color);
+    color: var(--text-color);
+    border-radius: 5px;
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px var(--focus-outline-color), inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Placeholder styling */
+input::placeholder, textarea::placeholder {
+    color: var(--text-color);
+    opacity: 0.7;
+}
+
+.form-group {
+    margin-bottom: var(--spacing-md);
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: var(--spacing-xs);
+    font-weight: bold;
+    color: var(--text-color);
+}
+
+/* Password Strength Indicator */
+.password-strength-container {
+    margin-top: 10px;
+    height: auto;
+    opacity: 1;
+    transition: opacity 0.4s ease-in-out, height 0.4s ease-in-out;
+    overflow: hidden;
+}
+
+.password-strength-container.is-hidden {
+    opacity: 0;
+    height: 0;
+}
+
+.password-strength-bar-container {
+    width: 100%;
+    height: 8px;
+    background-color: var(--background-color);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.password-strength-bar {
+    height: 100%;
+    width: 0%;
+    border-radius: 4px;
+    transition: width 0.4s ease-in-out, background-color 0.4s ease-in-out;
+}
+
+.password-strength-text {
+    margin-top: 6px;
+    font-size: 0.85em;
+    text-align: right;
+    color: var(--text-color);
+    transition: color 0.4s ease-in-out;
+}
+
+/* Strength Levels */
+.password-strength-bar.is-weak {
+    width: 25%;
+    background-color: #e74c3c;
+}
+
+.password-strength-bar.is-medium {
+    width: 60%;
+    background-color: #f39c12;
+}
+
+.password-strength-bar.is-strong {
+    width: 100%;
+    background-color: #2ecc71;
+}
+
+.password-strength-text.is-weak { color: #e74c3c; }
+.password-strength-text.is-medium { color: #f39c12; }
+.password-strength-text.is-strong { color: #2ecc71; }

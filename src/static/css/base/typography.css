@@ -1,0 +1,378 @@
+/* ================================
+   DÉFINITIONS DES POLICES AKTIVGROTESK
+   ================================ */
+
+/* Font imports - assuming they are in static/fonts */
+@font-face {
+    font-family: 'AktivGrotesk-Regular';
+    src: url('../fonts/AktivGrotesk-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'AktivGrotesk-Bold';
+    src: url('../fonts/AktivGrotesk-Bold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'AktivGrotesk-Medium';
+    src: url('../fonts/AktivGrotesk-Medium.ttf') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'AktivGrotesk-Light';
+    src: url('../fonts/AktivGrotesk-Light.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'AktivGrotesk-Italic';
+    src: url('../fonts/AktivGrotesk-Italic.ttf') format('truetype');
+    font-weight: normal;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'AktivGrotesk-Black';
+    src: url('../fonts/AktivGrotesk-Black.ttf') format('truetype');
+    font-weight: 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'AktivGrotesk-Hairline';
+    src: url('../fonts/AktivGrotesk-Hairline.ttf') format('truetype');
+    font-weight: 100;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'AktivGrotesk-Thin';
+    src: url('../fonts/AktivGrotesk-Thin.ttf') format('truetype');
+    font-weight: 200;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'AktivGrotesk-XBold';
+    src: url('../fonts/AktivGrotesk-XBold.ttf') format('truetype');
+    font-weight: 800;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'AktivGrotesk-BlackItalic';
+    src: url('../fonts/AktivGrotesk-BlackItalic.ttf') format('truetype');
+    font-weight: 900;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'AktivGrotesk-BoldItalic';
+    src: url('../fonts/AktivGrotesk-BoldItalic.ttf') format('truetype');
+    font-weight: bold;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'AktivGrotesk-HairlineItalic';
+    src: url('../fonts/AktivGrotesk-HairlineItalic.ttf') format('truetype');
+    font-weight: 100;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'AktivGrotesk-LightItalic';
+    src: url('../fonts/AktivGrotesk-LightItalic.ttf') format('truetype');
+    font-weight: 300;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'AktivGrotesk-MediumItalic';
+    src: url('../fonts/AktivGrotesk-MediumItalic.ttf') format('truetype');
+    font-weight: 500;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'AktivGrotesk-ThinItalic';
+    src: url('../fonts/AktivGrotesk-ThinItalic.ttf') format('truetype');
+    font-weight: 200;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'AktivGrotesk-XBoldItalic';
+    src: url('../fonts/AktivGrotesk-XBoldItalic.ttf') format('truetype');
+    font-weight: 800;
+    font-style: italic;
+    font-display: swap;
+}
+
+/* ================================
+   MODERN AKTIVGROTESK FONT PAIRING
+   ================================ */
+
+/* Logo */
+.logo-text {
+    font-family: 'AktivGrotesk-XBold', Arial, sans-serif;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+}
+
+.logo-subtext {
+    font-family: 'AktivGrotesk-Hairline', Arial, sans-serif;
+    font-weight: 100;
+    letter-spacing: 0.18em;
+}
+
+/* Main Titles (h1) */
+h1, .auth-title, .section-heading {
+    font-family: 'AktivGrotesk-Bold', Arial, sans-serif;
+    font-weight: bold;
+    letter-spacing: 0.06em;
+}
+
+/* Section Titles (h2, h3) */
+h2, h3, .auth-subtitle, .feature-item h3 {
+    font-family: 'AktivGrotesk-Medium', Arial, sans-serif;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+}
+
+/* Paragraphs and body */
+body, p, .feature-item p, .auth-card, .auth-footer {
+    font-family: 'AktivGrotesk-Regular', Arial, sans-serif;
+    font-weight: normal;
+    letter-spacing: 0.01em;
+}
+
+/* Buttons */
+button, .button, .btn, .btn-primary, .btn-secondary {
+    font-family: 'AktivGrotesk-Black', Arial, sans-serif;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+/* Inputs */
+input, textarea, select {
+    font-family: 'AktivGrotesk-Light', Arial, sans-serif;
+    font-weight: 300;
+}
+
+/* Code/Terminal Animation */
+#code-animation-container code, .auth-visual pre {
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: normal;
+    letter-spacing: 0.02em;
+}
+
+/* Small text, helper, muted */
+small, .text-muted {
+    font-family: 'AktivGrotesk-HairlineItalic', Arial, sans-serif;
+    font-weight: 100;
+    font-style: italic;
+    opacity: 0.8;
+}
+
+/* Force no underline on all links in all states */
+a, a:hover, a:focus, a:active, a:visited {
+    text-decoration: none !important;
+    color: var(--primary-color);
+    transition: var(--transition-normal);
+}
+
+a:hover {
+    color: var(--primary-light);
+}
+
+a:focus {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* Configuration de base */
+html {
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+body {
+    color: var(--text-color);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Hiérarchie des titres avec tailles responsives */
+h1, h2, h3, h4, h5, h6 {
+    margin: 0 0 1rem 0;
+    color: var(--text-color);
+    line-height: 1.2;
+}
+
+h1 {
+    font-size: var(--font-size-5xl);
+    font-weight: 800;
+}
+
+h2 {
+    font-size: var(--font-size-4xl);
+    font-weight: 700;
+}
+
+h3 {
+    font-size: var(--font-size-3xl);
+    font-weight: 600;
+}
+
+h4 {
+    font-size: var(--font-size-2xl);
+    font-weight: 600;
+}
+
+h5 {
+    font-size: var(--font-size-xl);
+    font-weight: 500;
+}
+
+h6 {
+    font-size: var(--font-size-lg);
+    font-weight: 500;
+}
+
+/* Paragraphes */
+p {
+    margin: 0 0 1rem 0;
+    line-height: 1.6;
+}
+
+/* Code et contenu technique */
+#code-animation-container code, .auth-visual pre, code {
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: normal;
+    letter-spacing: 0.02em;
+    font-size: 0.875em;
+    background: rgba(225, 0, 60, 0.1);
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    color: var(--primary-color);
+}
+
+pre {
+    font-family: 'Courier New', Courier, monospace;
+    background: var(--surface-color);
+    padding: 1rem;
+    border-radius: 8px;
+    overflow-x: auto;
+    border: 1px solid var(--border-color);
+}
+
+pre code {
+    background: none;
+    padding: 0;
+    color: var(--text-color);
+}
+
+/* Listes */
+ul, ol {
+    margin: 0 0 1rem 0;
+    padding-left: 2rem;
+}
+
+li {
+    margin-bottom: 0.5rem;
+}
+
+/* Citations */
+blockquote {
+    margin: 2rem 0;
+    padding: 1rem 2rem;
+    border-left: 4px solid var(--primary-color);
+    background: rgba(225, 0, 60, 0.05);
+    font-style: italic;
+    color: var(--text-muted);
+}
+
+/* Texte utilitaire */
+.text-small {
+    font-size: var(--font-size-sm);
+}
+
+.text-large {
+    font-size: var(--font-size-lg);
+}
+
+.text-bold {
+    font-weight: 700;
+}
+
+.text-italic {
+    font-style: italic;
+}
+
+.text-underline {
+    text-decoration: underline;
+}
+
+.text-no-decoration {
+    text-decoration: none;
+}
+
+/* Animation pour les titres principaux */
+@keyframes titleGlow {
+    0%, 100% { 
+        text-shadow: 
+            0 2px 4px rgba(0,0,0,0.5),
+            0 0 15px rgba(255,255,255,0.3),
+            0 0 25px rgba(255,255,255,0.2);
+    }
+    50% { 
+        text-shadow: 
+            0 2px 4px rgba(0,0,0,0.5),
+            0 0 25px rgba(255,255,255,0.5),
+            0 0 35px rgba(255,255,255,0.3);
+    }
+}
+
+/* Responsive typography */
+@media (max-width: 768px) {
+    html {
+        font-size: 14px;
+    }
+    
+    h1 {
+        font-size: var(--font-size-4xl);
+    }
+    
+    h2 {
+        font-size: var(--font-size-3xl);
+    }
+    
+    h3 {
+        font-size: var(--font-size-2xl);
+    }
+}

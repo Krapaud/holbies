@@ -1,0 +1,104 @@
+/* ===============================================
+   LAYOUT - GRID SYSTEM
+   =============================================== */
+
+/* Système de grille responsive */
+.grid {
+    display: grid;
+    gap: var(--spacing-lg);
+}
+
+.grid-2 {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.grid-3 {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+.grid-4 {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.grid-auto {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+/* Gaps spécifiques */
+.grid-gap-sm {
+    gap: var(--spacing-sm);
+}
+
+.grid-gap-md {
+    gap: var(--spacing-md);
+}
+
+.grid-gap-lg {
+    gap: var(--spacing-lg);
+}
+
+.grid-gap-xl {
+    gap: var(--spacing-xl);
+}
+
+/* Alignement */
+.grid-center {
+    justify-items: center;
+    align-items: center;
+}
+
+.grid-start {
+    justify-items: start;
+    align-items: start;
+}
+
+.grid-end {
+    justify-items: end;
+    align-items: end;
+}
+
+/* Tailles de colonnes spécifiques */
+.grid-1-2 {
+    grid-template-columns: 1fr 2fr;
+}
+
+.grid-2-1 {
+    grid-template-columns: 2fr 1fr;
+}
+
+.grid-1-1 {
+    grid-template-columns: 1fr 1fr;
+}
+
+.grid-1-1-1 {
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+/* Responsive - tablettes */
+@media (max-width: 1024px) {
+    .grid-4 {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    }
+    
+    .grid-1-2,
+    .grid-2-1 {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Responsive - mobiles */
+@media (max-width: 768px) {
+    .grid,
+    .grid-2,
+    .grid-3,
+    .grid-4,
+    .grid-auto,
+    .grid-1-1,
+    .grid-1-1-1 {
+        grid-template-columns: 1fr;
+    }
+    
+    .grid {
+        gap: var(--spacing-md);
+    }
+}

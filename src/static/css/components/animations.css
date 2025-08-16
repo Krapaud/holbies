@@ -1,0 +1,265 @@
+/* ================================
+   ANIMATIONS ET TERMINAL
+   ================================ */
+
+/* Animation container for typewriter effect - VERSION HARDCORE SANS SCROLLBAR */
+#code-animation-container, #hero-code-animation-container {
+    width: 100% !important;
+    height: 100% !important;
+    /* FORCER LA TAILLE - INTERDIRE L'AGRANDISSEMENT */
+    max-height: 100% !important;
+    min-height: 100% !important;
+    /* ZERO SCROLL VISIBLE - ON MASQUE ABSOLUMENT TOUT */
+    overflow: hidden !important; /* MASQUER TOTALEMENT LES SCROLLBARS */
+    padding: var(--spacing-md);
+    box-sizing: border-box !important;
+    display: block !important;
+    position: relative !important;
+}
+
+/* Spécifique pour auth-visual - VERSION ADAPTATIVE */
+.auth-visual #code-animation-container {
+    width: 100% !important;
+    height: 100% !important;
+    /* ADAPTATION AUTOMATIQUE - PAS DE MAX-HEIGHT FIXE */
+    min-height: 100% !important;
+    /* ZERO SCROLL VISIBLE - MASQUER ABSOLUMENT TOUT */
+    overflow: hidden !important; /* MASQUER TOTALEMENT LES SCROLLBARS */
+    padding: 0 !important; /* auth-visual a déjà le padding */
+    box-sizing: border-box !important;
+    display: block !important;
+    position: relative !important;
+}
+
+/* Conteneur de pré-code qui peut scroller SANS SCROLLBAR VISIBLE - VERSION ADAPTATIVE */
+#code-animation-container pre,
+#hero-code-animation-container pre,
+.auth-visual #code-animation-container pre {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    /* ADAPTATION AUTOMATIQUE - PAS DE MAX-HEIGHT FIXE POUR AUTH-VISUAL */
+    min-height: 100% !important;
+    /* ICI on permet le scroll mais ON MASQUE LA SCROLLBAR */
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    /* MASQUER SCROLLBAR POUR TOUS LES NAVIGATEURS */
+    scrollbar-width: none !important; /* Firefox */
+    -ms-overflow-style: none !important; /* Internet Explorer 10+ */
+    scroll-behavior: smooth !important;
+    font-family: 'Courier New', Courier, monospace !important;
+    color: #0f0 !important;
+    font-size: clamp(10px, 1.2vw, 14px) !important;
+    white-space: pre-wrap !important;
+    word-wrap: break-word !important;
+    line-height: 1.4 !important;
+    box-sizing: border-box !important;
+    /* EMPÊCHER L'EXPANSION POUR HERO SEULEMENT */
+    flex-shrink: 0 !important;
+    flex-grow: 0 !important;
+}
+
+/* Styles spécifiques pour hero (taille fixe) */
+#hero-code-animation-container pre {
+    max-height: 100% !important; /* Garde la taille fixe pour hero */
+}
+
+/* Styles spécifiques pour auth-visual (adaptatif) */
+.auth-visual #code-animation-container pre {
+    max-height: none !important; /* Permet l'adaptation pour auth-visual */
+}
+
+/* MASQUER SCROLLBAR WEBKIT (Chrome, Safari, Edge) */
+#code-animation-container pre::-webkit-scrollbar,
+#hero-code-animation-container pre::-webkit-scrollbar,
+.auth-visual #code-animation-container pre::-webkit-scrollbar {
+    width: 0px !important;
+    height: 0px !important;
+    background: transparent !important;
+    display: none !important;
+}
+
+#code-animation-container pre::-webkit-scrollbar-track,
+#hero-code-animation-container pre::-webkit-scrollbar-track,
+.auth-visual #code-animation-container pre::-webkit-scrollbar-track {
+    background: transparent !important;
+    display: none !important;
+}
+
+#code-animation-container pre::-webkit-scrollbar-thumb,
+#hero-code-animation-container pre::-webkit-scrollbar-thumb,
+.auth-visual #code-animation-container pre::-webkit-scrollbar-thumb {
+    background: transparent !important;
+    display: none !important;
+}
+
+/* CODE ET CURSEUR */
+#code-animation-container code,
+#hero-code-animation-container code,
+.auth-visual #code-animation-container code {
+    display: block !important;
+    line-height: 1.4 !important;
+    font-size: inherit !important;
+    color: #0f0 !important;
+    width: 100% !important;
+}
+
+#code-animation-container .cursor,
+#hero-code-animation-container .cursor,
+.auth-visual #code-animation-container .cursor {
+    display: inline-block !important;
+    background-color: #0f0 !important;
+    width: 8px !important;
+    height: 1.2em !important;
+    animation: blink 1s step-end infinite !important;
+}
+
+#code-animation-container .cursor {
+    display: inline-block;
+    background-color: #0f0;
+    width: 10px;
+    height: 1.2em;
+    animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+    from, to { background-color: transparent; }
+    50% { background-color: #0f0; }
+}
+
+/* Terminal styles */
+.hero-terminal {
+    width: 500px;
+    height: 450px;
+    background-color: #181818;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 25px;
+    overflow: hidden;
+    position: relative;
+    box-sizing: border-box;
+    border-radius: 12px;
+    box-shadow: 0 2px 16px #000a;
+    flex-shrink: 0;
+    flex-grow: 0;
+}
+
+.hero-terminal::before {
+    display: none;
+}
+
+.hero-terminal::after {
+    display: none;
+}
+
+.auth-visual {
+    flex: 1;
+    background-color: #181818;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: var(--spacing-md);
+    overflow: hidden;
+    position: relative;
+    box-sizing: border-box;
+    border-radius: 12px;
+    box-shadow: 0 2px 16px #000a;
+    max-width: 420px;
+    margin: 0 auto;
+    height: auto;
+    min-height: 500px;
+}
+
+.auth-visual pre {
+    margin: 0;
+    font-family: 'Courier New', Courier, monospace;
+    color: #0f0;
+    font-size: 16px;
+    white-space: pre-wrap;
+    word-break: break-all;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+}
+
+/* Animations globales */
+@keyframes titleGlow {
+    0%, 100% { 
+        text-shadow: 
+            0 2px 4px rgba(0,0,0,0.5),
+            0 0 15px rgba(255,255,255,0.3),
+            0 0 25px rgba(255,255,255,0.2);
+        transform: scale(1);
+    }
+    50% { 
+        text-shadow: 
+            0 2px 4px rgba(0,0,0,0.5),
+            0 0 20px rgba(255,255,255,0.6),
+            0 0 35px rgba(255,255,255,0.4),
+            0 0 45px rgba(241,242,242,0.3);
+        transform: scale(1.02);
+    }
+}
+
+@keyframes fadeInContent {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInFromLeft {
+    from {
+        transform: translateX(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideInFromRight {
+    from {
+        transform: translateX(30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes bounceIn {
+    from {
+        transform: scale(0.7);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
